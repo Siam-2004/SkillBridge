@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block shell_css %}<link rel="stylesheet" href="{% static 'css/public.css' %}?v=4.0">{% endblock %}
+
+{% block chrome %}
+  {% include "components/navbar.html" %}
+  <main id="main" class="auth-wrapper">
+    <div class="card auth-card">
+      <div class="card__body">
+        {% block form_header %}
+          <div class="auth-header">
+            <h1 class="auth-title">{% block form_title %}{% endblock %}</h1>
+            {% block form_lede %}{% endblock %}
+          </div>
+        {% endblock %}
+        {% include "components/messages.html" %}
+        {% block content %}{% endblock %}
+      </div>
+      {% block form_foot %}{% endblock %}
+    </div>
+  </main>
+{% endblock %}

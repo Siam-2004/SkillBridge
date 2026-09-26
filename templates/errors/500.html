@@ -1,0 +1,23 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Something went wrong — Skillbridge</title>
+  <link rel="stylesheet" href="{% static 'css/base.css' %}?v=4.0">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}?v=4.0">
+  <link rel="stylesheet" href="{% static 'css/error.css' %}?v=4.0">
+</head>
+<body>
+  {# Deliberately self-contained: the shell itself may be what failed. #}
+  <main class="shell shell--narrow page">
+    <div class="empty">
+      <div class="empty__icon" aria-hidden="true">500</div>
+      <h3>Something went wrong at our end</h3>
+      <p>Nothing was charged and no money moved — every financial operation is
+         all-or-nothing, so a failure leaves your balance exactly as it was.</p>
+      <a class="btn btn--primary" href="/">Back to the home page</a>
+    </div>
+  </main>
+</body>
+</html>

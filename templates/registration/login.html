@@ -1,0 +1,37 @@
+{% extends "layouts/auth.html" %}
+{% load static %}
+
+{% block title %}Sign In — SkillBridge{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/login.css' %}?v=4.0">
+{% endblock %}
+
+{% block form_header %}
+<div class="auth-header">
+  <div class="auth-brand-badge">SB</div>
+  <h1 class="auth-title">Welcome back</h1>
+  <p class="auth-subtitle">Sign in to your SkillBridge account</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+  {% include "components/form.html" %}
+
+  <div class="login-options">
+    <a href="{% url 'accounts:password_reset' %}">Forgot password?</a>
+  </div>
+
+  <button class="btn btn--primary btn--block btn--lg" type="submit">
+    Sign In to SkillBridge
+  </button>
+</form>
+{% endblock %}
+
+{% block form_foot %}
+<div class="card__foot center small">
+  Don't have an account yet? <a href="{% url 'accounts:register' %}" style="font-weight: 700; color: var(--brand-600);">Create one free</a>.
+</div>
+{% endblock %}

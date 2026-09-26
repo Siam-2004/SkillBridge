@@ -1,0 +1,34 @@
+<div class="card">
+  <div class="card__body">
+    <div class="row row--top" style="gap:var(--gap-5)">
+      <div class="center" style="flex:0 0 130px">
+        <div class="coin coin--xl">{{ summary.average_rating|default:"0.0" }}</div>
+        <div>{{ summary.average_rating|stars }}</div>
+        <p class="tiny muted" style="margin-top:6px">
+          {{ summary.total_reviews }} review{{ summary.total_reviews|pluralize }}
+        </p>
+      </div>
+      <div style="flex:1 1 auto">
+        {% for row in summary.breakdown %}
+          <div class="rating-bar" style="margin-bottom:6px">
+            <span class="nowrap" style="width:44px">{{ row.stars }} star</span>
+            <span class="rating-bar__track"><span class="rating-bar__fill" style="width:{{ row.percent }}%"></span></span>
+            <span class="muted nowrap" style="width:34px">{{ row.count }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if summary.category_averages %}
+      <hr>
+      <div class="grid grid--2">
+        {% for row in summary.category_averages %}
+          <div class="row row--between small">
+            <span class="muted">{{ row.label }}</span>
+            <span class="bold">{{ row.average }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>

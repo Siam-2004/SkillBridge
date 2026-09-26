@@ -1,0 +1,167 @@
+/* ==========================================================================
+   SkillBridge — Sign In / Login Page Dedicated Stylesheet
+   Premium SaaS authentication styling
+   ========================================================================== */
+
+.auth-wrapper {
+  min-height: calc(100vh - 64px - 100px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+:root[data-theme="dark"] .auth-card {
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.auth-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--brand-gradient);
+}
+
+.auth-card .card__body {
+  padding: 36px 32px 28px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--brand-gradient);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.45);
+}
+
+.auth-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Fields & Inputs */
+.auth-card .field {
+  margin-bottom: 18px;
+}
+
+.auth-card .field label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.auth-card input[type="text"],
+.auth-card input[type="email"],
+.auth-card input[type="password"] {
+  width: 100%;
+  height: 46px;
+  padding: 10px 14px;
+  border-radius: var(--r-md, 8px);
+  border: 1.5px solid var(--line-strong);
+  background: var(--surface);
+  font-size: 0.95rem;
+  color: var(--text);
+  transition: all var(--dur-fast, .15s) ease;
+}
+
+.auth-card input[type="text"]:focus,
+.auth-card input[type="email"]:focus,
+.auth-card input[type="password"]:focus {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+  outline: none;
+}
+
+:root[data-theme="dark"] .auth-card input:focus {
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+}
+
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0 24px;
+  font-size: 0.88rem;
+}
+
+.login-options a {
+  color: var(--brand-600);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--dur-fast, .15s);
+}
+
+.login-options a:hover {
+  color: var(--brand-700);
+  text-decoration: underline;
+}
+
+.auth-card .btn--primary {
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--r-md, 8px);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.auth-card .btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.auth-card .card__foot {
+  padding: 16px 32px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.auth-card .card__foot a {
+  color: var(--brand-600);
+  font-weight: 700;
+}

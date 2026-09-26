@@ -1,0 +1,31 @@
+{% extends "layouts/auth.html" %}
+{% load static %}
+{% block title %}Verification Failed — SkillBridge{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/verify.css' %}?v=4.2">
+{% endblock %}
+
+{% block form_header %}
+<div class="auth-header">
+  <div class="auth-brand-badge" style="background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 8px 24px -4px rgba(239, 68, 68, 0.45);">!</div>
+  <h1 class="auth-title">Verification Failed</h1>
+  <p class="auth-subtitle">That link or code is invalid or has expired</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="alert alert--error" style="margin-bottom: 1.5rem;">
+  <span class="alert__icon" aria-hidden="true">⚠️</span>
+  <div class="alert__body">{{ error|default:"Verification links and codes are single-use and expire." }}</div>
+</div>
+<p class="muted center" style="margin-bottom: 1.5rem; font-size: 0.95rem; text-align: center;">
+  Please sign in to your account to request a fresh verification code.
+</p>
+<a class="btn btn--primary btn--block btn--lg" href="{% url 'accounts:login' %}">Sign In to SkillBridge</a>
+{% endblock %}
+
+{% block form_foot %}
+<div class="card__foot center small">
+  Need help? <a href="{% url 'core:contact' %}" style="font-weight: 700; color: var(--brand-600);">Contact Support</a>.
+</div>
+{% endblock %}

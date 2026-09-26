@@ -1,0 +1,77 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Account settings — Skillbridge{% endblock %}
+{% block page_heading %}Account settings{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'accounts/css/settings.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="grid grid--2">
+  <section class="card">
+    <div class="card__head"><h2>Your details</h2></div>
+    <div class="card__body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="form" value="profile">
+        {% include "components/form.html" with form=profile_form %}
+        <button class="btn btn--primary" type="submit">Save details</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card__head"><h2>Password</h2></div>
+    <div class="card__body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="form" value="password">
+        {% include "components/form.html" with form=password_form %}
+        <button class="btn btn--secondary" type="submit">Change password</button>
+      </form>
+    </div>
+  </section>
+</div>
+
+<section class="card" style="margin-top:var(--gap-5)">
+  <div class="card__head">
+    <h2>Email notifications</h2>
+    <span class="small muted">Money, disputes and invitations are always emailed.</span>
+  </div>
+  <div class="card__body">
+    <form method="post" action="{% url 'accounts:notification_prefs' %}">
+      {% csrf_token %}
+      {% for field, label, help in prefs_fields %}
+        <div class="check">
+          <input type="checkbox" id="pref-{{ field }}" name="{{ field }}"
+                 {% if prefs|attr:field %}checked{% endif %}>
+          <label for="pref-{{ field }}">
+            <strong>{{ label }}</strong><br>
+            <span class="small muted">{{ help }}</span>
+          </label>
+        </div>
+      {% endfor %}
+      <div class="form-actions">
+        <button class="btn btn--secondary" type="submit">Save preferences</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="card" style="margin-top:var(--gap-5)">
+  <div class="card__head"><h2>Account</h2></div>
+  <div class="card__body">
+    <dl class="dl">
+      <dt>Role</dt><dd>{{ user.get_role_display }}</dd>
+      <dt>Email</dt>
+      <dd>
+        {{ user.email }}
+        {% if user.is_email_verified %}
+          <span class="sb-pill sb-pill--ok">Verified</span>
+        {% else %}
+          <span class="sb-pill sb-pill--warn">Unverified</span>
+        {% endif %}
+      </dd>
+      <dt>Member since</dt><dd>{{ user.date_joined|date:"j F Y" }}</dd>
+    </dl>
+  </div>
+</section>
+{% endblock %}

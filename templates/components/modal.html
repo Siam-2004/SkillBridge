@@ -1,0 +1,15 @@
+{% comment %}
+A dialog, built on <dialog>. Open it from anywhere with
+`data-modal-open="<id>"`; anything inside carrying `data-modal-close` shuts it.
+Include it with `id`, `title`, and override the `modal_body` / `modal_actions`
+blocks, or pass `body` for a plain message.
+{% endcomment %}
+<dialog class="modal" id="{{ id }}">
+  <div class="modal__head"><h2>{{ title }}</h2></div>
+  <div class="modal__body">{% block modal_body %}{{ body }}{% endblock %}</div>
+  <div class="modal__foot">
+    {% block modal_actions %}
+      <button class="btn btn--ghost" type="button" data-modal-close>Close</button>
+    {% endblock %}
+  </div>
+</dialog>

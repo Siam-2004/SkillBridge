@@ -1,0 +1,26 @@
+{% comment %}
+Render a Django form with our own field markup. Errors appear per field and
+again as a summary at the top, so a long form cannot hide the problem below
+the fold.
+{% endcomment %}
+{% if form.non_field_errors %}
+  <div class="alert alert--error">
+    <span class="alert__icon" aria-hidden="true">!</span>
+    <div class="alert__body">
+      {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% for field in form.visible_fields %}
+  <div class="field{% if field.errors %} is-invalid{% endif %}">
+    <label for="{{ field.id_for_label }}">
+      {{ field.label }}{% if field.field.required %}<span class="required-mark" aria-hidden="true">*</span>{% endif %}
+    </label>
+    {{ field }}
+    {% if field.help_text %}<p class="field__hint">{{ field.help_text }}</p>{% endif %}
+    {% for error in field.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+  </div>
+{% endfor %}
+
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}

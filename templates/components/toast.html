@@ -1,0 +1,6 @@
+{% comment %}
+The container transient messages are appended to. Django's own messages render
+as inline alerts; this is for feedback raised by a background request, via
+`SB.toast(message, tone)` in static/js/toast.js.
+{% endcomment %}
+<div class="toast-stack" role="status" aria-live="polite"></div>

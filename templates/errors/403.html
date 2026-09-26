@@ -1,0 +1,12 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}Not allowed — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/error.css' %}?v=4.0">{% endblock %}
+{% block content %}
+<div class="empty" style="padding-block:var(--gap-8)">
+  <div class="empty__icon" aria-hidden="true">403</div>
+  <h3>You do not have permission for that</h3>
+  <p>{% if reason %}{{ reason }}{% else %}If you think you should, check that you are signed in as the right account — a client and a freelancer see different things.{% endif %}</p>
+  <a class="btn btn--primary" href="{% url 'home' %}">Back to the home page</a>
+</div>
+{% endblock %}

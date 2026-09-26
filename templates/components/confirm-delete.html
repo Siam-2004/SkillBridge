@@ -1,0 +1,11 @@
+{% comment %}
+A destructive action, posted as a form. `data-confirm` puts a confirmation in
+front of it — the browser's own, so it cannot be missed or styled away.
+Pass `action`, `label`, and optionally `question`.
+{% endcomment %}
+<form method="post" action="{{ action }}" class="inline"
+      data-confirm="{{ question|default:'This cannot be undone. Continue?' }}"
+      data-no-busy="1">
+  {% csrf_token %}
+  <button class="btn btn--danger btn--sm" type="submit">{{ label|default:"Delete" }}</button>
+</form>

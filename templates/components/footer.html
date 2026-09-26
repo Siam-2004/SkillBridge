@@ -1,0 +1,43 @@
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="{% url 'home' %}">
+          <span class="brand__mark" aria-hidden="true">SB</span> Skillbridge
+        </a>
+        <p class="small muted" style="margin-top:var(--gap-3);max-width:40ch">
+          A freelance marketplace where the money is held in escrow before the
+          work starts, and released on terms both sides agreed in writing.
+        </p>
+      </div>
+      <div>
+        <h3>Community</h3>
+        <ul>
+          <li><a href="{% url 'directory:freelancer_list' %}">Find freelancers</a></li>
+          <li><a href="{% url 'core:categories' %}">Categories</a></li>
+          <li><a href="{% url 'core:search' %}">Search</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>How it works</h3>
+        <ul>
+          <li><a href="{% url 'core:how_it_works' %}">The process</a></li>
+          <li><a href="{% url 'core:help' %}">Help centre</a></li>
+          <li><a href="{% url 'core:about' %}">About</a></li>
+          <li><a href="{% url 'core:contact' %}">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="{% url 'core:terms' %}">Terms of service</a></li>
+          <li><a href="{% url 'core:privacy' %}">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; {% now "Y" %} Skillbridge. 1 {{ SKILLCOIN.NAME }} = 1 BDT.</span>
+      <span>Payments are held in escrow and released on approval.</span>
+    </div>
+  </div>
+</footer>

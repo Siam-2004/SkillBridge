@@ -1,0 +1,17 @@
+<article class="card card--link portfolio-card">
+  {% if item.cover_image %}<img src="{{ item.cover_image.url }}" alt="">{% endif %}
+  <div class="card__body">
+    <h3 style="font-size:1rem;margin-bottom:4px">
+      <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+    </h3>
+    {% if item.is_verified %}
+      <span class="sb-pill sb-pill--ok">Verified project</span>
+    {% endif %}
+    <p class="small clamp-2" style="margin-top:var(--gap-2)">{{ item.description }}</p>
+    {% if item.technology_list %}
+      <div class="tag-list" style="margin-top:var(--gap-3)">
+        {% for tech in item.technology_list|slice:":4" %}<span class="tag">{{ tech }}</span>{% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</article>

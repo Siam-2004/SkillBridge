@@ -1,0 +1,68 @@
+{% comment %}
+SkillBridge Transactional Email Shell.
+Table-based and inline-styled for maximum cross-client compatibility (Gmail, Outlook, Apple Mail).
+{% endcomment %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block email_title %}SkillBridge{% endblock %}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1e293b;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+               style="max-width:580px;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
+
+          <!-- Brand Header -->
+          <tr>
+            <td style="padding:24px 32px;background:linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <span style="display:inline-block;background-color:rgba(255,255,255,0.2);color:#ffffff;font-weight:800;font-size:13px;border-radius:6px;padding:3px 8px;margin-right:8px;vertical-align:middle;letter-spacing:0.05em;">SB</span>
+                    <span style="color:#ffffff;font-size:20px;font-weight:700;letter-spacing:-0.02em;vertical-align:middle;">SkillBridge</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Main Content -->
+          <tr>
+            <td style="padding:32px 32px 24px;">
+              <h1 style="margin:0 0 16px;font-size:21px;line-height:1.35;color:#0f172a;font-weight:700;">
+                {% block email_heading %}{% endblock %}
+              </h1>
+              <div style="font-size:15px;line-height:1.65;color:#334155;">
+                {% block email_body %}{% endblock %}
+              </div>
+
+              {% block email_cta %}{% endblock %}
+            </td>
+          </tr>
+
+          <!-- Footer Information -->
+          <tr>
+            <td style="padding:20px 32px;background-color:#f8fafc;border-top:1px solid #e2e8f0;">
+              <p style="margin:0;font-size:12px;line-height:1.6;color:#64748b;">
+                You received this email because you have an account on <strong>SkillBridge</strong>.
+                {% block email_footer_note %}{% endblock %}
+              </p>
+              <p style="margin:10px 0 0;font-size:11px;color:#94a3b8;">
+                SkillBridge · 1 SkillCoin = 1 BDT · Safe, reliable and escrow-protected
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Sub-footer copyright -->
+        <p style="margin:16px 0 0;font-size:12px;color:#94a3b8;text-align:center;">
+          &copy; {% now "Y" %} SkillBridge. All rights reserved.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

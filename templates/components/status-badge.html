@@ -1,0 +1,6 @@
+{% comment %}
+A state chip. Prefer the `status_pill` tag, which is registered as a builtin
+and picks the tone from one shared mapping; this partial exists for the few
+places that need to pass a label through a variable.
+{% endcomment %}
+{% status_pill status label %}

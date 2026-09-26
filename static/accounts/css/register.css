@@ -1,0 +1,240 @@
+/* ==========================================================================
+   SkillBridge — Register Page Dedicated Stylesheet
+   Premium SaaS registration styling
+   ========================================================================== */
+
+.auth-wrapper {
+  min-height: calc(100vh - 64px - 100px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+:root[data-theme="dark"] .auth-card {
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.auth-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--brand-gradient);
+}
+
+.auth-card .card__body {
+  padding: 36px 32px 28px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--brand-gradient);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.45);
+}
+
+.auth-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- Role Selector */
+.field:has(input[name="role"]) > label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.field ul:has(input[name="role"]) {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field ul:has(input[name="role"]) li {
+  margin: 0;
+}
+
+.field ul:has(input[name="role"]) li label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border: 2px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.field ul:has(input[name="role"]) li label:hover {
+  border-color: var(--brand-400);
+  background: var(--brand-50);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.field ul:has(input[name="role"]) li input[type="radio"] {
+  accent-color: var(--brand-600);
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Checked Role Card */
+.field ul:has(input[name="role"]) li:has(input[type="radio"]:checked) label {
+  border-color: var(--brand-600);
+  background: var(--brand-50);
+  box-shadow: 0 0 0 1px var(--brand-600), 0 6px 18px rgba(79, 70, 229, 0.15);
+  color: var(--brand-800);
+}
+
+:root[data-theme="dark"] .field ul:has(input[name="role"]) li:has(input[type="radio"]:checked) label {
+  background: rgba(139, 92, 246, 0.18);
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.6), 0 6px 20px rgba(139, 92, 246, 0.25);
+  color: #ffffff;
+}
+
+/* Standard Inputs */
+.auth-card .field {
+  margin-bottom: 18px;
+}
+
+.auth-card .field label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.auth-card input[type="text"],
+.auth-card input[type="email"],
+.auth-card input[type="password"] {
+  width: 100%;
+  height: 46px;
+  padding: 10px 14px;
+  border-radius: var(--r-md, 8px);
+  border: 1.5px solid var(--line-strong);
+  background: var(--surface);
+  font-size: 0.95rem;
+  color: var(--text);
+  transition: all var(--dur-fast, .15s) ease;
+}
+
+.auth-card input[type="text"]:focus,
+.auth-card input[type="email"]:focus,
+.auth-card input[type="password"]:focus {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+  outline: none;
+}
+
+:root[data-theme="dark"] .auth-card input:focus {
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+}
+
+/* Terms Checkbox */
+.auth-card .field:has(input[name="accept_terms"]) label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.auth-card input[name="accept_terms"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-600);
+  cursor: pointer;
+}
+
+.auth-card .btn--primary {
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--r-md, 8px);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  margin-top: 10px;
+}
+
+.auth-card .btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.auth-card .card__foot {
+  padding: 16px 32px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.auth-card .card__foot a {
+  color: var(--brand-600);
+  font-weight: 700;
+}
+
+@media (max-width: 540px) {
+  .field ul:has(input[name="role"]) {
+    grid-template-columns: 1fr;
+  }
+}

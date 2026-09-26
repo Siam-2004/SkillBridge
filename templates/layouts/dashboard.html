@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block shell_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=4.0">{% endblock %}
+
+{% block chrome %}
+<div class="app">
+  <aside class="app-side">
+    <a class="brand" href="{% url 'home' %}">
+      <span class="brand__mark" aria-hidden="true">SB</span> Skillbridge
+    </a>
+    {% include "components/sidebar.html" %}
+  </aside>
+
+  <div class="app-main">
+    <header class="app-top">
+      <button class="icon-btn side-toggle" type="button" data-side-toggle aria-label="Open navigation">☰</button>
+      <span class="app-top__title">{% block page_heading %}{% endblock %}</span>
+      {% if user.is_freelancer %}
+        <span class="top-role-badge top-role-badge--freelancer"><span class="role-pulse-dot"></span> Freelancer</span>
+      {% elif user.is_client %}
+        <span class="top-role-badge top-role-badge--client"><span class="role-pulse-dot"></span> Client</span>
+      {% endif %}
+      <span class="spacer"></span>
+
+      {% if wallet %}
+        <a class="wallet-chip hide-sm" href="{% url 'wallets:wallet' %}" title="Available balance">
+          <span class="wallet-chip__dot" aria-hidden="true"></span>
+          {{ wallet.available_balance|coin }} {{ SKILLCOIN.CODE }}
+        </a>
+      {% endif %}
+
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch colour theme">◐</button>
+      <a class="avatar avatar--sm" href="{% url 'accounts:settings' %}" title="{{ user.full_name }}">
+        {% if user.avatar %}<img src="{{ user.avatar.url }}" alt="">{% else %}{{ user.initials }}{% endif %}
+      </a>
+    </header>
+
+    {% if needs_email_verification %}
+      <div class="verify-banner">
+        <span>Verify your email address to post jobs, send proposals or move SkillCoin.</span>
+        <a href="{% url 'accounts:verify_notice' %}" style="text-decoration:underline;margin:0 10px;font-weight:600;color:inherit;">Enter Code</a>
+        <form method="post" action="{% url 'accounts:resend_verification' %}" data-no-busy="1" style="display:inline;">
+          {% csrf_token %}<button type="submit">Resend Code</button>
+        </form>
+      </div>
+    {% endif %}
+
+    <main id="main" class="app-body{% block body_class %}{% endblock %}">
+      {% block breadcrumbs %}{% endblock %}
+      {% include "components/messages.html" %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+<article class="card">
+  <div class="card__body">
+    <div class="row row--between row--top">
+      <div class="identity">
+        <span class="avatar avatar--sm">{{ review.reviewer.initials }}</span>
+        <div>
+          <div class="identity__name">{{ review.reviewer.full_name }}</div>
+          <div class="identity__meta">{{ review.created_at|date:"j M Y" }}</div>
+        </div>
+      </div>
+      <div class="right">
+        {{ review.overall_rating|stars }}
+        {% if review.is_verified %}<div class="tiny" style="color:var(--ok-fg)">Verified project</div>{% endif %}
+      </div>
+    </div>
+    {% if review.written_comment %}<p class="small" style="margin:var(--gap-3) 0 0">{{ review.written_comment }}</p>{% endif %}
+    {% if review.response %}
+      <div style="margin-top:var(--gap-3);padding-left:var(--gap-4);border-left:2px solid var(--line)">
+        <p class="tiny muted" style="margin-bottom:4px">Response</p>
+        <p class="small" style="margin:0">{{ review.response }}</p>
+      </div>
+    {% endif %}
+  </div>
+</article>

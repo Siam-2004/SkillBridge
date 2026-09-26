@@ -1,0 +1,34 @@
+<article class="card card--link freelancer-card">
+  <div class="card__body">
+    <div class="identity" style="margin-bottom:var(--gap-3)">
+      <span class="avatar avatar--lg">
+        {% if profile.profile_picture %}<img src="{{ profile.profile_picture.url }}" alt="">{% else %}{{ profile.user.initials }}{% endif %}
+      </span>
+      <div style="min-width:0">
+        <div class="identity__name">
+          <a href="{% url 'directory:freelancer_public' profile.user.username %}">{{ profile.user.full_name }}</a>
+        </div>
+        <div class="identity__meta truncate">{{ profile.professional_title|default:"Freelancer" }}</div>
+        {% if profile.user.rating_summary.total_reviews %}
+          <div class="tiny" style="margin-top:3px">
+            {{ profile.user.rating_summary.average_rating|stars }}
+            <span class="muted">{{ profile.user.rating_summary.average_rating }} ({{ profile.user.rating_summary.total_reviews }})</span>
+          </div>
+        {% else %}
+          <div class="tiny faint" style="margin-top:3px">No reviews yet</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if profile.bio %}<p class="small clamp-2">{{ profile.bio }}</p>{% endif %}
+
+    <div class="tag-list" style="margin:var(--gap-3) 0">
+      {% for entry in profile.skill_entries.all|slice:":5" %}<span class="tag">{{ entry.skill.name }}</span>{% endfor %}
+    </div>
+
+    <div class="row row--between tiny muted">
+      <span>{{ profile.completed_projects }} project{{ profile.completed_projects|pluralize }}</span>
+      {% if profile.hourly_rate %}<span class="coin">{{ profile.hourly_rate|coins }}/hr</span>{% endif %}
+    </div>
+  </div>
+</article>

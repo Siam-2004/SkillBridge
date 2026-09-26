@@ -1,0 +1,29 @@
+{% extends "emails/_base.html" %}
+{% block email_title %}{{ note.title }} · Skillbridge{% endblock %}
+{% block email_heading %}{{ note.title }}{% endblock %}
+
+{% block email_body %}
+  {% if note.message %}
+    <p style="margin:0 0 12px;">{{ note.message }}</p>
+  {% endif %}
+
+  {% if note.actor %}
+    <p style="margin:0 0 12px;color:#64748b;font-size:13px;">
+      Triggered by {{ note.actor.full_name }}.
+    </p>
+  {% endif %}
+{% endblock %}
+
+{% block email_cta %}
+  {% if note.target_url %}
+    {% include "emails/_button.html" with url=note.target_url label="Open in Skillbridge" %}
+  {% endif %}
+{% endblock %}
+
+{% block email_footer_note %}
+  {% if note.kind == "PAYMENT_RELEASED" or note.kind == "DEPOSIT_APPROVED" or note.kind == "WITHDRAWAL_UPDATE" %}
+    Messages about your money are always sent and cannot be switched off.
+  {% else %}
+    You can change which emails you receive in your account settings.
+  {% endif %}
+{% endblock %}

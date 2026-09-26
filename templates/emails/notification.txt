@@ -1,0 +1,12 @@
+{{ note.title }}
+
+{% if note.message %}{{ note.message }}
+
+{% endif %}{% if note.actor %}Triggered by {{ note.actor.full_name }}.
+
+{% endif %}{% if note.target_url %}Open in Skillbridge:
+{{ note.target_url }}
+
+{% endif %}--
+Skillbridge · 1 SkillCoin = 1 BDT · Escrow-protected payments
+You are receiving this because you have a Skillbridge account.

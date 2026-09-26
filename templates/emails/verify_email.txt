@@ -1,0 +1,20 @@
+Verify your email address - SkillBridge
+
+Hello {{ user.get_short_name }},
+
+Welcome to SkillBridge! Thank you for creating an account with us.
+
+Your 6-digit verification code is:
+====================================
+  {{ code }}
+====================================
+
+Enter this 6-digit code on the SkillBridge verification screen in your browser to activate your account.
+
+(This code expires in {{ hours }} hours and can only be used once)
+
+If you did not register for an account on SkillBridge, you can safely ignore this message.
+
+--
+SkillBridge Team
+https://skillbridge.local

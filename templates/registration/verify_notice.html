@@ -1,0 +1,73 @@
+{% extends "layouts/auth.html" %}
+{% load static %}
+
+{% block title %}Verify your email — SkillBridge{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/verify.css' %}?v=4.2">
+{% endblock %}
+
+{% block form_header %}
+<div class="auth-header">
+  <div class="auth-brand-badge">SB</div>
+  <h1 class="auth-title">Verify your email</h1>
+  <p class="auth-subtitle">Enter the 6-digit code sent to your inbox</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="verify-email-chip">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+  </svg>
+  <span>Sent to <strong>{{ request.user.email|default:"your registered email" }}</strong></span>
+</div>
+
+<form method="post" action="{% url 'accounts:verify_notice' %}" novalidate>
+  {% csrf_token %}
+  <div class="otp-container">
+    <label for="id_code" class="otp-label">
+      6-Digit Verification Code
+    </label>
+    <input
+      type="text"
+      name="code"
+      id="id_code"
+      class="otp-input"
+      maxlength="6"
+      pattern="[0-9]{6}"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      placeholder="· · · · · ·"
+      value="{{ code|default:'' }}"
+      required
+      autofocus
+    >
+  </div>
+  <button class="btn btn--primary btn--block btn--lg" type="submit">Verify Code &amp; Activate Account</button>
+</form>
+
+<div class="verify-info-box">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="16" x2="12" y2="12"></line>
+    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+  </svg>
+  <div>
+    <strong>Check your inbox:</strong> Copy the 6-digit verification code from the email. If you don't see it, check your spam or junk folder.
+  </div>
+</div>
+{% endblock %}
+
+{% block form_foot %}
+<div class="card__foot center small">
+  <p class="muted" style="margin: 0 0 0.5rem 0;">Didn't receive the email or code expired?</p>
+  <div class="verify-foot-actions">
+    <form method="post" action="{% url 'accounts:resend_verification' %}" style="display: inline; margin: 0;">
+      {% csrf_token %}
+      <button class="btn btn--secondary btn--sm" type="submit">Resend Code</button>
+    </form>
+    <a class="btn btn--ghost btn--sm" href="{% url 'home' %}">Back to Home</a>
+  </div>
+</div>
+{% endblock %}

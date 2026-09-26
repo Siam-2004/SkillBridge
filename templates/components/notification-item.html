@@ -1,0 +1,11 @@
+<div class="list-row{% if not note.is_read %} is-unread{% endif %}">
+  <span class="avatar avatar--sm">{{ note.actor.initials|default:"SB" }}</span>
+  <div class="list-row__main">
+    <span class="list-row__title">{{ note.title }}</span>
+    {% if note.message %}<span class="list-row__meta">{{ note.message }}</span>{% endif %}
+    <span class="tiny faint">{{ note.created_at|timesince }} ago</span>
+  </div>
+  {% if note.target_url %}
+    <a class="btn btn--ghost btn--sm" href="{{ note.target_url }}">Open</a>
+  {% endif %}
+</div>

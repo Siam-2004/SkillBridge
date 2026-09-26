@@ -1,0 +1,17 @@
+<div class="grid grid--3">
+  <div class="card stat">
+    <p class="stat__label">Available</p>
+    <p class="stat__value coin">{{ wallet.available_balance|coin }}</p>
+    <p class="stat__note">Spendable now</p>
+  </div>
+  <div class="card stat">
+    <p class="stat__label">Reserved</p>
+    <p class="stat__value coin">{{ wallet.reserved_balance|coin }}</p>
+    <p class="stat__note">Held against job budgets and pending payouts</p>
+  </div>
+  <div class="card stat">
+    <p class="stat__label">In escrow</p>
+    <p class="stat__value coin">{{ wallet.escrow_balance|coin }}</p>
+    <p class="stat__note">Committed to funded projects</p>
+  </div>
+</div>

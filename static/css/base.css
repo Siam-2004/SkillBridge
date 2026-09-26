@@ -1,0 +1,285 @@
+/* ==========================================================================
+   Skillbridge — foundation
+   Design tokens, reset, typography and layout primitives.
+   Hand-written CSS: there is no build step, so what is here is what ships.
+   ========================================================================== */
+
+:root {
+  /* Brand ---------------------------------------------------------------- */
+  --brand-50:  #eef4ff;
+  --brand-100: #dbe6ff;
+  --brand-200: #bed2ff;
+  --brand-300: #91b4ff;
+  --brand-400: #5d8cff;
+  --brand-500: #3465f0;
+  --brand-600: #2149d6;
+  --brand-700: #1b3bad;
+  --brand-800: #1a3488;
+  --brand-900: #1b306c;
+
+  /* Neutrals ------------------------------------------------------------- */
+  --ink-900: #11151c;
+  --ink-800: #1d232e;
+  --ink-700: #2c3440;
+  --ink-600: #45505f;
+  --ink-500: #5f6b7c;
+  --ink-400: #7d8798;
+  --ink-300: #a8b0bd;
+  --ink-200: #d3d8e0;
+  --ink-100: #e7eaf0;
+  --ink-50:  #f4f6f9;
+
+  /* State ---------------------------------------------------------------- */
+  --ok-bg: #e6f6ed;    --ok-fg: #12693c;    --ok-line: #9fd9b8;
+  --warn-bg: #fdf3da;  --warn-fg: #7d5406;  --warn-line: #ecd08a;
+  --danger-bg: #fdecec; --danger-fg: #98221f; --danger-line: #f0b3b1;
+  --info-bg: #e8f0fe;  --info-fg: #1c4ba3;  --info-line: #b3ccf5;
+
+  /* Surfaces ------------------------------------------------------------- */
+  --page: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f8f9fb;
+  --line: #e5e7ec;
+  --line-strong: #d0d4dc;
+  --text: var(--ink-800);
+  --text-muted: var(--ink-500);
+  --text-faint: var(--ink-400);
+
+  /* Ambient Glow --------------------------------------------------------- */
+  --glow-color: rgba(70, 130, 180, 0.5);
+  --glow-size: 70%;
+
+  /* Shape ---------------------------------------------------------------- */
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 999px;
+
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, .04), 0 1px 2px -1px rgba(0, 0, 0, .03);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, .06), 0 2px 4px -2px rgba(0, 0, 0, .04);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, .07), 0 4px 6px -4px rgba(0, 0, 0, .03);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, .08), 0 8px 10px -6px rgba(0, 0, 0, .03);
+  --shadow-glow: 0 0 25px rgba(79, 70, 229, 0.25);
+
+  --brand-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --brand-gradient-hover: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+  --brand-glow: rgba(79, 70, 229, 0.25);
+
+  /* Timing --------------------------------------------------------------- */
+  --dur-fast: .15s;
+  --dur-normal: .25s;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Rhythm --------------------------------------------------------------- */
+  --gap-1: 4px;  --gap-2: 8px;  --gap-3: 12px; --gap-4: 16px;
+  --gap-5: 24px; --gap-6: 32px; --gap-7: 48px; --gap-8: 64px;
+
+  --shell: 1180px;
+  --shell-wide: 1400px;
+
+  --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-secondary: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter', Roboto, sans-serif;
+  --font: var(--font-primary);
+  --mono: "JetBrains Mono", Consolas, ui-monospace, Menlo, monospace;
+}
+
+/* Dark theme. Set on <html data-theme="dark"> before first paint. */
+:root[data-theme="dark"] {
+  --page: #0a0d16;
+  --surface: rgba(16, 22, 36, 0.58);
+  --surface-2: rgba(255, 255, 255, 0.05);
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+
+  --ink-50:  rgba(255, 255, 255, 0.05);
+  --ink-100: rgba(255, 255, 255, 0.09);
+  --ink-200: rgba(255, 255, 255, 0.16);
+
+  --ok-bg: rgba(16, 185, 129, 0.12);    --ok-fg: #6ee7b7;    --ok-line: rgba(16, 185, 129, 0.3);
+  --warn-bg: rgba(245, 158, 11, 0.12);  --warn-fg: #fcd34d;  --warn-line: rgba(245, 158, 11, 0.3);
+  --danger-bg: rgba(239, 68, 68, 0.12); --danger-fg: #fca5a5; --danger-line: rgba(239, 68, 68, 0.3);
+  --info-bg: rgba(59, 130, 246, 0.12);  --info-fg: #93c5fd;  --info-line: rgba(59, 130, 246, 0.3);
+
+  /* Ambient Glow: Deep Violet & Royal Indigo Storm */
+  --glow-color: rgba(99, 102, 241, 0.2);
+  --glow-size: 70%;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .5);
+  --shadow: 0 4px 20px rgba(0, 0, 0, .6);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, .7);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, .8);
+  --shadow-glow: 0 0 35px rgba(99, 102, 241, 0.25);
+}
+
+/* ---------------------------------------------------------------- reset -- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--page);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* Ambient top glow — light = cool blue, dark = royal indigo / violet */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 85% var(--glow-size) at 50% 0%,
+    var(--glow-color),
+    transparent 70%
+  );
+  filter: blur(80px);
+}
+
+:root[data-theme="dark"] body::before {
+  background: radial-gradient(
+    ellipse 85% 65% at 50% 0%,
+    rgba(99, 102, 241, 0.18),
+    transparent 70%
+  );
+  filter: blur(80px);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-secondary);
+  margin: 0 0 var(--gap-3);
+  line-height: 1.25;
+  font-weight: 700;
+}
+h1 { font-size: 1.9rem; letter-spacing: -.02em; }
+h2 { font-size: 1.4rem; letter-spacing: -.01em; }
+h3 { font-size: 1.12rem; }
+h4 { font-size: 1rem; }
+
+p { margin: 0 0 var(--gap-4); }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--brand-600); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:root[data-theme="dark"] a { color: var(--brand-300); }
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+
+hr { border: 0; border-top: 1px solid var(--line); margin: var(--gap-5) 0; }
+
+code, kbd, pre { font-family: var(--mono); font-size: .875em; }
+
+ul, ol { margin: 0 0 var(--gap-4); padding-left: 1.3em; }
+li { margin-bottom: var(--gap-1); }
+
+small { font-size: .82rem; }
+
+/* Visible focus for keyboard users, invisible for mouse users. */
+:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* Screen-reader-only text, still focusable for skip links. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; left: var(--gap-4); top: -60px; z-index: 200;
+  background: var(--brand-600); color: #fff; padding: var(--gap-2) var(--gap-4);
+  border-radius: var(--r); transition: top .15s ease;
+}
+.skip-link:focus { top: var(--gap-4); }
+
+/* --------------------------------------------------------------- layout -- */
+.shell { width: 100%; max-width: var(--shell); margin-inline: auto; padding-inline: var(--gap-4); }
+.shell--wide { max-width: var(--shell-wide); }
+.shell--narrow { max-width: 760px; }
+
+.stack > * + * { margin-top: var(--gap-4); }
+.stack-sm > * + * { margin-top: var(--gap-2); }
+.stack-lg > * + * { margin-top: var(--gap-6); }
+
+.row { display: flex; gap: var(--gap-3); align-items: center; }
+.row--between { justify-content: space-between; }
+.row--end { justify-content: flex-end; }
+.row--top { align-items: flex-start; }
+.row--wrap { flex-wrap: wrap; }
+.row--tight { gap: var(--gap-2); }
+.spacer { flex: 1 1 auto; }
+
+.grid { display: grid; gap: var(--gap-4); }
+.grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid--sidebar { grid-template-columns: minmax(0, 1fr) 320px; gap: var(--gap-5); }
+.grid--aside { grid-template-columns: 260px minmax(0, 1fr); gap: var(--gap-5); }
+
+@media (max-width: 1024px) {
+  .grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid--sidebar, .grid--aside { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .grid--2, .grid--3, .grid--4 { grid-template-columns: minmax(0, 1fr); }
+}
+
+.page { padding-block: var(--gap-6) var(--gap-8); }
+.page-head { margin-bottom: var(--gap-5); }
+.page-head h1 { margin-bottom: var(--gap-2); }
+.page-head .lede { color: var(--text-muted); font-size: 1.02rem; max-width: 70ch; margin: 0; }
+
+.section { margin-bottom: var(--gap-7); }
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--gap-3); margin-bottom: var(--gap-4);
+}
+.section-head h2 { margin: 0; }
+
+/* ----------------------------------------------------------- typography -- */
+.muted { color: var(--text-muted); }
+.faint { color: var(--text-faint); }
+.tiny  { font-size: .78rem; }
+.small { font-size: .86rem; }
+.big   { font-size: 1.1rem; }
+.bold  { font-weight: 600; }
+.nowrap { white-space: nowrap; }
+.mono  { font-family: var(--mono); }
+.center { text-align: center; }
+.right { text-align: right; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.clamp-2 {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.clamp-3 {
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Money is always shown in tabular figures so columns line up. */
+.coin { font-variant-numeric: tabular-nums; font-weight: 600; }
+.coin--lg { font-size: 1.5rem; letter-spacing: -.01em; }
+.coin--xl { font-size: 2.1rem; letter-spacing: -.02em; }
+.coin--in  { color: var(--ok-fg); }
+.coin--out { color: var(--danger-fg); }
+
+.hide { display: none !important; }
+@media (max-width: 720px) { .hide-sm { display: none !important; } }
+@media (max-width: 1024px) { .hide-md { display: none !important; } }

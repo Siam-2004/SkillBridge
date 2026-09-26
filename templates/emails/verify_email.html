@@ -1,0 +1,43 @@
+{% extends "emails/_base.html" %}
+{% block email_title %}Verify your email · SkillBridge{% endblock %}
+{% block email_heading %}Verify your email address{% endblock %}
+
+{% block email_body %}
+  <p style="margin:0 0 14px; font-size: 15px; color: #1e293b;">Hello <strong>{{ user.get_short_name }}</strong>,</p>
+  <p style="margin:0 0 16px; font-size: 15px; color: #334155; line-height: 1.6;">
+    Welcome to <strong>SkillBridge</strong>! Thank you for creating an account with us.
+  </p>
+  <p style="margin:0 0 20px; font-size: 15px; color: #334155; line-height: 1.6;">
+    To complete your registration and activate your account, please enter the following 6-digit verification code on the SkillBridge verification screen:
+  </p>
+
+  <!-- 6-Digit OTP Code Card -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
+    <tr>
+      <td align="center">
+        <div style="max-width:380px;padding:26px 20px;background:#f5f3ff;border:2px solid #818cf8;border-radius:14px;text-align:center;box-shadow:0 4px 14px rgba(79, 70, 229, 0.08);">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#4f46e5;margin-bottom:12px;">
+            Your 6-Digit Verification Code
+          </div>
+          <div style="font-family:'Courier New',Courier,monospace;font-size:42px;font-weight:800;letter-spacing:10px;color:#3730a3;padding:6px 0;line-height:1;">
+            {{ code }}
+          </div>
+          <div style="font-size:13px;color:#64748b;margin-top:12px;">
+            Valid for <strong>{{ hours }} hours</strong> · Single use only
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <p style="margin:20px 0 0;font-size:14px;color:#475569;line-height:1.6;text-align:center;">
+    Return to SkillBridge in your browser and enter this code to activate all platform features.
+  </p>
+{% endblock %}
+
+{% block email_cta %}
+{% endblock %}
+
+{% block email_footer_note %}
+  <br>If you did not register for an account on SkillBridge, you can safely ignore this message.
+{% endblock %}

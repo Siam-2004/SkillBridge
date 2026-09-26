@@ -1,0 +1,12 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}Page not found — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/error.css' %}?v=4.0">{% endblock %}
+{% block content %}
+<div class="empty" style="padding-block:var(--gap-8)">
+  <div class="empty__icon" aria-hidden="true">404</div>
+  <h3>We could not find that page</h3>
+  <p>It may have been removed, or it may be private — a job, project or file you are not part of looks exactly like a page that does not exist, and that is deliberate.</p>
+  <a class="btn btn--primary" href="{% url 'home' %}">Back to the home page</a>
+</div>
+{% endblock %}

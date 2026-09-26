@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block shell_css %}<link rel="stylesheet" href="{% static 'css/public.css' %}?v=4.1">{% endblock %}
+
+{% block chrome %}
+  {% include "components/navbar.html" %}
+  <main id="main">
+    {% block hero %}{% endblock %}
+    <div class="shell page">
+      {% block breadcrumbs %}{% endblock %}
+      {% include "components/messages.html" %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+  {% include "components/footer.html" %}
+{% endblock %}

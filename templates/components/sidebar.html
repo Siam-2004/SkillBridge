@@ -1,0 +1,49 @@
+{% if user.is_freelancer %}
+  <nav class="side-group" aria-label="Overview">
+    <p class="side-group__title">Overview</p>
+    <div class="side-role-badge side-role-badge--freelancer" title="Freelancer Account">
+      <span class="role-badge-dot"></span>
+      <span class="role-badge-text">Freelancer</span>
+    </div>
+    <a class="side-link{% if nav == 'dashboard' %} is-active{% endif %}" href="{% url 'profiles:freelancer_dashboard' %}">Dashboard</a>
+    <a class="side-link{% if nav == 'freelancers' %} is-active{% endif %}" href="{% url 'directory:freelancer_list' %}">Explore freelancers</a>
+  </nav>
+  <nav class="side-group" aria-label="Money">
+    <p class="side-group__title">Money</p>
+    <a class="side-link{% if nav == 'wallet' %} is-active{% endif %}" href="{% url 'wallets:wallet' %}">Wallet</a>
+    <a class="side-link{% if nav == 'transactions' %} is-active{% endif %}" href="{% url 'wallets:transactions' %}">Transactions</a>
+  </nav>
+  <nav class="side-group" aria-label="Profile">
+    <p class="side-group__title">Profile</p>
+    <a class="side-link{% if nav == 'profile' %} is-active{% endif %}" href="{% url 'profiles:edit_freelancer' %}">My profile</a>
+    <a class="side-link{% if nav == 'portfolio' %} is-active{% endif %}" href="{% url 'portfolios:my_portfolio' %}">Portfolio</a>
+  </nav>
+{% else %}
+  <nav class="side-group" aria-label="Overview">
+    <p class="side-group__title">Overview</p>
+    <div class="side-role-badge side-role-badge--client" title="Client Account">
+      <span class="role-badge-dot"></span>
+      <span class="role-badge-text">Client</span>
+    </div>
+    <a class="side-link{% if nav == 'dashboard' %} is-active{% endif %}" href="{% url 'profiles:client_dashboard' %}">Dashboard</a>
+    <a class="side-link{% if nav == 'freelancers' %} is-active{% endif %}" href="{% url 'directory:freelancer_list' %}">Find freelancers</a>
+  </nav>
+  <nav class="side-group" aria-label="Money">
+    <p class="side-group__title">Money</p>
+    <a class="side-link{% if nav == 'wallet' %} is-active{% endif %}" href="{% url 'wallets:wallet' %}">Wallet</a>
+    <a class="side-link{% if nav == 'transactions' %} is-active{% endif %}" href="{% url 'wallets:transactions' %}">Transactions</a>
+  </nav>
+  <nav class="side-group" aria-label="Profile">
+    <p class="side-group__title">Profile</p>
+    <a class="side-link{% if nav == 'profile' %} is-active{% endif %}" href="{% url 'profiles:edit_client' %}">My profile</a>
+  </nav>
+{% endif %}
+
+<nav class="side-group" aria-label="Account">
+  <p class="side-group__title">Account</p>
+  <a class="side-link" href="{% url 'accounts:settings' %}">Settings</a>
+  <form method="post" action="{% url 'accounts:logout' %}" data-no-busy="1">
+    {% csrf_token %}
+    <button class="side-link" type="submit" style="width:100%;background:none;border:0;text-align:left;cursor:pointer;font:inherit">Sign out</button>
+  </form>
+</nav>

@@ -1,0 +1,19 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Add experience — Skillbridge{% endblock %}
+{% block page_heading %}Add experience{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'profiles/css/profile_edit.css' %}?v=4.0">{% endblock %}
+{% block content %}
+<section class="card" style="max-width:640px">
+  <div class="card__body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "components/form.html" %}
+      <div class="form-actions">
+        <button class="btn btn--primary" type="submit">Add experience</button>
+        <a class="btn btn--ghost" href="{% url 'profiles:edit_freelancer' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

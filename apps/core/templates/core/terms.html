@@ -1,0 +1,53 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}Terms of service — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'core/css/legal.css' %}?v=4.0">{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Terms of service</h1>
+</div>
+<div class="prose">
+<p class="muted">These terms describe how Skillbridge works. They are written
+plainly on purpose.</p>
+
+<h2>1. Accounts</h2>
+<p>You register as either a client or a freelancer, and you verify your email
+address before you can post a job, send a proposal, or move SkillCoin. You are
+responsible for what happens under your account.</p>
+
+<h2>2. SkillCoin</h2>
+<p>SkillCoin is an internal accounting unit: one SkillCoin equals one
+Bangladeshi taka. It is not a security, not a cryptocurrency, and carries no
+interest. It enters the platform when a deposit is verified and leaves when a
+withdrawal is paid.</p>
+
+<h2>3. Job budgets</h2>
+<p>Publishing a job reserves its full budget. Cancelling before anybody is
+hired returns the reservation in full. After a freelancer is hired, neither
+party may cancel unilaterally.</p>
+
+<h2>4. Agreements</h2>
+<p>An accepted agreement is binding on both parties and cannot be edited in
+place. Changes require a modification request approved by the other party, and
+every version is retained.</p>
+
+<h2>5. Escrow and payment</h2>
+<p>Funding a project moves the agreed amount into escrow, where neither party
+controls it. Task payments are drawn from escrow only. A client is never
+charged twice for work that escrow already covers.</p>
+
+<h2>6. The review window</h2>
+<p>A client has 48 hours from submission to approve, request a revision, or
+raise a dispute. If none of those happens, the payment is released
+automatically as agreed at the outset.</p>
+
+<h2>7. Disputes</h2>
+<p>Either party may raise a dispute, which freezes the relevant escrow. A
+Skillbridge administrator reviews the agreement, the messages, the submissions
+and the payment history, and issues a decision with a written reason.</p>
+
+<h2>8. Records</h2>
+<p>Financial records, agreements, submissions and completed-project
+conversations are retained as evidence and are not deleted.</p>
+</div>
+{% endblock %}

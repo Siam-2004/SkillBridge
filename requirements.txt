@@ -1,0 +1,14 @@
+# Skillbridge runs on Django alone.
+#
+#     pip install -r requirements.txt
+#     python manage.py migrate
+#     python manage.py runserver
+#
+# There is no database server, cache, broker, worker or frontend build step to
+# install. SQLite ships with Python; everything else is Django.
+Django>=5.0,<6.0
+
+# Optional. Only needed if you want to upload images (profile pictures,
+# portfolio covers, homepage art). Every other feature runs without it, and the
+# upload forms degrade to a clear error rather than crashing.
+Pillow>=10.0

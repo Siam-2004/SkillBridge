@@ -1,0 +1,53 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}{{ owner.full_name }} — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'profiles/css/client_profile.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="grid grid--sidebar">
+  <div class="stack-lg">
+    <section class="card">
+      <div class="card__body">
+        <div class="identity" style="gap:var(--gap-4)">
+          <span class="avatar avatar--xl">
+            {% if profile.profile_picture %}<img src="{{ profile.profile_picture.url }}" alt="">{% else %}{{ owner.initials }}{% endif %}
+          </span>
+          <div>
+            <h1 style="font-size:1.5rem;margin-bottom:2px">{{ owner.full_name }}</h1>
+            <p class="muted">{{ profile.company_name|default:"Client" }}{% if profile.industry %} · {{ profile.industry }}{% endif %}</p>
+            {% if profile.location %}<p class="tiny muted">{{ profile.location }}</p>{% endif %}
+          </div>
+        </div>
+        {% if profile.bio %}<p style="margin-top:var(--gap-4);white-space:pre-line">{{ profile.bio }}</p>{% endif %}
+
+        <div class="dash-grid" style="margin-top:var(--gap-5);margin-bottom:0">
+          <div class="stat" style="padding-left:0"><p class="stat__label">Jobs posted</p><p class="stat__value">{{ profile.jobs_posted }}</p></div>
+          <div class="stat"><p class="stat__label">Freelancers hired</p><p class="stat__value">{{ profile.total_hired }}</p></div>
+          <div class="stat"><p class="stat__label">Completed</p><p class="stat__value">{{ profile.completed_projects }}</p></div>
+          <div class="stat"><p class="stat__label">Rating</p><p class="stat__value">{{ summary.average_rating|default:"—" }}</p></div>
+        </div>
+      </div>
+    </section>
+
+    {% if open_jobs %}
+      <section>
+        <h2>Open jobs</h2>
+        <div class="grid grid--2">
+          {% for job in open_jobs %}{% include "components/job-card.html" %}{% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    <section>
+      <h2>Reviews from freelancers</h2>
+      {% if reviews %}
+        <div class="stack">{% for review in reviews %}{% include "components/review-card.html" %}{% endfor %}</div>
+      {% else %}
+        <div class="card"><div class="card__body muted small">No reviews yet.</div></div>
+      {% endif %}
+    </section>
+  </div>
+
+  <aside>{% include "components/rating-summary.html" %}</aside>
+</div>
+{% endblock %}

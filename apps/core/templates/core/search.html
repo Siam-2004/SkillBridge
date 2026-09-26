@@ -1,0 +1,71 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+
+{% block title %}{% if query %}{{ query }} — search{% else %}Search{% endif %} — SkillBridge{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'core/css/search.css' %}?v=4.0">
+{% endblock %}
+
+{% block content %}
+<div class="search-header">
+  <h1>Search SkillBridge</h1>
+  <form method="get" class="search-bar-wrap" role="search">
+    <label class="sr-only" for="q">Search</label>
+    <input id="q" type="search" name="q" value="{{ query }}" placeholder="Search freelancers, skills, portfolios, categories...">
+    <button class="btn btn--primary" type="submit">Search</button>
+  </form>
+</div>
+
+{% if query %}
+  <p class="search-summary">
+    Showing <strong>{{ result_count }}</strong> result{{ result_count|pluralize }} for “<strong>{{ query }}</strong>”.
+  </p>
+
+  {% if results.freelancers %}
+    <section class="section">
+      <div class="section-head">
+        <h2>Freelancers</h2>
+        <a href="{% url 'directory:freelancer_list' %}?q={{ query|urlencode }}">All freelancer results →</a>
+      </div>
+      <div class="grid grid--3">
+        {% for profile in results.freelancers %}{% include "components/freelancer-card.html" %}{% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if results.portfolios %}
+    <section class="section">
+      <div class="section-head">
+        <h2>Portfolio Projects</h2>
+      </div>
+      <div class="grid grid--3">
+        {% for item in results.portfolios %}
+          <article class="card card--link">
+            <div class="card__body">
+              <h3 style="margin-bottom: 4px;"><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></h3>
+              <p class="tiny muted">{{ item.freelancer.user.full_name }}</p>
+              <p class="small clamp-2" style="margin-top: var(--gap-2);">{{ item.description }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if results.skills or results.categories %}
+    <section class="section">
+      <div class="section-head">
+        <h2>Matched Skills &amp; Categories</h2>
+      </div>
+      <div class="tag-list">
+        {% for skill in results.skills %}<a class="tag" href="{% url 'directory:freelancer_list' %}?skills={{ skill.pk }}">{{ skill.name }}</a>{% endfor %}
+        {% for category in results.categories %}<a class="tag" href="{% url 'directory:freelancer_list' %}?category={{ category.pk }}">{{ category.name }}</a>{% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if not result_count %}
+    {% include "components/empty-state.html" with title="Nothing matched" body="Try searching with different keywords, or browse all categories instead." action_url="/categories/" action_label="Browse categories" %}
+  {% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+
+{% block title %}Browse Jobs & Projects — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'core/css/categories.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div class="row row--between row--wrap" style="align-items:flex-end;gap:var(--gap-3)">
+    <div>
+      <h1>Explore Jobs & Client Projects</h1>
+      <p class="lede">Every job listed on Skillbridge has its budget pre-funded into escrow. You never work without payment security.</p>
+    </div>
+    {% if user.is_authenticated and user.is_client %}
+      <a class="btn btn--primary" href="{% url 'profiles:client_dashboard' %}">+ Post a Job</a>
+    {% else %}
+      <a class="btn btn--primary" href="{% url 'accounts:register' %}?role=CLIENT">+ Post a Job</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Search & Category Rail -->
+<div class="card" style="padding:var(--gap-4);margin-bottom:var(--gap-6);backdrop-filter:blur(12px)">
+  <form action="{% url 'core:search' %}" method="get" class="row row--wrap" style="gap:var(--gap-3)">
+    <div style="flex:1 1 300px">
+      <input type="search" name="q" placeholder="Search projects by keyword (e.g. Django, UI/UX, Flutter, React)..." style="height:44px;border-radius:var(--r-md)">
+    </div>
+    <button class="btn btn--primary" type="submit" style="height:44px;border-radius:var(--r-md);padding:0 24px">Search Projects</button>
+  </form>
+</div>
+
+<!-- Available Project Categories -->
+<div class="section-head">
+  <h2>Browse by Project Category</h2>
+  <a href="{% url 'core:categories' %}">All categories →</a>
+</div>
+
+<div class="category-grid" style="margin-bottom:var(--gap-7)">
+  {% for category in categories %}
+    <a class="category-tile" href="{% url 'core:search' %}?q={{ category.name }}">
+      <strong>{{ category.name }}</strong>
+      <span>Browse related projects & skills</span>
+    </a>
+  {% endfor %}
+</div>
+
+<!-- Featured Escrow Projects / Job Showcase -->
+<div class="section-head">
+  <h2>Recent Funded Opportunities</h2>
+  <span class="muted small">All payments held safely in SkillCoin escrow</span>
+</div>
+
+<div class="stack" style="margin-bottom:var(--gap-7)">
+  <div class="card" style="padding:var(--gap-5);backdrop-filter:blur(12px)">
+    <div class="row row--between row--wrap" style="gap:var(--gap-3);margin-bottom:var(--gap-3)">
+      <div>
+        <h3 style="margin-bottom:4px;font-size:1.25rem"><a href="{% url 'directory:freelancer_list' %}" style="color:var(--text)">Full-Stack Web Application (Django & React)</a></h3>
+        <p class="tiny muted" style="margin:0">Posted by Verified Client · Fixed Price · Delivery in 2 weeks</p>
+      </div>
+      <div class="right">
+        <span class="coin coin--lg" style="color:var(--ok-fg, #10b981)">50,000 SKC</span>
+        <span class="tiny muted" style="display:block">Escrow Budget Verified</span>
+      </div>
+    </div>
+    <p class="small" style="color:var(--text-muted);margin-bottom:var(--gap-4)">
+      Need an experienced full-stack developer to build a modern dashboard with user management, responsive UI, and secure database interactions. Budget is 100% funded and locked in escrow.
+    </p>
+    <div class="row row--between row--wrap" style="gap:var(--gap-3)">
+      <div class="tag-list">
+        <span class="tag">Django</span>
+        <span class="tag">Python</span>
+        <span class="tag">React</span>
+        <span class="tag">PostgreSQL</span>
+      </div>
+      {% if user.is_authenticated and user.is_freelancer %}
+        <a class="btn btn--primary btn--sm" href="{% url 'profiles:freelancer_dashboard' %}">Submit Proposal</a>
+      {% else %}
+        <a class="btn btn--primary btn--sm" href="{% url 'accounts:register' %}?role=FREELANCER">Apply as Freelancer</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="padding:var(--gap-5);backdrop-filter:blur(12px)">
+    <div class="row row--between row--wrap" style="gap:var(--gap-3);margin-bottom:var(--gap-3)">
+      <div>
+        <h3 style="margin-bottom:4px;font-size:1.25rem"><a href="{% url 'directory:freelancer_list' %}" style="color:var(--text)">SaaS Landing Page & UI/UX Redesign in Figma</a></h3>
+        <p class="tiny muted" style="margin:0">Posted by Tech Startup · Fixed Price · 5 days</p>
+      </div>
+      <div class="right">
+        <span class="coin coin--lg" style="color:var(--ok-fg, #10b981)">25,000 SKC</span>
+        <span class="tiny muted" style="display:block">Escrow Budget Verified</span>
+      </div>
+    </div>
+    <p class="small" style="color:var(--text-muted);margin-bottom:var(--gap-4)">
+      Looking for a creative UI/UX designer to craft a high-converting, modern glassmorphic landing page and dashboard prototype in Figma. Includes wireframes, design system, and component kit.
+    </p>
+    <div class="row row--between row--wrap" style="gap:var(--gap-3)">
+      <div class="tag-list">
+        <span class="tag">Figma</span>
+        <span class="tag">UI/UX</span>
+        <span class="tag">Design System</span>
+        <span class="tag">Mobile Responsive</span>
+      </div>
+      {% if user.is_authenticated and user.is_freelancer %}
+        <a class="btn btn--primary btn--sm" href="{% url 'profiles:freelancer_dashboard' %}">Submit Proposal</a>
+      {% else %}
+        <a class="btn btn--primary btn--sm" href="{% url 'accounts:register' %}?role=FREELANCER">Apply as Freelancer</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="padding:var(--gap-5);backdrop-filter:blur(12px)">
+    <div class="row row--between row--wrap" style="gap:var(--gap-3);margin-bottom:var(--gap-3)">
+      <div>
+        <h3 style="margin-bottom:4px;font-size:1.25rem"><a href="{% url 'directory:freelancer_list' %}" style="color:var(--text)">Cross-Platform Mobile App (Flutter / React Native)</a></h3>
+        <p class="tiny muted" style="margin:0">Posted by Product Studio · Milestone Escrow · 4 weeks</p>
+      </div>
+      <div class="right">
+        <span class="coin coin--lg" style="color:var(--ok-fg, #10b981)">80,000 SKC</span>
+        <span class="tiny muted" style="display:block">Escrow Budget Verified</span>
+      </div>
+    </div>
+    <p class="small" style="color:var(--text-muted);margin-bottom:var(--gap-4)">
+      Develop a mobile application for iOS and Android with offline-first architecture, push notifications, and API integration. Milestone payouts upon verified deliverables.
+    </p>
+    <div class="row row--between row--wrap" style="gap:var(--gap-3)">
+      <div class="tag-list">
+        <span class="tag">Flutter</span>
+        <span class="tag">Dart</span>
+        <span class="tag">REST API</span>
+        <span class="tag">Mobile Dev</span>
+      </div>
+      {% if user.is_authenticated and user.is_freelancer %}
+        <a class="btn btn--primary btn--sm" href="{% url 'profiles:freelancer_dashboard' %}">Submit Proposal</a>
+      {% else %}
+        <a class="btn btn--primary btn--sm" href="{% url 'accounts:register' %}?role=FREELANCER">Apply as Freelancer</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- CTA Banner -->
+<div class="cta-band">
+  <h2>Have a Project to Build?</h2>
+  <p>Post your project requirement, deposit the budget safely into escrow, and choose from our vetted freelancers.</p>
+  <div class="btn-group" style="justify-content:center;margin-top:var(--gap-4)">
+    <a class="btn btn--secondary btn--lg" href="{% url 'accounts:register' %}?role=CLIENT">Post a Job for Free</a>
+    <a class="btn btn--ghost btn--lg" href="{% url 'directory:freelancer_list' %}" style="color:#fff">Browse Freelancers</a>
+  </div>
+</div>
+{% endblock %}

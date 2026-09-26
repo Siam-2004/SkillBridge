@@ -1,0 +1,188 @@
+/* ==========================================================================
+   SkillBridge — Profile Editing Stylesheet
+   Styles for editing client & freelancer profiles, education, and experience
+   ========================================================================== */
+
+/* Main Card Containers */
+.card {
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md), 0 0 20px rgba(79, 70, 229, 0.08);
+}
+
+.card__head {
+  padding: var(--gap-4) var(--gap-5);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card__head h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.card__body {
+  padding: var(--gap-5);
+}
+
+.card__body--tight {
+  padding: var(--gap-3) var(--gap-4);
+}
+
+/* Enhanced Form Spacing & Fields */
+.card__body form .field {
+  margin-bottom: var(--gap-4);
+}
+
+.card__body form .field:last-of-type {
+  margin-bottom: 0;
+}
+
+.card__body form .field label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.card__body form .field input[type="text"],
+.card__body form .field input[type="email"],
+.card__body form .field input[type="url"],
+.card__body form .field input[type="number"],
+.card__body form .field input[type="date"],
+.card__body form .field select,
+.card__body form .field textarea {
+  width: 100%;
+  border-radius: var(--r-md, 8px);
+  transition: all var(--dur-normal, .25s) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card__body form .field textarea {
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.card__body form .field__hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.card__body form .field__error {
+  font-size: 0.8rem;
+  color: var(--danger, #ef4444);
+  margin-top: 6px;
+}
+
+/* Sidebar experience / education items */
+.card__body--tight .row--between {
+  padding: var(--gap-3) 0 !important;
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+  transition: background-color var(--dur-fast, .15s) ease;
+}
+
+.card__body--tight .row--between:last-child {
+  border-bottom: none;
+}
+
+/* Tags in edit sidebar */
+.card__body .tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card__body .tag-list .tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  transition: all var(--dur-fast, .15s) ease;
+}
+
+.card__body .tag-list .tag:hover {
+  background: var(--brand-50);
+  border-color: var(--brand-200);
+  color: var(--brand-700);
+}
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  margin-top: var(--gap-6);
+  padding-top: var(--gap-5);
+  border-top: 1px solid var(--line);
+}
+
+/* Dark Mode Overrides */
+:root[data-theme="dark"] .card {
+  background: rgba(18, 18, 24, 0.65);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="dark"] .card:hover {
+  border-color: rgba(139, 92, 246, 0.25);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(139, 92, 246, 0.12);
+}
+
+:root[data-theme="dark"] .card__head {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .card__body--tight .row--between {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .form-actions {
+  border-top-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .card__body .tag-list .tag {
+  background: rgba(24, 24, 36, 0.7);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+}
+
+:root[data-theme="dark"] .card__body .tag-list .tag:hover {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.3);
+  color: var(--brand-200);
+}
+
+:root[data-theme="dark"] .card__body form .field input[type="text"]:focus,
+:root[data-theme="dark"] .card__body form .field input[type="email"]:focus,
+:root[data-theme="dark"] .card__body form .field input[type="url"]:focus,
+:root[data-theme="dark"] .card__body form .field input[type="number"]:focus,
+:root[data-theme="dark"] .card__body form .field input[type="date"]:focus,
+:root[data-theme="dark"] .card__body form .field select:focus,
+:root[data-theme="dark"] .card__body form .field textarea:focus {
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .grid--sidebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

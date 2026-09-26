@@ -1,0 +1,118 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}Find freelancers — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'profiles/css/freelancers.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div class="row row--between row--wrap" style="align-items:flex-end;gap:var(--gap-3)">
+    <div>
+      <h1>Find Freelancers</h1>
+      <p class="lede">{{ total }} vetted talent{{ total|pluralize }} ready for your project. Escrow-protected collaboration.</p>
+    </div>
+    <div class="filter-count-chip">
+      <span class="count-pulse"></span>
+      <strong>{{ total }}</strong> freelancers available
+    </div>
+  </div>
+</div>
+
+<div class="grid grid--aside">
+  <aside class="card freelancer-filters">
+    <div class="card__head">
+      <h2><span>⚡</span> Filters</h2>
+      <a class="filter-reset-link" href="{% url 'directory:freelancer_list' %}">Reset</a>
+    </div>
+    <div class="card__body">
+      <form method="get" class="filters-form">
+        <!-- Search Keyword -->
+        <div class="filter-group">
+          <label for="{{ form.q.id_for_label }}">Search</label>
+          <div class="filter-input-wrap">
+            <span class="filter-input-icon">🔍</span>
+            <input type="text" name="q" id="{{ form.q.id_for_label }}" value="{{ form.q.value|default:'' }}" placeholder="Name, role, skill...">
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="filter-group">
+          <label for="{{ form.category.id_for_label }}">Category</label>
+          {{ form.category }}
+        </div>
+
+        <!-- Hourly Rate Range (Side by side) -->
+        <div class="filter-group">
+          <label>Hourly Rate (BDT)</label>
+          <div class="rate-range-row">
+            <div class="rate-input-wrap">
+              <span class="rate-prefix">Min</span>
+              <input type="number" name="min_rate" id="{{ form.min_rate.id_for_label }}" value="{{ form.min_rate.value|default:'' }}" placeholder="0" min="0">
+            </div>
+            <span class="rate-sep">–</span>
+            <div class="rate-input-wrap">
+              <span class="rate-prefix">Max</span>
+              <input type="number" name="max_rate" id="{{ form.max_rate.id_for_label }}" value="{{ form.max_rate.value|default:'' }}" placeholder="5000" min="0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating -->
+        <div class="filter-group">
+          <label for="{{ form.min_rating.id_for_label }}">Minimum Rating</label>
+          <div class="rating-select-wrap">
+            <select name="min_rating" id="{{ form.min_rating.id_for_label }}">
+              <option value="">Any rating</option>
+              <option value="4.5"{% if form.min_rating.value == '4.5' or form.min_rating.value == 4.5 %} selected{% endif %}>★ 4.5 & up</option>
+              <option value="4.0"{% if form.min_rating.value == '4.0' or form.min_rating.value == 4.0 %} selected{% endif %}>★ 4.0 & up</option>
+              <option value="3.0"{% if form.min_rating.value == '3.0' or form.min_rating.value == 3.0 %} selected{% endif %}>★ 3.0 & up</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="filter-group">
+          <label for="{{ form.availability.id_for_label }}">Availability</label>
+          {{ form.availability }}
+        </div>
+
+        <!-- Experience Level -->
+        <div class="filter-group">
+          <label for="{{ form.experience_level.id_for_label }}">Experience</label>
+          {{ form.experience_level }}
+        </div>
+
+        <!-- Sort -->
+        <div class="filter-group">
+          <label for="{{ form.sort.id_for_label }}">Sort By</label>
+          {{ form.sort }}
+        </div>
+
+        <!-- Portfolio Checkbox -->
+        <div class="filter-group filter-check-group">
+          <label class="check-label" for="{{ form.has_portfolio.id_for_label }}">
+            <input type="checkbox" name="has_portfolio" value="yes" id="{{ form.has_portfolio.id_for_label }}"{% if form.has_portfolio.value == 'yes' %} checked{% endif %}>
+            <span>Only with portfolio</span>
+          </label>
+        </div>
+
+        <!-- Submit & Clear -->
+        <div class="filter-actions">
+          <button class="btn btn--primary btn--block" type="submit">Apply Filters</button>
+          <a class="btn btn--ghost btn--block btn--sm" href="{% url 'directory:freelancer_list' %}">Clear All</a>
+        </div>
+      </form>
+    </div>
+  </aside>
+
+  <div>
+    {% if page.object_list %}
+      <div class="grid grid--2">
+        {% for profile in page.object_list %}{% include "components/freelancer-card.html" %}{% endfor %}
+      </div>
+      {% include "components/pagination.html" %}
+    {% else %}
+      {% include "components/empty-state.html" with title="No freelancers match" body="Try relaxing the rating, rate, or category filters." action_url="/freelancers/" action_label="Clear filters" %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

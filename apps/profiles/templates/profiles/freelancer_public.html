@@ -1,0 +1,151 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}{{ owner.full_name }} — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'profiles/css/freelancer_profile.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="grid grid--sidebar">
+  <div class="stack-lg">
+    <section class="card">
+      <div class="card__body">
+        <div class="identity" style="gap:var(--gap-4)">
+          <span class="avatar avatar--xl">
+            {% if profile.profile_picture %}<img src="{{ profile.profile_picture.url }}" alt="">{% else %}{{ owner.initials }}{% endif %}
+          </span>
+          <div style="min-width:0">
+            <h1 style="font-size:1.55rem;margin-bottom:2px">{{ owner.full_name }}</h1>
+            <p class="muted" style="margin-bottom:var(--gap-2)">{{ profile.professional_title|default:"Freelancer" }}</p>
+            <div class="row row--wrap tiny muted" style="gap:var(--gap-3)">
+              {% if profile.location %}<span>{{ profile.location }}</span>{% endif %}
+              <span>{{ profile.get_availability_display }}</span>
+              <span>{{ profile.get_experience_level_display }}</span>
+              {% if profile.hourly_rate %}<span class="coin">{{ profile.hourly_rate|coins }}/hr</span>{% endif %}
+            </div>
+          </div>
+        </div>
+
+        {% if profile.bio %}<p style="margin-top:var(--gap-4);white-space:pre-line">{{ profile.bio }}</p>{% endif %}
+
+        {% if portfolio %}
+          <div style="margin-top:var(--gap-4)">
+            <a class="portfolio-view-btn" href="{% url 'portfolios:public_list' owner.username %}">📂 View Full Portfolio →</a>
+          </div>
+        {% endif %}
+
+        <div class="dash-grid" style="margin-top:var(--gap-5);margin-bottom:0">
+          <div class="stat" style="padding-left:0"><p class="stat__label">Projects</p><p class="stat__value">{{ profile.completed_projects }}</p></div>
+          <div class="stat"><p class="stat__label">Success rate</p><p class="stat__value">{{ profile.success_rate }}%</p></div>
+          <div class="stat"><p class="stat__label">On time</p><p class="stat__value">{{ profile.on_time_rate }}%</p></div>
+          <div class="stat"><p class="stat__label">Rating</p><p class="stat__value">{{ summary.average_rating|default:"—" }}</p></div>
+        </div>
+      </div>
+    </section>
+
+    {% if skills %}
+      <section class="card">
+        <div class="card__head"><h2>Skills</h2></div>
+        <div class="card__body">
+          <div class="skill-grid">
+            {% for entry in skills %}
+              <div class="skill">
+                <span class="bold">{{ entry.skill.name }}</span>
+                <span class="tiny muted">{{ entry.get_level_display }}{% if entry.years %} · {{ entry.years }} yr{{ entry.years|pluralize }}{% endif %}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    {% if portfolio %}
+      <section class="card">
+        <div class="card__head">
+          <h2>Portfolio</h2>
+          <a href="{% url 'portfolios:public_list' owner.username %}">See all →</a>
+        </div>
+        <div class="card__body">
+          <div class="grid grid--3">
+            {% for item in portfolio %}
+              <a class="portfolio-tile" href="{{ item.get_absolute_url }}">
+                {% if item.cover_image %}<img src="{{ item.cover_image.url }}" alt="">{% endif %}
+                <strong>{{ item.title }}</strong>
+                {% if item.is_verified %}<span class="sb-pill sb-pill--ok">Verified</span>{% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    {% if experiences %}
+      <section class="card">
+        <div class="card__head"><h2>Experience</h2></div>
+        <div class="card__body">
+          <ul class="timeline">
+            {% for job in experiences %}
+              <li>
+                <strong>{{ job.position }}</strong> — {{ job.company }}
+                <div class="timeline__when">
+                  {{ job.start_date|date:"M Y" }} –
+                  {% if job.is_current %}present{% else %}{{ job.end_date|date:"M Y" }}{% endif %}
+                </div>
+                {% if job.description %}<p class="small muted" style="margin-top:4px">{{ job.description }}</p>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </section>
+    {% endif %}
+
+    {% if education %}
+      <section class="card">
+        <div class="card__head"><h2>Education</h2></div>
+        <div class="card__body">
+          <ul class="timeline">
+            {% for row in education %}
+              <li>
+                <strong>{{ row.degree }}</strong>{% if row.field %}, {{ row.field }}{% endif %}
+                <div class="timeline__when">{{ row.institution }} · {{ row.start_date|date:"Y" }}–{{ row.end_date|date:"Y"|default:"present" }}</div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </section>
+    {% endif %}
+
+    <section>
+      <h2>Reviews</h2>
+      {% if reviews %}
+        <div class="stack">
+          {% for review in reviews %}{% include "components/review-card.html" %}{% endfor %}
+        </div>
+      {% else %}
+        <div class="card"><div class="card__body muted small">No reviews yet. Reviews can only be left after a completed project.</div></div>
+      {% endif %}
+    </section>
+  </div>
+
+  <aside class="stack">
+    {% include "components/rating-summary.html" %}
+
+    <div class="card">
+      <div class="card__body">
+        {% if not user.is_authenticated %}
+          <a class="btn btn--primary btn--block" href="{% url 'accounts:register' %}?role=CLIENT">Join to hire</a>
+        {% endif %}
+        <dl class="dl" style="margin-top:var(--gap-4)">
+          <dt>Member since</dt><dd>{{ owner.date_joined|date:"M Y" }}</dd>
+          <dt>Languages</dt><dd>{{ profile.languages|default:"—" }}</dd>
+        </dl>
+        {% if profile.website or profile.github_url or profile.linkedin_url %}
+          <div class="tag-list" style="margin-top:var(--gap-3)">
+            {% if profile.website %}<a class="tag" href="{{ profile.website }}" rel="nofollow noopener">Website</a>{% endif %}
+            {% if profile.github_url %}<a class="tag" href="{{ profile.github_url }}" rel="nofollow noopener">GitHub</a>{% endif %}
+            {% if profile.linkedin_url %}<a class="tag" href="{{ profile.linkedin_url }}" rel="nofollow noopener">LinkedIn</a>{% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

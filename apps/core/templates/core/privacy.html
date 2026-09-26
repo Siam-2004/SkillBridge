@@ -1,0 +1,39 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}Privacy policy — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'core/css/legal.css' %}?v=4.0">{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Privacy policy</h1>
+</div>
+<div class="prose">
+<h2>What we hold</h2>
+<ul>
+  <li>Your account details: name, email address, username, and role.</li>
+  <li>Your profile: what you have chosen to publish about your work.</li>
+  <li>Your activity: jobs, proposals, agreements, messages, tasks and files.</li>
+  <li>Your money: deposits, withdrawals, and every SkillCoin movement.</li>
+</ul>
+
+<h2>Who can see it</h2>
+<p>Your public profile, portfolio and reviews are visible to anyone. Everything
+else is visible only to the people involved: messages to their participants,
+project files to project members, and your wallet to you.</p>
+
+<h2>The assistant</h2>
+<p>The built-in assistant has no direct access to the database. It answers from
+a context document assembled for your specific question and checked against
+your permissions first. It is never given private messages, wallet balances,
+another client's data, or authentication details.</p>
+
+<h2>Administrators</h2>
+<p>Administrators can see what they need to verify payments, moderate content
+and resolve disputes. Sensitive administrative actions are recorded in an
+append-only audit trail.</p>
+
+<h2>Retention</h2>
+<p>Financial records, agreements and completed-project evidence are kept, so a
+dispute can be settled on what actually happened. Requesting deletion of an
+account does not erase the financial record it is part of.</p>
+</div>
+{% endblock %}

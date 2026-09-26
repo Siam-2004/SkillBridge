@@ -1,0 +1,261 @@
+/* ==========================================================================
+   SkillBridge — Dashboard View Stylesheet
+   Dedicated styling for Client & Freelancer dashboards
+   ========================================================================== */
+
+/* Dashboard Overview Hero */
+.dash-overview-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-4);
+  padding: 24px 28px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--gap-5);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+:root[data-theme="dark"] .dash-overview-hero {
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dash-overview-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--brand-gradient);
+}
+
+.dash-overview-hero__meta {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.role-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+.role-pill-tag--freelancer {
+  background: rgba(99, 102, 241, 0.1);
+  color: #4f46e5;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.role-pill-tag--client {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+:root[data-theme="dark"] .role-pill-tag--freelancer {
+  background: rgba(139, 92, 246, 0.18);
+  color: #c7d2fe;
+}
+
+:root[data-theme="dark"] .role-pill-tag--client {
+  background: rgba(16, 185, 129, 0.18);
+  color: #a7f3d0;
+}
+
+.dash-overview-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.dash-overview-subtitle {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.dash-overview-hero__action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .dash-overview-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+  .dash-overview-hero__action {
+    width: 100%;
+    margin-top: 14px;
+  }
+}
+
+/* Metric Stat Cards */
+.dash-grid .card.stat {
+  display: flex;
+  flex-direction: column;
+  padding: var(--gap-4) var(--gap-5);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform var(--dur-normal, .25s) var(--ease-out, ease),
+              box-shadow var(--dur-normal, .25s) var(--ease-out, ease),
+              border-color var(--dur-normal, .25s) var(--ease-out, ease);
+}
+
+:root[data-theme="dark"] .dash-grid .card.stat {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.dash-grid .card.stat::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--brand-gradient);
+  opacity: 0.8;
+  transition: opacity var(--dur-fast, .15s);
+}
+
+.dash-grid .card.stat:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(79, 70, 229, 0.1);
+  border-color: var(--brand-300);
+}
+
+.dash-grid .card.stat:hover::before {
+  opacity: 1;
+}
+
+.dash-grid .stat__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.dash-grid .stat__value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.dash-grid .stat__value.coin {
+  color: var(--brand-600);
+}
+
+:root[data-theme="dark"] .dash-grid .stat__value.coin {
+  color: var(--brand-300);
+}
+
+.dash-grid .stat__note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: auto;
+  line-height: 1.4;
+}
+
+/* Quick Actions Card */
+.grid--2 > .card {
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
+}
+
+:root[data-theme="dark"] .grid--2 > .card {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.grid--2 > .card .card__head {
+  padding: var(--gap-4) var(--gap-5);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.grid--2 > .card .card__head h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.grid--2 > .card .card__body {
+  padding: var(--gap-5);
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-3);
+}
+
+.btn-group .btn {
+  justify-content: center;
+  font-weight: 600;
+  border-radius: var(--r-md, 8px);
+  padding: 10px 16px;
+}
+
+/* Alert Notification In Dashboard */
+.alert--info {
+  border-radius: var(--r-lg);
+  border: 1px solid var(--brand-200);
+  background: var(--brand-50);
+  color: var(--brand-900);
+  padding: var(--gap-4) var(--gap-5);
+  margin-bottom: var(--gap-5);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-theme="dark"] .alert--info {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.25);
+  color: var(--brand-200);
+}
+
+.alert--info a {
+  font-weight: 700;
+  color: inherit;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .btn-group {
+    flex-direction: column;
+  }
+}

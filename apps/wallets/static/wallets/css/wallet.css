@@ -1,0 +1,224 @@
+/* ==========================================================================
+   SkillBridge — Wallet Stylesheet
+   Styles for main wallet overview, balances, and recent movements
+   ========================================================================== */
+
+/* Wallet Hero Banner */
+.wallet-hero {
+  background: linear-gradient(135deg, #0d0f17 0%, #171b2e 45%, #241c4a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--r-xl);
+  color: #ffffff;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 30px rgba(139, 92, 246, 0.15);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.wallet-hero::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.wallet-hero .card__body {
+  padding: var(--gap-6);
+  position: relative;
+  z-index: 1;
+}
+
+.wallet-hero .stat__label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+.wallet-hero .tiny {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.wallet-hero .coin {
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.wallet-hero .coin--xl {
+  font-size: 2.3rem;
+  background: linear-gradient(135deg, #ffffff 40%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.wallet-hero .coin--lg {
+  font-size: 1.6rem;
+}
+
+.wallet-buckets {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: var(--gap-5);
+}
+
+.bucket {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  padding-left: var(--gap-5);
+  display: flex;
+  flex-direction: column;
+}
+
+.bucket--available {
+  border-left: 0;
+  padding-left: 0;
+}
+
+/* Hero Action Buttons */
+.wallet-hero .btn--primary {
+  background: var(--brand-gradient, linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%));
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 11px 22px;
+  border-radius: var(--r-pill);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wallet-hero .btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.55);
+}
+
+.wallet-hero .btn--secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  padding: 11px 20px;
+  border-radius: var(--r-pill);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wallet-hero .btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  color: #ffffff;
+}
+
+/* Recent Movements & Deposit Cards */
+.grid--2 > section.card,
+.grid--2 > .stack > section.card {
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+:root[data-theme="dark"] .grid--2 > section.card,
+:root[data-theme="dark"] .grid--2 > .stack > section.card {
+  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(18, 18, 24, 0.65);
+}
+
+.card__head {
+  padding: var(--gap-4) var(--gap-5);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:root[data-theme="dark"] .card__head {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.card__head h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* List Row */
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-4);
+  padding: var(--gap-3) var(--gap-5);
+  border-bottom: 1px solid var(--line);
+  transition: background var(--dur-fast, 0.15s) ease;
+}
+
+:root[data-theme="dark"] .list-row {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.list-row:last-child {
+  border-bottom: none;
+}
+
+.list-row:hover {
+  background: var(--surface-2);
+}
+
+:root[data-theme="dark"] .list-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.list-row__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-row__title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: block;
+  color: var(--text);
+}
+
+.list-row__meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.coin--in {
+  color: var(--ok-fg, #10b981) !important;
+  font-weight: 700;
+}
+
+.coin--out {
+  color: var(--danger-fg, #ef4444) !important;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .wallet-buckets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .bucket {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .wallet-buckets {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

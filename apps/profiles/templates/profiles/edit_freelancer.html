@@ -1,0 +1,85 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}My profile — Skillbridge{% endblock %}
+{% block page_heading %}My profile{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'profiles/css/profile_edit.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="grid grid--sidebar">
+  <section class="card">
+    <div class="card__head">
+      <h2>Freelancer profile</h2>
+      <a class="btn btn--ghost btn--sm" href="{{ user.get_absolute_url }}">View public page</a>
+    </div>
+    <div class="card__body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include "components/form.html" %}
+        <div class="form-actions"><button class="btn btn--primary" type="submit">Save profile</button></div>
+      </form>
+    </div>
+  </section>
+
+  <aside class="stack">
+    <div class="card">
+      <div class="card__head">
+        <h2>Skills</h2>
+        <a class="btn btn--ghost btn--sm" href="{% url 'profiles:edit_skills' %}">Edit</a>
+      </div>
+      <div class="card__body">
+        {% if skills %}
+          <div class="tag-list">
+            {% for entry in skills %}<span class="tag">{{ entry.skill.name }}</span>{% endfor %}
+          </div>
+        {% else %}
+          <p class="small muted">No skills yet — they are the main way clients find you.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head">
+        <h2>Experience</h2>
+        <a class="btn btn--ghost btn--sm" href="{% url 'profiles:add_experience' %}">Add</a>
+      </div>
+      <div class="card__body card__body--tight">
+        {% for job in experiences %}
+          <div class="row row--between" style="padding:var(--gap-2) 0;border-bottom:1px solid var(--line)">
+            <div>
+              <strong class="small">{{ job.position }}</strong><br>
+              <span class="tiny muted">{{ job.company }} · {{ job.start_date|date:"M Y" }}–{% if job.is_current %}now{% else %}{{ job.end_date|date:"M Y" }}{% endif %}</span>
+            </div>
+            <form method="post" action="{% url 'profiles:delete_experience' job.pk %}" data-confirm="Remove this entry?" data-no-busy="1">
+              {% csrf_token %}<button class="btn btn--ghost btn--sm" type="submit">Remove</button>
+            </form>
+          </div>
+        {% empty %}
+          <p class="small muted">Nothing added yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head">
+        <h2>Education</h2>
+        <a class="btn btn--ghost btn--sm" href="{% url 'profiles:add_education' %}">Add</a>
+      </div>
+      <div class="card__body card__body--tight">
+        {% for row in education %}
+          <div class="row row--between" style="padding:var(--gap-2) 0;border-bottom:1px solid var(--line)">
+            <div>
+              <strong class="small">{{ row.degree }}</strong><br>
+              <span class="tiny muted">{{ row.institution }}</span>
+            </div>
+            <form method="post" action="{% url 'profiles:delete_education' row.pk %}" data-confirm="Remove this entry?" data-no-busy="1">
+              {% csrf_token %}<button class="btn btn--ghost btn--sm" type="submit">Remove</button>
+            </form>
+          </div>
+        {% empty %}
+          <p class="small muted">Nothing added yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

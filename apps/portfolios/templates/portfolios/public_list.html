@@ -1,0 +1,23 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}{{ owner.full_name }} — portfolio{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'portfolios/css/portfolio.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <p class="tiny muted"><a href="{{ owner.get_absolute_url }}">{{ owner.full_name }}</a> / portfolio</p>
+  <h1>Portfolio</h1>
+  <p class="lede">{{ page.paginator.count }} piece{{ page.paginator.count|pluralize }} of work.</p>
+</div>
+
+{% if page.object_list %}
+  <div class="grid grid--3">
+    {% for item in page.object_list %}
+      {% include "components/portfolio-card.html" %}
+    {% endfor %}
+  </div>
+  {% include "components/pagination.html" %}
+{% else %}
+  {% include "components/empty-state.html" with title="Nothing published yet" body="This freelancer has not made any work public." %}
+{% endif %}
+{% endblock %}

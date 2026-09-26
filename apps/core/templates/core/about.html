@@ -1,0 +1,62 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+
+{% block title %}About SkillBridge — Fair freelancing with escrow-backed payments{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'core/css/about.css' %}?v=4.0">
+{% endblock %}
+
+{% block content %}
+<div class="about-hero">
+  <span class="about-badge">Our Mission</span>
+  <h1>A marketplace where money is never a question.</h1>
+  <p class="lede">
+    SkillBridge is built on one simple principle: work starts only when funding is already locked in escrow,
+    and payment is released only on terms both sides explicitly agreed to.
+  </p>
+</div>
+
+<div class="about-grid">
+  <div class="pillar-card">
+    <div class="pillar-icon">🔒</div>
+    <h3>1. Budget Guaranteed</h3>
+    <p>
+      Clients fund the job before it publishes. Freelancers never spend hours writing proposals or working on projects where the money doesn't exist.
+    </p>
+  </div>
+
+  <div class="pillar-card">
+    <div class="pillar-icon">📝</div>
+    <h3>2. Locked Agreements</h3>
+    <p>
+      Scope, price, milestones, and revisions are locked in written, versioned agreements. Changing terms requires mutual consent from both parties.
+    </p>
+  </div>
+
+  <div class="pillar-card">
+    <div class="pillar-icon">⚡</div>
+    <h3>3. 48-Hour Auto Release</h3>
+    <p>
+      When work is delivered, clients have 48 hours to approve or request a revision. Silence is not leverage — payments auto-release when terms are fulfilled.
+    </p>
+  </div>
+</div>
+
+<div class="skillcoin-card card">
+  <div style="max-width: 680px;">
+    <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 12px;">What is SkillCoin?</h2>
+    <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 16px;">
+      One SkillCoin equals exactly <strong>one Bangladeshi Taka (1 SkillCoin = 1 BDT)</strong>.
+      It is a transparent internal platform ledger unit, not a cryptocurrency and not an investment asset.
+    </p>
+    <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 24px;">
+      SkillCoin enters the platform when a deposit is verified and exits when a withdrawal is paid out.
+      Every single movement is recorded on an immutable double-entry ledger that both parties can audit.
+    </p>
+    <div class="btn-group">
+      <a class="btn btn--primary" href="{% url 'accounts:register' %}">Get started today</a>
+      <a class="btn btn--secondary" href="{% url 'core:how_it_works' %}">See how it works</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

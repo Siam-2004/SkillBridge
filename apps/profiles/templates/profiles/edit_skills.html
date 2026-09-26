@@ -1,0 +1,70 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Skills — Skillbridge{% endblock %}
+{% block page_heading %}Skills{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'profiles/css/skills.css' %}?v=4.0">{% endblock %}
+{% block page_js %}<script src="{% static 'profiles/js/skills.js' %}"></script>{% endblock %}
+
+{% block content %}
+<form method="post" id="skills-form">
+  {% csrf_token %}
+
+  <section class="card" style="margin-bottom:var(--gap-5)">
+    <div class="card__head">
+      <h2>Categories</h2>
+      <span class="small muted">The fields of work you want to appear under.</span>
+    </div>
+    <div class="card__body">
+      <div class="checkbox-grid">
+        {% for category in all_categories %}
+          <div class="check">
+            <input type="checkbox" id="cat-{{ category.pk }}" name="category" value="{{ category.pk }}"
+                   {% if category.pk in current_categories %}checked{% endif %}>
+            <label for="cat-{{ category.pk }}">{{ category.name }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card__head">
+      <h2>Skills</h2>
+      <input type="search" id="skill-filter" placeholder="Filter skills" style="max-width:220px">
+    </div>
+    <div class="card__body">
+      <div class="skill-picker">
+        {% for skill in all_skills %}
+          {% with entry=current|key:skill.pk %}
+            <div class="skill-pick{% if entry %} is-on{% endif %}" data-name="{{ skill.name|lower }}">
+              <div class="check">
+                <input type="checkbox" id="skill-{{ skill.pk }}" name="skill" value="{{ skill.pk }}"
+                       {% if entry %}checked{% endif %}>
+                <label for="skill-{{ skill.pk }}">
+                  {{ skill.name }}
+                  {% if skill.category %}<span class="tiny faint">{{ skill.category.name }}</span>{% endif %}
+                </label>
+              </div>
+              <div class="skill-pick__detail">
+                <label class="sr-only" for="level-{{ skill.pk }}">Level for {{ skill.name }}</label>
+                <select id="level-{{ skill.pk }}" name="level-{{ skill.pk }}">
+                  <option value="1"{% if entry.level == 1 %} selected{% endif %}>Beginner</option>
+                  <option value="2"{% if entry.level == 2 or not entry %} selected{% endif %}>Intermediate</option>
+                  <option value="3"{% if entry.level == 3 %} selected{% endif %}>Advanced</option>
+                  <option value="4"{% if entry.level == 4 %} selected{% endif %}>Expert</option>
+                </select>
+                <label class="sr-only" for="years-{{ skill.pk }}">Years of {{ skill.name }}</label>
+                <input id="years-{{ skill.pk }}" type="number" name="years-{{ skill.pk }}" min="0" max="50"
+                       value="{{ entry.years|default:0 }}" placeholder="yrs">
+              </div>
+            </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+    </div>
+    <div class="card__foot">
+      <button class="btn btn--primary" type="submit">Save skills</button>
+    </div>
+  </section>
+</form>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Dashboard — Skillbridge{% endblock %}
+{% block page_heading %}Dashboard Overview{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'profiles/css/dashboard_view.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="dash-overview-hero">
+  <div class="dash-overview-hero__meta">
+    <div class="role-pill-tag role-pill-tag--client">
+      <span class="role-pulse-dot"></span> Client Account
+    </div>
+    <h1 class="dash-overview-title">Overview</h1>
+    <p class="dash-overview-subtitle">
+      Welcome back, <strong>{{ user.full_name|default:user.username }}</strong>! Manage your hiring projects, active talent, and escrow funds.
+    </p>
+  </div>
+  <div class="dash-overview-hero__action">
+    <a class="btn btn--primary btn--sm" href="{% url 'directory:freelancer_list' %}">Explore Freelancers</a>
+    <a class="btn btn--secondary btn--sm" href="{% url 'wallets:deposit' %}">+ Add Funds</a>
+  </div>
+</div>
+
+<div class="dash-grid">
+  <a class="card stat" href="{% url 'wallets:wallet' %}">
+    <p class="stat__label">Available balance</p>
+    <p class="stat__value coin">{{ wallet_info.available|coin }}</p>
+    <p class="stat__note">{{ wallet_info.reserved|coin }} reserved · {{ wallet_info.escrow|coin }} in escrow</p>
+  </a>
+  <a class="card stat" href="{% url 'directory:freelancer_list' %}">
+    <p class="stat__label">Find Talent</p>
+    <p class="stat__value">Browse</p>
+    <p class="stat__note">Explore top freelancers</p>
+  </a>
+  <a class="card stat" href="{% url 'profiles:edit_client' %}">
+    <p class="stat__label">Profile</p>
+    <p class="stat__value">Manage</p>
+    <p class="stat__note">Update company & contact details</p>
+  </a>
+</div>
+
+<div class="grid grid--2" style="margin-top:var(--gap-5)">
+  <section class="card">
+    <div class="card__head">
+      <h2>Quick Actions</h2>
+    </div>
+    <div class="card__body">
+      <div class="btn-group">
+        <a class="btn btn--primary" href="{% url 'directory:freelancer_list' %}">Browse freelancers</a>
+        <a class="btn btn--secondary" href="{% url 'profiles:edit_client' %}">Edit profile</a>
+        <a class="btn btn--ghost" href="{% url 'wallets:wallet' %}">View wallet</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card__head">
+      <h2>Company Details</h2>
+      <a href="{% url 'profiles:edit_client' %}">Edit →</a>
+    </div>
+    <div class="card__body">
+      <p class="bold">{{ profile.company_name|default:user.full_name }}</p>
+      {% if profile.industry %}<p class="small muted">{{ profile.industry }}</p>{% endif %}
+      {% if profile.company_description %}<p class="small" style="margin-top:var(--gap-2)">{{ profile.company_description }}</p>{% endif %}
+      {% if profile.website %}<p class="small" style="margin-top:var(--gap-2)"><a href="{{ profile.website }}" target="_blank" rel="noopener">{{ profile.website }}</a></p>{% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}My portfolio — Skillbridge{% endblock %}
+{% block page_heading %}My portfolio{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'portfolios/css/portfolio.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="row row--between row--wrap" style="margin-bottom:var(--gap-4)">
+  <p class="muted" style="margin:0">
+    {{ items|length }} entr{{ items|length|pluralize:"y,ies" }} ·
+    work delivered through Skillbridge carries a verified badge.
+  </p>
+  <a class="btn btn--primary" href="{% url 'portfolios:create' %}">Add work</a>
+</div>
+
+{% if items %}
+  <div class="grid grid--3">
+    {% for item in items %}
+      <article class="card portfolio-card">
+        {% if item.cover_image %}<img src="{{ item.cover_image.url }}" alt="">{% endif %}
+        <div class="card__body">
+          <div class="row row--between row--top">
+            <h3 style="font-size:1rem;margin-bottom:4px">
+              <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+            </h3>
+            {% if item.is_public %}
+              <span class="sb-pill sb-pill--ok">Public</span>
+            {% else %}
+              <span class="sb-pill sb-pill--neutral">Private</span>
+            {% endif %}
+          </div>
+          {% if item.is_verified %}<span class="sb-pill sb-pill--info">Verified project</span>{% endif %}
+          <p class="small clamp-2" style="margin:var(--gap-2) 0">{{ item.description }}</p>
+          <div class="btn-group">
+            <a class="btn btn--secondary btn--sm" href="{% url 'portfolios:edit' item.public_id %}">Edit</a>
+            <form method="post" action="{% url 'portfolios:delete' item.public_id %}"
+                  data-confirm="Remove this portfolio entry?" data-no-busy="1">
+              {% csrf_token %}
+              <button class="btn btn--ghost btn--sm" type="submit">Remove</button>
+            </form>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  {% include "components/empty-state.html" with title="Nothing in your portfolio yet" body="Add work you can show, or import a completed Skillbridge project in one click from the project page." action_url="/portfolios/new/" action_label="Add work" %}
+{% endif %}
+{% endblock %}

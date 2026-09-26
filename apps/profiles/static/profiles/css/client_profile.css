@@ -1,0 +1,175 @@
+/* ==========================================================================
+   SkillBridge — Client Public Profile Stylesheet
+   ========================================================================== */
+
+/* Client Hero Card */
+.grid--sidebar > .stack-lg > .card:first-child {
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--line);
+  position: relative;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.grid--sidebar > .stack-lg > .card:first-child:hover {
+  box-shadow: var(--shadow-md), 0 0 20px rgba(79, 70, 229, 0.08);
+}
+
+.grid--sidebar > .stack-lg > .card:first-child::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--brand-gradient);
+}
+
+.grid--sidebar > .stack-lg > .card:first-child .card__body {
+  padding: var(--gap-6);
+}
+
+.avatar--xl {
+  width: 88px;
+  height: 88px;
+  border-radius: var(--r-pill);
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--brand-100), var(--shadow-md);
+  flex-shrink: 0;
+  transition: box-shadow var(--dur-normal, .25s) var(--ease-out, ease),
+              transform var(--dur-normal, .25s) var(--ease-out, ease);
+}
+
+/* Client Metrics */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap-3);
+  margin-top: var(--gap-5);
+  padding: var(--gap-3);
+  border-radius: var(--r-lg);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color var(--dur-fast, .15s) ease;
+}
+
+.stat {
+  padding: var(--gap-3);
+  text-align: center;
+  border-radius: var(--r-md, 8px);
+  background: var(--surface);
+  border: 1px solid var(--line-light, var(--line));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(79, 70, 229, 0.08);
+  border-color: var(--brand-300);
+}
+
+.stat__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.stat__value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+/* Additional Cards in Client Profile */
+.grid--sidebar aside .card,
+.grid--sidebar .stack > .card,
+.grid--sidebar section > .card {
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.grid--sidebar aside .card:hover,
+.grid--sidebar .stack > .card:hover,
+.grid--sidebar section > .card:hover {
+  box-shadow: var(--shadow-md), 0 0 20px rgba(79, 70, 229, 0.08);
+}
+
+/* Dark Mode Overrides */
+:root[data-theme="dark"] .grid--sidebar > .stack-lg > .card:first-child {
+  background: rgba(18, 18, 24, 0.65);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="dark"] .grid--sidebar > .stack-lg > .card:first-child:hover {
+  border-color: rgba(139, 92, 246, 0.25);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(139, 92, 246, 0.12);
+}
+
+:root[data-theme="dark"] .avatar--xl {
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px rgba(139, 92, 246, 0.35), var(--shadow-md);
+}
+
+:root[data-theme="dark"] .identity p.muted {
+  color: var(--brand-300);
+}
+
+:root[data-theme="dark"] .dash-grid {
+  background: rgba(24, 24, 36, 0.5);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .stat {
+  background: rgba(18, 18, 24, 0.65);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .stat:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+:root[data-theme="dark"] .grid--sidebar aside .card,
+:root[data-theme="dark"] .grid--sidebar .stack > .card,
+:root[data-theme="dark"] .grid--sidebar section > .card {
+  background: rgba(18, 18, 24, 0.65);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="dark"] .grid--sidebar aside .card:hover,
+:root[data-theme="dark"] .grid--sidebar .stack > .card:hover,
+:root[data-theme="dark"] .grid--sidebar section > .card:hover {
+  border-color: rgba(139, 92, 246, 0.25);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(139, 92, 246, 0.12);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dash-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .dash-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

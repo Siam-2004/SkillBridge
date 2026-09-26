@@ -1,0 +1,16 @@
+# The database is created by `manage.py migrate`; it is not source.
+
+
+# Uploads and collected static files are generated, not written.
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/

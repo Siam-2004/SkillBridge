@@ -1,0 +1,139 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+
+{% block title %}How It Works — SkillBridge Freelance Marketplace{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'core/css/how_it_works.css' %}?v=4.0">
+{% endblock %}
+
+{% block content %}
+<div class="hiw-hero">
+  <h1>Transparent workflows from first proposal to final payout.</h1>
+  <p class="lede">
+    SkillBridge replaces guesswork with strict guarantees. Here is how clients and freelancers collaborate safely.
+  </p>
+</div>
+
+<div class="hiw-tracks">
+  <!-- Clients Track -->
+  <div class="track-card">
+    <div class="track-header">
+      <span class="track-badge track-badge--client">Client Journey</span>
+      <h2 style="margin: 0; font-size: 1.3rem;">Hiring on SkillBridge</h2>
+    </div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <span class="step-num">1</span>
+        <div class="step-content">
+          <strong>Add Funds</strong>
+          <p>Deposit SkillCoin into your wallet. 1 SkillCoin = 1 BDT.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-num">2</span>
+        <div class="step-content">
+          <strong>Post a Job</strong>
+          <p>The job budget is reserved from your balance immediately when published so talent knows you are ready.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-num">3</span>
+        <div class="step-content">
+          <strong>Negotiate Terms</strong>
+          <p>Review proposals, discuss milestones, revisions, and deadlines in the negotiation room.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-num">4</span>
+        <div class="step-content">
+          <strong>Fund Escrow</strong>
+          <p>Accepting locks the contract and locks funds safely in milestone escrow before work begins.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-num">5</span>
+        <div class="step-content">
+          <strong>Approve &amp; Release</strong>
+          <p>Review delivered work within 48 hours. Approve to release payment, request a revision, or dispute.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <a class="btn btn--primary btn--block" href="{% url 'accounts:register' %}?role=CLIENT">Hire Talent Now</a>
+    </div>
+  </div>
+
+  <!-- Freelancers Track -->
+  <div class="track-card">
+    <div class="track-header">
+      <span class="track-badge track-badge--freelancer">Freelancer Journey</span>
+      <h2 style="margin: 0; font-size: 1.3rem;">Working on SkillBridge</h2>
+    </div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <span class="step-num">1</span>
+        <div class="step-content">
+          <strong>Create Profile</strong>
+          <p>Showcase your verified skills, experience, portfolio projects, and set your hourly rate.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-num">2</span>
+        <div class="step-content">
+          <strong>Find Funded Jobs</strong>
+          <p>Every job on SkillBridge has an actual reserved budget, ensuring you never work on empty promises.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-num">3</span>
+        <div class="step-content">
+          <strong>Agree &amp; Lock</strong>
+          <p>Propose your terms and counter-offer until both sides are completely aligned on scope.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-num">4</span>
+        <div class="step-content">
+          <strong>Deliver Quality Work</strong>
+          <p>Submit milestones through the platform workspace. Clients can review or request revisions.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-num">5</span>
+        <div class="step-content">
+          <strong>Guaranteed Payout</strong>
+          <p>On client approval, or automatically after 48 hours of silence, funds land directly in your wallet.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <a class="btn btn--secondary btn--block" href="{% url 'accounts:register' %}?role=FREELANCER">Find Freelance Work</a>
+    </div>
+  </div>
+</div>
+
+<!-- 48-Hour Guarantee Rule -->
+<div class="rule-card">
+  <div class="rule-icon">⏱</div>
+  <div class="rule-body">
+    <h2>The 48-Hour Escrow Protection Rule</h2>
+    <p>
+      When a freelancer submits completed work, the client has 48 hours to inspect it.
+      They can approve it (releasing payment instantly), request a revision (pausing the timer), or open a dispute.
+      If the client does nothing, the platform auto-releases the milestone payment to the freelancer. Silence is never used as leverage on SkillBridge.
+    </p>
+  </div>
+</div>
+{% endblock %}

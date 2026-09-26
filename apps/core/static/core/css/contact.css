@@ -1,0 +1,136 @@
+/* ==========================================================================
+   SkillBridge — Contact Page Dedicated Stylesheet
+   ========================================================================== */
+
+.contact-hero {
+  padding: 36px 0 24px;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.contact-hero h1 {
+  font-size: clamp(2rem, 3.8vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  transition: color 0.25s ease;
+}
+
+.contact-hero .lede {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  transition: color 0.25s ease;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin: 36px 0;
+}
+
+@media (max-width: 800px) {
+  .contact-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.contact-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.contact-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand-300);
+  box-shadow: var(--shadow-md);
+}
+
+:root[data-theme="dark"] .contact-card {
+  background: rgba(18, 18, 24, 0.65);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="dark"] .contact-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.6), 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+.contact-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--brand-50);
+  color: var(--brand-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex: 0 0 44px;
+  transition: all 0.25s ease;
+}
+
+:root[data-theme="dark"] .contact-icon {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.15);
+}
+
+.contact-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  transition: color 0.25s ease;
+}
+
+:root[data-theme="dark"] .contact-card h3 {
+  color: #f3f4f6;
+}
+
+.contact-card p {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+  transition: color 0.25s ease;
+}
+
+:root[data-theme="dark"] .contact-card p {
+  color: #9ca3af;
+}
+
+.contact-card a {
+  color: var(--brand-600);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.contact-card a:hover {
+  text-decoration: underline;
+}
+
+:root[data-theme="dark"] .contact-card a {
+  color: #a78bfa;
+}
+
+:root[data-theme="dark"] .contact-card a:hover {
+  color: #c4b5fd;
+  text-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+}

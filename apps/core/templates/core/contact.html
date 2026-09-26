@@ -1,0 +1,69 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+
+{% block title %}Contact Support — SkillBridge{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'core/css/contact.css' %}?v=4.0">
+{% endblock %}
+
+{% block content %}
+<div class="contact-hero">
+  <h1>We are here to help.</h1>
+  <p class="lede">Have questions about your account, escrow, or platform features? Get in touch with our team.</p>
+</div>
+
+<div class="contact-grid">
+  <div>
+    <div class="contact-card">
+      <div class="contact-icon">💬</div>
+      <div>
+        <h3>General Inquiries &amp; Support</h3>
+        <p>For account setup, profile verification, or general questions:</p>
+        <p style="margin-top: 8px;">
+          <a href="mailto:support@skillbridge.local">support@skillbridge.local</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-icon">🛡</div>
+      <div>
+        <h3>Dispute Resolution</h3>
+        <p>
+          For active milestone or contract disputes, please use the dispute system in your project workspace.
+          This preserves full chat history and escrow records for administrative review.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="contact-card">
+      <div class="contact-icon">💳</div>
+      <div>
+        <h3>SkillCoin &amp; Wallet Help</h3>
+        <p>
+          Deposits and withdrawals are processed via the wallet ledger.
+          If you have questions about transaction status, please include your reference ID.
+        </p>
+        <p style="margin-top: 8px;">
+          <a href="{% url 'wallets:wallet' %}">Go to your Wallet →</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-icon">🚩</div>
+      <div>
+        <h3>Trust &amp; Safety</h3>
+        <p>
+          To report suspicious activity, prohibited services, or harassment, reach out directly to our moderation team:
+        </p>
+        <p style="margin-top: 8px;">
+          <a href="mailto:safety@skillbridge.local">safety@skillbridge.local</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

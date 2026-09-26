@@ -1,0 +1,88 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}{{ item.title }} — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'portfolios/css/portfolio.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="grid grid--sidebar">
+  <article>
+    <div class="page-head">
+      <p class="tiny muted">
+        <a href="{{ owner.get_absolute_url }}">{{ owner.full_name }}</a> /
+        <a href="{% url 'portfolios:public_list' owner.username %}">portfolio</a>
+      </p>
+      <h1>{{ item.title }}</h1>
+      <div class="row row--tight row--wrap">
+        {% if item.is_verified %}<span class="sb-pill sb-pill--ok">Verified Skillbridge project</span>{% endif %}
+        {% if item.category %}<span class="tag">{{ item.category.name }}</span>{% endif %}
+        {% if item.completed_on %}<span class="tiny muted">Completed {{ item.completed_on|date:"M Y" }}</span>{% endif %}
+      </div>
+    </div>
+
+    {% if item.cover_image %}
+      <img class="portfolio-hero" src="{{ item.cover_image.url }}" alt="">
+    {% endif %}
+
+    <div class="card">
+      <div class="card__body prose">
+        <p style="white-space:pre-line">{{ item.description }}</p>
+
+        {% if item.role %}<h2>My role</h2><p>{{ item.role }}</p>{% endif %}
+        {% if item.responsibilities %}<p style="white-space:pre-line">{{ item.responsibilities }}</p>{% endif %}
+        {% if item.outcome %}<h2>Outcome</h2><p style="white-space:pre-line">{{ item.outcome }}</p>{% endif %}
+        {% if item.confidentiality_note %}
+          <div class="alert alert--info">
+            <span class="alert__icon" aria-hidden="true">i</span>
+            <div class="alert__body">{{ item.confidentiality_note }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if media %}
+      <div class="grid grid--2" style="margin-top:var(--gap-5)">
+        {% for image in media %}
+          <figure style="margin:0">
+            <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" style="border-radius:var(--r);border:1px solid var(--line)">
+            {% if image.caption %}<figcaption class="tiny muted" style="margin-top:6px">{{ image.caption }}</figcaption>{% endif %}
+          </figure>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </article>
+
+  <aside class="stack">
+    <div class="card">
+      <div class="card__body">
+        <div class="identity">
+          <span class="avatar">{{ owner.initials }}</span>
+          <div>
+            <div class="identity__name"><a href="{{ owner.get_absolute_url }}">{{ owner.full_name }}</a></div>
+            <div class="identity__meta">{{ item.freelancer.professional_title }}</div>
+          </div>
+        </div>
+        <dl class="dl" style="margin-top:var(--gap-4)">
+          {% if item.duration_months %}<dt>Duration</dt><dd>{{ item.duration_months }} month{{ item.duration_months|pluralize }}</dd>{% endif %}
+          {% if item.client_name %}<dt>Client</dt><dd>{{ item.client_name }}</dd>{% endif %}
+        </dl>
+        <div class="tag-list" style="margin-top:var(--gap-3)">
+          {% if item.demo_url %}<a class="tag" href="{{ item.demo_url }}" rel="nofollow noopener">Live demo</a>{% endif %}
+          {% if item.repository_url %}<a class="tag" href="{{ item.repository_url }}" rel="nofollow noopener">Source</a>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if item.technology_list or item.skills.all %}
+      <div class="card">
+        <div class="card__head"><h2>Built with</h2></div>
+        <div class="card__body">
+          <div class="tag-list">
+            {% for tech in item.technology_list %}<span class="tag">{{ tech }}</span>{% endfor %}
+            {% for skill in item.skills.all %}<span class="tag">{{ skill.name }}</span>{% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

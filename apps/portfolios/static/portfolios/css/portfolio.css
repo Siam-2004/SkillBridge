@@ -1,0 +1,170 @@
+/* ==========================================================================
+   SkillBridge — Portfolios Stylesheet
+   Styles for portfolio showcase, project detail, and portfolio management
+   ========================================================================== */
+
+/* Portfolio Cards */
+.portfolio-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform var(--dur-normal) var(--ease-out),
+              box-shadow var(--dur-normal) var(--ease-out),
+              border-color var(--dur-normal) var(--ease-out),
+              background var(--dur-normal) var(--ease-out);
+}
+
+.portfolio-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(99, 102, 241, 0.08);
+  border-color: var(--brand-300);
+}
+
+:root[data-theme="dark"] .portfolio-card {
+  background: rgba(18, 18, 24, 0.65);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="dark"] .portfolio-card:hover {
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6),
+              0 0 24px rgba(139, 92, 246, 0.22);
+}
+
+.portfolio-card img {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  width: 100%;
+  display: block;
+  border-bottom: 1px solid var(--line);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root[data-theme="dark"] .portfolio-card img {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.portfolio-card:hover img {
+  transform: scale(1.03);
+}
+
+.portfolio-card .card__body {
+  padding: var(--gap-4);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.portfolio-card h3 a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color var(--dur-fast);
+}
+
+.portfolio-card:hover h3 a {
+  color: var(--brand-600);
+}
+
+:root[data-theme="dark"] .portfolio-card:hover h3 a {
+  color: var(--brand-300, #a78bfa);
+}
+
+.portfolio-card .sb-pill {
+  margin-bottom: var(--gap-2);
+}
+
+.portfolio-card .btn-group {
+  margin-top: auto;
+  padding-top: var(--gap-3);
+  display: flex;
+  gap: var(--gap-2);
+  align-items: center;
+}
+
+/* Portfolio Detail Hero */
+.portfolio-hero {
+  width: 100%;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  margin-bottom: var(--gap-5);
+  max-height: 460px;
+  object-fit: cover;
+  box-shadow: var(--shadow-md);
+  transition: border-color var(--dur-normal) var(--ease-out),
+              box-shadow var(--dur-normal) var(--ease-out);
+}
+
+:root[data-theme="dark"] .portfolio-hero {
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.1);
+}
+
+/* Gallery Images in Detail */
+.grid--2 figure {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform var(--dur-normal) var(--ease-out),
+              box-shadow var(--dur-normal) var(--ease-out),
+              border-color var(--dur-normal) var(--ease-out),
+              background var(--dur-normal) var(--ease-out);
+}
+
+.grid--2 figure:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+:root[data-theme="dark"] .grid--2 figure {
+  background: rgba(18, 18, 24, 0.65);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme="dark"] .grid--2 figure:hover {
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(139, 92, 246, 0.18);
+}
+
+.grid--2 figure img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.grid--2 figure:hover img {
+  transform: scale(1.02);
+}
+
+.grid--2 figcaption {
+  padding: var(--gap-2) var(--gap-3);
+  transition: color var(--dur-fast);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .grid--3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

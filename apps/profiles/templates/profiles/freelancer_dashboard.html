@@ -1,0 +1,85 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Dashboard — Skillbridge{% endblock %}
+{% block page_heading %}Dashboard Overview{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'profiles/css/dashboard_view.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="dash-overview-hero">
+  <div class="dash-overview-hero__meta">
+    <div class="role-pill-tag role-pill-tag--freelancer">
+      <span class="role-pulse-dot"></span> Freelancer Account
+    </div>
+    <h1 class="dash-overview-title">Overview</h1>
+    <p class="dash-overview-subtitle">
+      Welcome back, <strong>{{ user.full_name|default:user.username }}</strong>! Track your earnings, active proposals, and profile performance.
+    </p>
+  </div>
+  <div class="dash-overview-hero__action">
+    <a class="btn btn--primary btn--sm" href="{% url 'portfolios:my_portfolio' %}">+ Manage Portfolio</a>
+    <a class="btn btn--secondary btn--sm" href="{% url 'wallets:withdraw' %}">Withdraw</a>
+  </div>
+</div>
+
+{% if profile and not profile.is_profile_complete %}
+  <div class="alert alert--info">
+    <span class="alert__icon" aria-hidden="true">i</span>
+    <div class="alert__body">
+      <strong>Finish your profile.</strong>
+      A professional title, a bio and at least one skill make you visible in the freelancer directory.
+      <a href="{% url 'profiles:edit_freelancer' %}">Complete it now</a>.
+    </div>
+  </div>
+{% endif %}
+
+<div class="dash-grid">
+  <a class="card stat" href="{% url 'wallets:wallet' %}">
+    <p class="stat__label">Available balance</p>
+    <p class="stat__value coin">{{ wallet_info.available|coin }}</p>
+    <p class="stat__note">{{ wallet_info.reserved|coin }} reserved</p>
+  </a>
+  <a class="card stat" href="{% url 'portfolios:my_portfolio' %}">
+    <p class="stat__label">Portfolio</p>
+    <p class="stat__value">Manage</p>
+    <p class="stat__note">Showcase your best work</p>
+  </a>
+  <a class="card stat" href="{% url 'profiles:edit_freelancer' %}">
+    <p class="stat__label">Profile</p>
+    <p class="stat__value">{% if profile.is_profile_complete %}Active{% else %}Incomplete{% endif %}</p>
+    <p class="stat__note">Update skills & hourly rate</p>
+  </a>
+  <a class="card stat" href="{% url 'wallets:transactions' %}">
+    <p class="stat__label">Transactions</p>
+    <p class="stat__value">Ledger</p>
+    <p class="stat__note">View all account activity</p>
+  </a>
+</div>
+
+<div class="grid grid--2" style="margin-top:var(--gap-5)">
+  <section class="card">
+    <div class="card__head">
+      <h2>Quick Actions</h2>
+    </div>
+    <div class="card__body">
+      <div class="btn-group">
+        <a class="btn btn--primary" href="{% url 'portfolios:my_portfolio' %}">Manage portfolio</a>
+        <a class="btn btn--secondary" href="{% url 'profiles:edit_freelancer' %}">Edit profile</a>
+        <a class="btn btn--ghost" href="{% url 'wallets:wallet' %}">View wallet</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card__head">
+      <h2>Profile Overview</h2>
+      <a href="{% url 'profiles:edit_freelancer' %}">Edit →</a>
+    </div>
+    <div class="card__body">
+      <p class="bold">{{ profile.professional_title|default:"Freelancer" }}</p>
+      {% if profile.hourly_rate %}<p class="small coin" style="margin-top:var(--gap-1)">{{ profile.hourly_rate|coins }}/hr</p>{% endif %}
+      {% if profile.bio %}<p class="small clamp-3" style="margin-top:var(--gap-2)">{{ profile.bio }}</p>{% endif %}
+      {% if profile.location %}<p class="tiny muted" style="margin-top:var(--gap-2)">Location: {{ profile.location }}</p>{% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}

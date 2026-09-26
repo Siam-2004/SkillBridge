@@ -1,0 +1,39 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+
+{% block title %}Explore Categories — SkillBridge{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'core/css/categories.css' %}?v=4.0">
+{% endblock %}
+
+{% block content %}
+<div class="categories-hero">
+  <h1>Browse by Industry &amp; Skill</h1>
+  <p class="lede">Explore vetted freelancers and verified talent across all professional fields on SkillBridge.</p>
+</div>
+
+<div class="grid grid--3">
+  {% for category in categories %}
+    <div class="category-card">
+      <h3 class="category-card__title">
+        <a href="{% url 'directory:freelancer_list' %}?category={{ category.pk }}">{{ category.name }}</a>
+      </h3>
+      {% if category.description %}
+        <p class="category-card__desc">{{ category.description }}</p>
+      {% else %}
+        <p class="category-card__desc">Find verified specialists in {{ category.name }}.</p>
+      {% endif %}
+
+      {% if category.children.all %}
+        <div class="category-sublist">
+          {% for child in category.children.all %}
+            <a class="category-chip" href="{% url 'directory:freelancer_list' %}?category={{ child.pk }}">{{ child.name }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  {% empty %}
+    {% include "components/empty-state.html" with title="No categories yet" body="An administrator adds categories from the admin site." %}
+  {% endfor %}
+</div>
+{% endblock %}

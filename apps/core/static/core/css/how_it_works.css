@@ -1,0 +1,237 @@
+/* ==========================================================================
+   SkillBridge — How It Works Dedicated Stylesheet
+   ========================================================================== */
+
+.hiw-hero {
+  text-align: center;
+  padding: 48px 0 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.hiw-hero h1 {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  transition: color 0.25s ease;
+}
+
+.hiw-hero .lede {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  transition: color 0.25s ease;
+}
+
+.hiw-tracks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+  margin: 40px 0;
+}
+
+@media (max-width: 880px) {
+  .hiw-tracks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.track-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  padding: 32px 28px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root[data-theme="dark"] .track-card {
+  background: rgba(18, 18, 24, 0.65);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="dark"] .track-card:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 0 24px rgba(139, 92, 246, 0.12);
+}
+
+.track-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  transition: border-color 0.25s ease;
+}
+
+:root[data-theme="dark"] .track-header {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.track-badge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.track-badge--client {
+  background: var(--brand-50);
+  color: var(--brand-700);
+}
+
+:root[data-theme="dark"] .track-badge--client {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+.track-badge--freelancer {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+:root[data-theme="dark"] .track-badge--freelancer {
+  background: rgba(168, 85, 247, 0.15);
+  color: #d8b4fe;
+  border-color: rgba(168, 85, 247, 0.25);
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.step-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: transform 0.2s ease;
+}
+
+.step-num {
+  flex: 0 0 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-gradient);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.88rem;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+  transition: all 0.25s ease;
+}
+
+:root[data-theme="dark"] .step-num {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.4);
+}
+
+.step-content strong {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  transition: color 0.25s ease;
+}
+
+:root[data-theme="dark"] .step-content strong {
+  color: #f3f4f6;
+}
+
+.step-content p {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+  transition: color 0.25s ease;
+}
+
+:root[data-theme="dark"] .step-content p {
+  color: #9ca3af;
+}
+
+/* 48-Hour Card */
+.rule-card {
+  margin: 40px 0;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  color: #ffffff;
+  border-radius: var(--r-xl);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  border: 1px solid transparent;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root[data-theme="dark"] .rule-card {
+  background: linear-gradient(135deg, rgba(18, 18, 24, 0.75) 0%, rgba(30, 27, 75, 0.6) 100%);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), 0 0 24px rgba(139, 92, 246, 0.15);
+}
+
+@media (max-width: 768px) {
+  .rule-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.rule-icon {
+  font-size: 3rem;
+  flex: 0 0 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+:root[data-theme="dark"] .rule-icon {
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  color: #c4b5fd;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.2);
+}
+
+.rule-body h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 10px;
+  color: #ffffff;
+  transition: color 0.25s ease;
+}
+
+.rule-body p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #c7d2fe;
+  margin: 0;
+  transition: color 0.25s ease;
+}
+
+:root[data-theme="dark"] .rule-body p {
+  color: #c4b5fd;
+}

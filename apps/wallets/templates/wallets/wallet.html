@@ -1,0 +1,140 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Wallet — Skillbridge{% endblock %}
+{% block page_heading %}Wallet{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'wallets/css/wallet.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="wallet-hero card">
+  <div class="card__body">
+    <div class="wallet-buckets">
+      <div class="bucket bucket--available">
+        <p class="stat__label">Available</p>
+        <p class="coin coin--xl">{{ info.available|coin }}</p>
+        <p class="tiny muted">Spendable right now</p>
+      </div>
+      <div class="bucket">
+        <p class="stat__label">Reserved</p>
+        <p class="coin coin--lg">{{ info.reserved|coin }}</p>
+        <p class="tiny muted">Held against published jobs and pending payouts</p>
+      </div>
+      <div class="bucket">
+        <p class="stat__label">In escrow</p>
+        <p class="coin coin--lg">{{ info.escrow|coin }}</p>
+        <p class="tiny muted">Committed to funded projects</p>
+      </div>
+      <div class="bucket bucket--total">
+        <p class="stat__label">Total</p>
+        <p class="coin coin--lg">{{ info.total|coin }}</p>
+        <p class="tiny muted">{{ SKILLCOIN.CODE }} · 1 = 1 BDT</p>
+      </div>
+    </div>
+
+    <div class="btn-group" style="margin-top:var(--gap-4); display: flex; gap: var(--gap-3); align-items: center; flex-wrap: wrap;">
+      <a class="btn btn--primary" href="{% url 'wallets:deposit' %}" style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="font-weight: 800; font-size: 1.1rem; line-height: 1;">+</span> Add Funds / Deposit
+      </a>
+      <a class="btn btn--secondary" href="{% url 'wallets:withdraw' %}" style="display: inline-flex; align-items: center; gap: 6px;">
+        <span style="font-weight: 800; font-size: 1.1rem; line-height: 1;">↓</span> Withdraw Funds
+      </a>
+      <a class="btn btn--ghost" href="{% url 'wallets:transactions' %}">Full ledger</a>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid--2" style="margin-top:var(--gap-5)">
+  <section class="card">
+    <div class="card__head">
+      <h2>Recent movements</h2>
+      <a href="{% url 'wallets:transactions' %}">All →</a>
+    </div>
+    <div class="card__body card__body--tight">
+      {% for t in recent %}
+        <div class="list-row" style="padding-inline:0">
+          <div class="list-row__main">
+            <span class="list-row__title">{{ t.get_transaction_type_display }}</span>
+            <span class="list-row__meta">{{ t.description|default:"—" }}</span>
+            <span class="tiny faint mono">{{ t.internal_transaction_id }}</span>
+          </div>
+          <span class="coin {% if t.delta > 0 %}coin--in{% elif t.delta < 0 %}coin--out{% endif %}">
+            {% if t.delta > 0 %}+{% endif %}{{ t.delta|coin }}
+          </span>
+          <span class="tiny faint nowrap">{{ t.created_at|date:"j M" }}</span>
+        </div>
+      {% empty %}
+        <div class="empty"><p>No movements yet.</p></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <div class="stack">
+    <section class="card">
+      <div class="card__head">
+        <h2>Wallet details</h2>
+      </div>
+      <div class="card__body">
+        <p class="small muted">SkillCoin is used for transactions on SkillBridge. Your available balance can be used directly across the platform.</p>
+        <div style="margin-top:var(--gap-3); display: flex; gap: 8px; flex-wrap: wrap;">
+          <a class="btn btn--primary btn--sm" href="{% url 'wallets:deposit' %}">+ Deposit</a>
+          <a class="btn btn--secondary btn--sm" href="{% url 'wallets:withdraw' %}">↓ Withdraw</a>
+          <a class="btn btn--ghost btn--sm" href="{% url 'wallets:transactions' %}">Ledger</a>
+        </div>
+      </div>
+    </section>
+
+    {% if deposits %}
+      <section class="card">
+        <div class="card__head"><h2>Recent deposits</h2></div>
+        <div class="card__body card__body--tight">
+          {% for dep in deposits %}
+            <div class="list-row" style="padding-inline:0">
+              <div class="list-row__main">
+                <span class="list-row__title">{{ dep.transaction_id|default:"Added Funds" }}</span>
+                <span class="list-row__meta mono tiny">{{ dep.reference_id }}</span>
+              </div>
+              <span class="coin coin--in">+{{ dep.amount|coin }}</span>
+              <span class="tag {% if dep.status == 'APPROVED' %}tag--ok{% elif dep.status == 'PENDING' %}tag--warn{% else %}tag--danger{% endif %} tiny">
+                {{ dep.get_status_display }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if withdrawals %}
+      <section class="card">
+        <div class="card__head"><h2>Recent withdrawals</h2></div>
+        <div class="card__body card__body--tight">
+          {% for wdr in withdrawals %}
+            <div class="list-row" style="padding-inline:0">
+              <div class="list-row__main">
+                <span class="list-row__title">{{ wdr.get_payment_method_display }} ({{ wdr.account_number }})</span>
+                <span class="list-row__meta mono tiny">{{ wdr.reference_id }}</span>
+              </div>
+              <span class="coin coin--out">-{{ wdr.amount|coin }}</span>
+              <span class="tag {% if wdr.status == 'APPROVED' %}tag--ok{% elif wdr.status == 'PENDING' %}tag--warn{% else %}tag--danger{% endif %} tiny">
+                {{ wdr.get_status_display }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if user.is_freelancer and earnings.by_project %}
+      <section class="card">
+        <div class="card__head"><h2>Earnings by project</h2></div>
+        <div class="card__body card__body--tight">
+          {% for row in earnings.by_project %}
+            <div class="row row--between" style="padding:var(--gap-2) 0">
+              <span class="small truncate">{{ row.project__title|default:"Other" }}</span>
+              <span class="coin small">{{ row.total|coin }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

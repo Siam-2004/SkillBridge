@@ -1,0 +1,59 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Transactions — Skillbridge{% endblock %}
+{% block page_heading %}Transactions{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'wallets/css/transactions.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<p class="muted" style="margin-bottom:var(--gap-4)">
+  Every movement of your SkillCoin, in order. The ledger is append-only: a
+  correction is a new entry, never an edit.
+</p>
+
+<form method="get" class="row row--tight row--wrap ledger-filters" data-autosubmit>
+  {% for field in form %}
+    <span class="field" style="margin:0">
+      <label class="sr-only" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+    </span>
+  {% endfor %}
+  <button class="btn btn--secondary btn--sm" type="submit">Filter</button>
+  <a class="btn btn--ghost btn--sm" href="{% url 'wallets:transactions' %}">Clear</a>
+</form>
+
+{% if page.object_list %}
+  <div class="card card--flush">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Reference</th><th>Type</th><th>Description</th>
+            <th>Movement</th><th class="num">Amount</th><th class="num">Balance after</th><th>When</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in page.object_list %}
+            <tr>
+              <td class="mono tiny">{{ t.internal_transaction_id }}</td>
+              <td>{% status_pill t.transaction_type t.get_transaction_type_display %}</td>
+              <td class="small">
+                {{ t.description|default:"—" }}
+                {% if t.project %}<br><span class="tiny faint">{{ t.project.title }}</span>{% endif %}
+              </td>
+              <td class="tiny muted nowrap">{{ t.from_bucket|title }} → {{ t.to_bucket|title }}</td>
+              <td class="num coin {% if t.delta > 0 %}coin--in{% elif t.delta < 0 %}coin--out{% endif %}">
+                {% if t.delta > 0 %}+{% endif %}{{ t.delta|coin }}
+              </td>
+              <td class="num coin">{{ t.balance_after|coin }}</td>
+              <td class="small nowrap">{{ t.created_at|date:"j M Y" }}<br><span class="tiny faint">{{ t.created_at|date:"H:i" }}</span></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% include "components/pagination.html" %}
+{% else %}
+  {% include "components/empty-state.html" with title="No transactions match" body="Clear the filters to see the whole ledger." %}
+{% endif %}
+{% endblock %}

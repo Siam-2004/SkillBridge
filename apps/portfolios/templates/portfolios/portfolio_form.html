@@ -1,0 +1,49 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}{% if item %}Edit{% else %}Add{% endif %} portfolio work — Skillbridge{% endblock %}
+{% block page_heading %}{% if item %}Edit portfolio entry{% else %}Add portfolio work{% endif %}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'portfolios/css/portfolio.css' %}?v=4.0">{% endblock %}
+
+{% block content %}
+<div class="grid grid--sidebar">
+  <section class="card">
+    <div class="card__body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include "components/form.html" %}
+        <div class="form-actions">
+          <button class="btn btn--primary" type="submit">Save</button>
+          <a class="btn btn--ghost" href="{% url 'portfolios:my_portfolio' %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <aside class="stack">
+    <div class="alert alert--info">
+      <span class="alert__icon" aria-hidden="true">i</span>
+      <div class="alert__body">
+        Confidential work stays private. If any part of it cannot be shown,
+        write that in the confidentiality note and leave the entry unpublished.
+      </div>
+    </div>
+
+    {% if item %}
+      <div class="card">
+        <div class="card__head"><h2>Images</h2></div>
+        <div class="card__body">
+          {% for image in item.media.all %}
+            <img src="{{ image.image.url }}" alt="{{ image.alt_text }}"
+                 style="border-radius:var(--r);margin-bottom:var(--gap-2)">
+          {% endfor %}
+          <form method="post" action="{% url 'portfolios:add_media' item.public_id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% include "components/form.html" with form=media_form %}
+            <button class="btn btn--secondary btn--block" type="submit">Add image</button>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

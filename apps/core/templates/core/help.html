@@ -1,0 +1,48 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}Help centre — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'core/css/legal.css' %}?v=4.0">{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Help centre</h1>
+</div>
+<div class="prose">
+<h2>Money</h2>
+<h3>How do I add SkillCoin?</h3>
+<p>Send the amount to the bKash or Nagad number shown on the deposit page, then
+submit the amount, the number you sent from, and the provider's transaction ID.
+An administrator confirms the transfer arrived and your balance is credited.
+Each transaction ID can be claimed once.</p>
+
+<h3>Why is some of my balance "reserved"?</h3>
+<p>Because it is committed. Publishing a job reserves its budget; requesting a
+withdrawal reserves the amount while the payout is prepared. It is still your
+money — it just cannot be spent twice.</p>
+
+<h3>How do I withdraw?</h3>
+<p>Request a payout to your bKash or Nagad number. The amount is reserved
+immediately, and an administrator sends the money and records the provider's
+transaction ID. If a payout fails, the reservation returns to your available
+balance.</p>
+
+<h2>Work</h2>
+<h3>Can I change an agreement after accepting it?</h3>
+<p>Not unilaterally. Raise a modification or a deadline extension; it takes
+effect when the other party approves it, and the previous terms are kept.</p>
+
+<h3>What happens if I miss the 48-hour window?</h3>
+<p>The payment for that task releases to the freelancer automatically. Request
+a revision or raise a dispute before the window closes if you are not happy.</p>
+
+<h3>Who can see my project files?</h3>
+<p>Only the client, the hired freelancer and active team members. Files are
+served through a permission check every single time — there is no public URL
+for a private file.</p>
+
+<h2>Disputes</h2>
+<h3>What does raising a dispute do?</h3>
+<p>It freezes the escrow on that project immediately, so nothing can be
+released while it is open. Both sides give a statement and attach evidence,
+and an administrator decides: release, refund, split, or continue to hold.</p>
+</div>
+{% endblock %}

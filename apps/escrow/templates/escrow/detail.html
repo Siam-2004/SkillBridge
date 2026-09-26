@@ -1,0 +1,61 @@
+{% extends "layouts/dashboard.html" %}
+{% block title %}Escrow — {{ project.title }}{% endblock %}
+{% block page_heading %}Escrow{% endblock %}
+
+{% block content %}
+<section class="card">
+  <div class="card__head">
+    <h2>{{ project.title }}</h2>
+    {% status_pill escrow.status %}
+  </div>
+  <div class="card__body">
+    {% if escrow.is_locked %}
+      <div class="alert alert--warning">
+        <span class="alert__icon" aria-hidden="true">▲</span>
+        <div class="alert__body">
+          <strong>Frozen.</strong> {{ escrow.lock_reason }}
+          Nothing can be released or refunded until this is resolved.
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="dash-grid" style="margin-bottom:0">
+      <div class="stat"><p class="stat__label">Funded</p><p class="stat__value coin">{{ escrow.funded_amount|coin }}</p></div>
+      <div class="stat"><p class="stat__label">Still held</p><p class="stat__value coin">{{ escrow.held_amount|coin }}</p></div>
+      <div class="stat"><p class="stat__label">Released</p><p class="stat__value coin">{{ escrow.released_amount|coin }}</p></div>
+      <div class="stat"><p class="stat__label">Refunded</p><p class="stat__value coin">{{ escrow.refunded_amount|coin }}</p></div>
+    </div>
+
+    <div class="meter" style="margin-top:var(--gap-4)">
+      <div class="meter__fill" style="width:{{ escrow.release_percent }}%"></div>
+    </div>
+    <p class="tiny muted" style="margin-top:6px">{{ escrow.release_percent }}% released</p>
+  </div>
+</section>
+
+<section class="card" style="margin-top:var(--gap-5)">
+  <div class="card__head"><h2>Allocations</h2></div>
+  <div class="card__body card__body--tight">
+    {% if allocations %}
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Task</th><th>To</th><th class="num">Amount</th><th>Status</th><th>Released</th></tr></thead>
+          <tbody>
+            {% for a in allocations %}
+              <tr>
+                <td class="small">{% if a.task %}<a href="{{ a.task.get_absolute_url }}">{{ a.task.title }}</a>{% else %}Final project payment{% endif %}</td>
+                <td class="small">{{ a.freelancer.full_name }}</td>
+                <td class="num coin">{{ a.amount|coin }}</td>
+                <td>{% status_pill a.status %}</td>
+                <td class="small">{{ a.released_at|date:"j M Y"|default:"—" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty"><p>No allocations yet. The team owner splits the escrow across tasks.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

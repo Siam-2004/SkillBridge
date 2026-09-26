@@ -1,0 +1,328 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+
+{% block title %}Skillbridge — Find and Hire Skilled Professionals Easily{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'core/css/home.css' %}?v=4.0">{% endblock %}
+
+{% block hero %}
+<section class="hero hero--showcase">
+  <div class="shell hero__shell">
+    <!-- Top Pill Badge -->
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span>STUDENTS FRIENDLY FREELANCE PLATFORM</span>
+    </div>
+
+    <!-- Main Headline with Gradient Accent -->
+    <h1 class="hero-headline">
+      Find and Hire Skilled<br>
+      <span class="hero-gradient-text">Professionals Easily</span>
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="hero__lede">
+      Connect directly with skilled freelancers for your projects. Simple, transparent, and efficient collaboration without unnecessary complexity.
+    </p>
+
+    <!-- Dual Action CTA Buttons -->
+    <div class="hero-actions">
+      <a href="{% url 'accounts:register' %}" class="btn btn--hero-primary">Get Started Now</a>
+      <a href="{% url 'directory:freelancer_list' %}" class="btn btn--hero-secondary">Browse Projects</a>
+    </div>
+
+    <!-- Floating Live Product Mockup Deck -->
+    <div class="hero-deck">
+      <!-- Card 1: Verified Talent Spotlight -->
+      <div class="card hero-deck__card hero-deck__card--left">
+        <div class="row" style="gap:12px;margin-bottom:12px">
+          <div class="avatar avatar--md" style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-weight:800;border:none">MR</div>
+          <div style="min-width:0;text-align:left">
+            <strong style="display:block;font-size:0.95rem;color:var(--text)">Momin Rifat</strong>
+            <span class="tiny muted">Full-Stack & Backend Developer</span>
+          </div>
+          <span class="sb-pill sb-pill--ok" style="margin-left:auto;font-size:0.7rem">★ 5.0</span>
+        </div>
+        <div class="tag-list" style="margin-bottom:10px">
+          <span class="tag">Django</span>
+          <span class="tag">React</span>
+          <span class="tag">FastAPI</span>
+        </div>
+        <div class="row row--between tiny" style="border-top:1px solid var(--line);padding-top:8px">
+          <span class="muted">Hourly Rate</span>
+          <span class="coin" style="color:var(--brand-600);font-weight:700">1,200 BDT/hr</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Centerpiece Active Escrow Guarantee Card -->
+      <div class="card hero-deck__card hero-deck__card--center">
+        <div class="row row--between" style="margin-bottom:10px">
+          <span class="sb-pill sb-pill--info" style="font-size:0.75rem">🔒 ESCROW SECURED</span>
+          <span class="tiny muted">Project #SB-2048</span>
+        </div>
+        <strong style="display:block;font-size:1.05rem;color:var(--text);margin-bottom:4px;text-align:left">
+          E-Commerce Platform Redesign
+        </strong>
+        <p class="tiny muted" style="text-align:left;margin-bottom:12px">
+          Funds locked before work begins · 48h approval protection
+        </p>
+        <div class="row row--between" style="background:var(--surface-2);padding:10px 14px;border-radius:var(--r-md);margin-bottom:8px">
+          <span class="tiny muted">Locked Budget</span>
+          <span class="coin bold" style="color:#10b981;font-size:1.1rem">35,000 SKC</span>
+        </div>
+        <div class="tiny" style="color:#10b981;display:flex;align-items:center;gap:6px">
+          <span>✓</span> 100% Payout Guaranteed on Delivery
+        </div>
+      </div>
+
+      <!-- Card 3: Local Settlement Trust Card -->
+      <div class="card hero-deck__card hero-deck__card--right">
+        <div class="row" style="gap:10px;margin-bottom:8px;text-align:left">
+          <span style="font-size:1.4rem">⚡</span>
+          <div>
+            <strong style="display:block;font-size:0.92rem;color:var(--text)">Local Payouts</strong>
+            <span class="tiny muted">bKash · Nagad · Bank</span>
+          </div>
+        </div>
+        <p class="tiny muted" style="text-align:left;margin-bottom:10px">
+          1 SkillCoin = 1 BDT Flat. Zero conversion fees. Verified directly by platform administrators.
+        </p>
+        <div class="row row--between tiny" style="border-top:1px solid var(--line);padding-top:8px">
+          <span class="muted">Admin Approved</span>
+          <span style="color:#10b981;font-weight:700">Instant Ledger</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Bar with Trending Quick Pills -->
+    <div class="hero-search-container">
+      <form class="hero-search" action="{% url 'core:search' %}" method="get" role="search">
+        <label class="sr-only" for="hero-q">Search</label>
+        <span class="hero-search__icon">🔍</span>
+        <input id="hero-q" type="search" name="q" placeholder="Search by role, skill (e.g. Django, Figma, React, Flutter, Video Editing)...">
+        <button class="btn btn--primary" type="submit">Search</button>
+      </form>
+
+      <div class="trending-pills">
+        <span class="trending-label">Trending:</span>
+        <a href="{% url 'core:search' %}?q=Django" class="trending-pill">Django</a>
+        <a href="{% url 'core:search' %}?q=React" class="trending-pill">React</a>
+        <a href="{% url 'core:search' %}?q=Figma" class="trending-pill">UI/UX Figma</a>
+        <a href="{% url 'core:search' %}?q=Flutter" class="trending-pill">Flutter</a>
+        <a href="{% url 'core:search' %}?q=Python" class="trending-pill">Python</a>
+      </div>
+    </div>
+
+    <!-- Key Metrics Strip -->
+    <div class="stat-strip">
+      <div class="card stat">
+        <p class="stat__label">Verified Clients</p>
+        <p class="stat__value">{{ stats.total_clients }}</p>
+      </div>
+      <div class="card stat">
+        <p class="stat__label">Skilled Freelancers</p>
+        <p class="stat__value">{{ stats.total_freelancers }}</p>
+      </div>
+      <div class="card stat">
+        <p class="stat__label">Settled in Escrow</p>
+        <p class="stat__value">{{ stats.total_paid_out }}</p>
+      </div>
+      <div class="card stat">
+        <p class="stat__label">Platform Rating</p>
+        <p class="stat__value">{{ stats.average_rating }} ★</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+
+<!-- ---------------------------------------------------------------------- -->
+<!-- SECTION: BENTO GRID SHOWCASE (Different, Modern SaaS Structure) -->
+<!-- ---------------------------------------------------------------------- -->
+<section class="section">
+  <div class="section-head" style="text-align:center;margin-bottom:var(--gap-6);display:block">
+    <span class="sb-pill sb-pill--info" style="margin-bottom:10px">SECURITY & FAIR WORK</span>
+    <h2 style="font-size:clamp(1.8rem, 3.2vw, 2.5rem);font-weight:900;letter-spacing:-0.03em">
+      Built for the Next Generation of Work
+    </h2>
+    <p class="muted" style="max-width:58ch;margin:0 auto">
+      No unpaid work, no hidden platform commissions, and zero trust issues. Everything is mathematically secured on our ledger.
+    </p>
+  </div>
+
+  <div class="bento-grid">
+    <!-- Bento 1: Large Wide Feature (2 Cols) -->
+    <div class="card bento-card bento-card--wide">
+      <div class="bento-card__content">
+        <span class="bento-tag">CORE ESCROW PROTOCOL</span>
+        <h3>Pre-Funded Milestone Protection</h3>
+        <p class="muted">
+          Clients deposit the project budget before the work starts. Freelancers are 100% sure the money exists and will be paid upon verified delivery.
+        </p>
+        <!-- Flow Indicator -->
+        <div class="escrow-flow">
+          <div class="flow-step">
+            <span class="flow-step__num">1</span>
+            <strong>Client Funds</strong>
+            <span class="tiny muted">Locked in Escrow</span>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step">
+            <span class="flow-step__num">2</span>
+            <strong>Work Begins</strong>
+            <span class="tiny muted">Terms Accepted</span>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step">
+            <span class="flow-step__num">3</span>
+            <strong>Review Delivery</strong>
+            <span class="tiny muted">48h Verification</span>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step flow-step--active">
+            <span class="flow-step__num">✓</span>
+            <strong>Instant Payout</strong>
+            <span class="tiny muted">Zero Delay</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bento 2: Student & Talent Friendly -->
+    <div class="card bento-card">
+      <div class="bento-card__content">
+        <span class="bento-tag">ACCESSIBLE</span>
+        <h3>Student & Graduate Friendly</h3>
+        <p class="muted">
+          No paid bid proposals or fake hurdles. Showcase your GitHub, Figma prototypes, and real delivered skills to get hired by local and global clients.
+        </p>
+      </div>
+      <div class="bento-badge-row">
+        <span class="sb-pill sb-pill--ok">✓ Free Registration</span>
+        <span class="sb-pill sb-pill--neutral">✓ Direct Portfolio Links</span>
+      </div>
+    </div>
+
+    <!-- Bento 3: Local 1:1 Currency Settlement -->
+    <div class="card bento-card">
+      <div class="bento-card__content">
+        <span class="bento-tag">TRANSPARENCY</span>
+        <h3>1 SkillCoin = 1 BDT Flat</h3>
+        <p class="muted">
+          Zero conversion fees or unfair international markups. Direct mobile banking through bKash, Nagad, and local bank transfers with admin audit approval.
+        </p>
+      </div>
+      <div class="bento-badge-row">
+        <span class="sb-pill sb-pill--info">bKash</span>
+        <span class="sb-pill sb-pill--warn">Nagad</span>
+        <span class="sb-pill sb-pill--neutral">Bank Wire</span>
+      </div>
+    </div>
+
+    <!-- Bento 4: Immutable Ledger Audit -->
+    <div class="card bento-card bento-card--wide">
+      <div class="bento-card__content">
+        <span class="bento-tag">AUDITABILITY</span>
+        <h3>Immutable Double-Entry Ledger</h3>
+        <p class="muted">
+          Every single movement of funds is permanently recorded on an audit ledger. Both clients and freelancers can inspect transaction statements anytime.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------------- -->
+<!-- SECTION: BROWSE CATEGORIES -->
+<!-- ---------------------------------------------------------------------- -->
+{% if categories %}
+<section class="section">
+  <div class="section-head">
+    <div>
+      <span class="sb-pill sb-pill--neutral" style="margin-bottom:6px">TOP FIELDS</span>
+      <h2>Explore by Specialized Category</h2>
+    </div>
+    <a href="{% url 'core:categories' %}" class="btn btn--secondary btn--sm">View All Categories →</a>
+  </div>
+  <div class="category-grid">
+    {% for category in categories %}
+      <a class="category-tile" href="{% url 'core:categories' %}">
+        <div class="row row--between" style="margin-bottom:8px">
+          <strong>{{ category.name }}</strong>
+          <span style="font-size:1.1rem;opacity:0.7">↗</span>
+        </div>
+        <span>Browse verified talent & active projects</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ---------------------------------------------------------------------- -->
+<!-- SECTION: VETTED FREELANCERS READY TO WORK -->
+<!-- ---------------------------------------------------------------------- -->
+{% if featured_freelancers %}
+<section class="section">
+  <div class="section-head">
+    <div>
+      <span class="sb-pill sb-pill--ok" style="margin-bottom:6px">VERIFIED TALENT</span>
+      <h2>Freelancers Ready for Your Next Project</h2>
+    </div>
+    <a href="{% url 'directory:freelancer_list' %}" class="btn btn--secondary btn--sm">Browse Full Directory →</a>
+  </div>
+  <div class="grid grid--4">
+    {% for profile in featured_freelancers %}{% include "components/freelancer-card.html" %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ---------------------------------------------------------------------- -->
+<!-- SECTION: TWO-WAY VALUE COMPARISON -->
+<!-- ---------------------------------------------------------------------- -->
+<section class="section">
+  <div class="value-panel">
+    <div class="card value-card">
+      <div class="card__body">
+        <span class="sb-pill sb-pill--info" style="margin-bottom:12px">FOR CLIENTS</span>
+        <h2>Hire With Guaranteed Peace of Mind</h2>
+        <p class="muted">Post requirements, fund once into escrow, and only release when you are fully satisfied.</p>
+        <ul class="value-list">
+          <li><span class="num">1</span><div><strong>Deposit into Escrow</strong><br><span class="small muted">Send via bKash/Nagad/Bank. Funds stay locked until you inspect the delivered work.</span></div></li>
+          <li><span class="num">2</span><div><strong>Choose Vetted Talent</strong><br><span class="small muted">Browse real portfolios and compare transparent hourly rates.</span></div></li>
+          <li><span class="num">3</span><div><strong>Review & Approve</strong><br><span class="small muted">You get a dedicated 48-hour window per delivery to request changes or approve.</span></div></li>
+        </ul>
+        <a class="btn btn--primary" href="{% url 'accounts:register' %}?role=CLIENT">Start Hiring as Client</a>
+      </div>
+    </div>
+
+    <div class="card value-card">
+      <div class="card__body">
+        <span class="sb-pill sb-pill--ok" style="margin-bottom:12px">FOR FREELANCERS</span>
+        <h2>Work Where Payout is 100% Guaranteed</h2>
+        <p class="muted">Never chase unpaying clients again. Every job on Skillbridge has its budget already reserved.</p>
+        <ul class="value-list">
+          <li><span class="num">1</span><div><strong>Build Your Portfolio</strong><br><span class="small muted">Link live websites, GitHub repositories, and design work directly on your profile.</span></div></li>
+          <li><span class="num">2</span><div><strong>Propose on Funded Projects</strong><br><span class="small muted">Every opportunity has its budget confirmed before you submit a proposal.</span></div></li>
+          <li><span class="num">3</span><div><strong>Automated Payouts</strong><br><span class="small muted">Once submitted, client silence automatically approves and releases your payment.</span></div></li>
+        </ul>
+        <a class="btn btn--primary" href="{% url 'accounts:register' %}?role=FREELANCER">Join as Freelancer</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------------- -->
+<!-- SECTION: CALL TO ACTION -->
+<!-- ---------------------------------------------------------------------- -->
+<section class="section">
+  <div class="cta-band">
+    <h2>Fair Collaboration. Guaranteed Payments.</h2>
+    <p>Every agreement is locked, every SkillCoin transaction is verified on the audit ledger, and no payment moves without rules both sides accepted.</p>
+    <div class="btn-group" style="justify-content:center;margin-top:var(--gap-5);gap:16px">
+      <a class="btn btn--secondary btn--lg" href="{% url 'accounts:register' %}">Create Your Free Account</a>
+      <a class="btn btn--ghost btn--lg" href="{% url 'core:how_it_works' %}" style="color:#fff">Learn How It Works</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

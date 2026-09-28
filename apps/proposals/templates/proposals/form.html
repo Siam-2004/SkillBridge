@@ -1,1 +1,92 @@
 {% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Submit Proposal — {{ job.title }} — Skillbridge{% endblock %}
+{% block page_heading %}Submit a Proposal{% endblock %}
+
+{% block content %}
+<div class="page-head" style="margin-bottom:var(--gap-5)">
+  <h1 style="font-size:1.6rem;margin-bottom:6px">Apply for: {{ job.title }}</h1>
+  <p class="lede">
+    {{ job.category.name }} · Posted by {{ job.client.full_name }} ·
+    <span class="coin bold">{{ job.budget|coins }}</span> committed budget
+  </p>
+</div>
+
+<div class="grid grid--sidebar">
+  <section class="card">
+    <div class="card__head">
+      <h2>Your Terms &amp; Proposal</h2>
+    </div>
+    <div class="card__body">
+      <form method="post" novalidate id="proposal-form" class="form form--wide">
+        {% csrf_token %}
+        {% include "components/form.html" %}
+        <div class="form-actions" style="margin-top:var(--gap-5)">
+          <button class="btn btn--primary btn--lg" type="submit">
+            Submit Proposal
+          </button>
+          <a class="btn btn--ghost" href="{{ job.get_absolute_url }}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <aside class="stack">
+    <div class="card">
+      <div class="card__head"><h2>Job Overview</h2></div>
+      <div class="card__body">
+        <p class="stat__label">Client's Budget</p>
+        <p class="coin coin--lg">{{ job.budget|coins }}</p>
+        <p class="tiny muted" style="margin-top:4px">
+          {% if job.budget_reserved_at %}
+            <span class="sb-pill sb-pill--ok">Budget Reserved</span>
+          {% else %}
+            Budget committed
+          {% endif %}
+        </p>
+
+        <hr style="margin:var(--gap-3) 0">
+
+        <dl class="dl" style="font-size:0.9rem">
+          <dt>Deadline</dt>
+          <dd>{{ job.deadline|date:"j M Y" }}</dd>
+          {% if job.estimated_days %}
+            <dt>Client estimate</dt>
+            <dd>{{ job.estimated_days }} days</dd>
+          {% endif %}
+          <dt>Experience</dt>
+          <dd>{{ job.get_experience_level_display }}</dd>
+          <dt>Complexity</dt>
+          <dd>{{ job.get_complexity_display }}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head"><h2>Deliverables required</h2></div>
+      <div class="card__body small muted">
+        {% if job.requirements %}
+          <ul style="padding-left:1.1em;line-height:1.6">
+            {% for line in job.requirements|split:"\n" %}
+              <li>{{ line }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>{{ job.description|truncatewords:30 }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head"><h2>Proposal Tips</h2></div>
+      <div class="card__body small muted">
+        <ul style="padding-left:1.1em;line-height:1.6">
+          <li>Be realistic with your timeline and quote.</li>
+          <li>Clearly break down what you will deliver.</li>
+          <li>Mention prior relevant experience or share similar past work.</li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

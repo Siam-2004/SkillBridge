@@ -1,16 +1,3 @@
-"""The **only** code in Skillbridge permitted to change a wallet balance. forbids ``wallet.available_balance += amount`` anywhere in business logic.  Every
-movement goes through :func:`move`, which performs, inside a single
-``transaction.atomic()`` block:
-
-    validation → row lock → balance update → ledger row → audit row → commit
-
-Notification is fired by the caller after commit, because a notification is a
-business event, not part of the balance change.
-
-Callers never construct :class:`WalletTransaction` themselves — if a new kind of
-movement is needed, add a named helper *here* so the invariants stay in one
-place and the ledger stays complete.
-"""
 
 from __future__ import annotations
 

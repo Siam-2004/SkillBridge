@@ -1,15 +1,3 @@
-"""Escrow: money committed to a project and no longer either party's to spend.
-
-Escrow is the platform's promise in table form. Once a client funds a project,
-the coins leave their spendable balance and sit here until a task is approved,
-a project is completed, or a dispute is resolved. Two consequences follow, and
-both are enforced by database constraints rather than by convention:
-
-* the four amounts must always reconcile — what was funded equals what is still
-  held plus what has been released plus what has been refunded;
-* a task payment is drawn from ``held_amount`` and never from the client's
-  available balance, so a client cannot be charged twice for the same work.
-"""
 
 from __future__ import annotations
 

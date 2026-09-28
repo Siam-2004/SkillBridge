@@ -1,9 +1,3 @@
-"""Wallet-level operations that are not a deposit or a withdrawal.
-
-Balance movements live in ``wallets.ledger``; deposits and withdrawals live in
-``apps.payments``. What is left here is administration of the wallet itself and
-the reconciliation check that proves stored balances still match the ledger.
-"""
 
 from __future__ import annotations
 

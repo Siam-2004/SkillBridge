@@ -1,9 +1,3 @@
-"""Wallets and the ledger.
-
-Financial history is read-only in the admin. A mistake is corrected with a new
-adjustment transaction, never by editing a row — a ledger you can edit is not
-a ledger.
-"""
 
 from django.contrib import admin
 

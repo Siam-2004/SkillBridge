@@ -1,15 +1,3 @@
-"""Escrow: funding it, splitting it, and paying it out.
-
-This module owns the escrow *row*; the coins themselves are moved by
-``wallets.ledger``. Every function that changes an escrow balance keeps the
-``escrow_balances_reconcile`` constraint true — held + released + refunded
-equals funded — so the database rejects any arithmetic slip.
-
-The rule that shapes the release functions: when a project's money is already
-in escrow, paying a task must not touch the client's available balance again.
-``release_task_payment`` therefore only ever moves escrow → freelancer, and the
-client's spendable balance is not even a parameter.
-"""
 
 from __future__ import annotations
 

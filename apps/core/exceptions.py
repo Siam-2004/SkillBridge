@@ -1,16 +1,8 @@
-"""Domain exceptions.
-
-Services raise these instead of returning error strings, so a view, a DRF
-endpoint, a Celery task and a management command all get the same failure
-semantics. ``DomainError`` carries a user-safe message; internals stay in logs.
-"""
 
 from __future__ import annotations
 
-
 class DomainError(Exception):
     """Base class for every expected, user-visible business failure."""
-
     status_code = 400
     default_message = "That action could not be completed."
 
@@ -49,10 +41,6 @@ class DuplicateProposal(DomainError):
     default_message = "You already have an active proposal submitted for this job."
 
 
-# --------------------------------------------------------------------------- #
-# Financial failures — deliberately distinct so the money path can be audited
-# and alerted on separately from ordinary validation noise.
-# --------------------------------------------------------------------------- #
 class FinancialError(DomainError):
     default_message = "This financial operation could not be completed."
 

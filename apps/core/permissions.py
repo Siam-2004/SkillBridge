@@ -1,10 +1,3 @@
-"""Authorisation primitives.
-
-every protected operation to pass *authentication → role
-permission → object permission → business validation*.  These helpers are the
-role and object layers; the business layer lives in each app's ``services.py``.
-They raise rather than return False so a caller cannot forget to check.
-"""
 
 from __future__ import annotations
 
@@ -70,10 +63,6 @@ def require_verified_freelancer(user):
     return require_verified(user)
 
 
-# --------------------------------------------------------------------------- #
-# View decorators — translate a DomainError into a redirect + flash message so
-# templates never have to branch on permissions.
-# --------------------------------------------------------------------------- #
 def _guard(check):
     def decorator(view):
         @wraps(view)

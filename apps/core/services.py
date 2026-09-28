@@ -1,8 +1,3 @@
-"""Activity recording.
-
-Every important state change writes one row here so that a project's history
-reads as a narrative. Sensitive actions additionally write to ``apps.audit``.
-"""
 
 from __future__ import annotations
 
@@ -23,11 +18,6 @@ def record_activity(
     visibility: str = ActivityLog.Visibility.PARTICIPANTS,
     **metadata,
 ) -> ActivityLog:
-    """Write one activity row.
-
-    ``actor`` falls back to whoever is handling the current request, so a
-    service three layers deep does not need the caller to thread it through.
-    """
     if actor is None:
         actor = current_actor()
 

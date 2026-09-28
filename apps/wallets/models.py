@@ -1,17 +1,3 @@
-"""The SkillCoin wallet and its ledger.
-
-Two invariants are enforced by database ``CheckConstraint``s rather than only
-in Python, because a partial financial state must be impossible — even if some
-future code path forgets to go through the service layer, the database refuses
-the write:
-
-* no balance bucket may go negative;
-* a ledger row's amount must be positive, with direction carried by the bucket
-pair, so an "amount" can never be read with the wrong sign.
-
-Every row also records the wallet total before and after, which is what lets
-the ledger be replayed and checked against the stored balances.
-"""
 
 from __future__ import annotations
 

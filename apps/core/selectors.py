@@ -1,9 +1,3 @@
-"""Read-only queries for platform-wide figures.
-
-The home page must never show a hardcoded number, so every statistic it
-displays is computed here from live rows and cached briefly in Django's
-default local-memory cache. The cache is an optimisation, never a dependency.
-"""
 
 from __future__ import annotations
 

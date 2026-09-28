@@ -1,8 +1,3 @@
-"""Escrow, seen from the project it belongs to.
-
-Read-only. Funding happens from the agreement, and releases happen from a task
-approval or the final project approval — each of which has its own service.
-"""
 
 from __future__ import annotations
 

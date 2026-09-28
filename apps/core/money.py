@@ -1,12 +1,3 @@
-"""SkillCoin money primitives.
-
-Every amount in Skillbridge is a ``Decimal`` with two decimal places and
-1 SkillCoin == 1 BDT.  Floats are never used for money: they are not
-exact, and the rules require that a financial operation either lands perfectly or
-rolls back entirely.  ``MoneyField()`` is the only column type used for balances,
-budgets, allocations and ledger amounts so rounding behaves identically
-everywhere.
-"""
 
 from __future__ import annotations
 

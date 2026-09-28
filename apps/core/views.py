@@ -23,11 +23,6 @@ from apps.core.selectors import category_tree, homepage_blocks, platform_stats
 # Helpers used by every app's views
 # --------------------------------------------------------------------------- #
 def paginate(request, queryset, per_page: int = 20):
-    """Paginate, and hand back the querystring with ``page`` removed.
-
-    Templates use the returned querystring to build page links that keep every
-    active filter, which is what makes job and freelancer search usable.
-    """
     paginator = Paginator(queryset, per_page)
     number = request.GET.get("page") or 1
     try:
@@ -43,12 +38,6 @@ def paginate(request, queryset, per_page: int = 20):
 
 
 def handle_domain_errors(view):
-    """Turn a ``DomainError`` into a flash message or a JSON error.
-
-    Services raise; views do not each re-implement the translation. A fetch()
-    caller gets JSON with the right status, a normal form post gets a message
-    and a redirect back to where it came from.
-    """
 
     @wraps(view)
     def wrapper(request, *args, **kwargs):
@@ -72,9 +61,6 @@ def _respond(request, exc: DomainError):
             body["errors"] = exc.errors
         return JsonResponse(body, status=exc.status_code)
 
-    # An authorisation failure gets a real 403. Redirecting would hide it
-    # behind whatever page the person came from, and would report "denied" with
-    # a success status code.
     if isinstance(exc, PermissionDenied):
         return render(request, "errors/403.html", {"reason": exc.message}, status=403)
     if isinstance(exc, NotVerified):
@@ -92,15 +78,8 @@ def wants_json(request) -> bool:
     )
 
 
-# --------------------------------------------------------------------------- #
-# Public pages
-# --------------------------------------------------------------------------- #
 def home(request):
-    """The marketing home page.
 
-    Every figure shown is read live. Hardcoding them would mean the front page
-    could tell a visitor something the database does not support.
-    """
     from apps.profiles.selectors import featured_freelancers
 
     return render(

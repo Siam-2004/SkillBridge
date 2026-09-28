@@ -1,1 +1,269 @@
 {% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}{{ job.title }} — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'marketplace/css/job_detail.css' %}">{% endblock %}
+
+{% block breadcrumbs %}
+  {% include "components/breadcrumbs.html" with crumbs=crumbs %}
+{% endblock %}
+
+{% block content %}
+<div class="grid grid--sidebar">
+  <article>
+    <div class="card">
+      <div class="card__body">
+        <div class="row row--between row--top">
+          <div style="min-width:0">
+            <h1 style="font-size:1.6rem">{{ job.title }}</h1>
+            <p class="muted small">
+              {{ job.category.name }} · posted {{ job.published_at|default:job.created_at|timesince }} ago
+              · {{ job.view_count }} view{{ job.view_count|pluralize }}
+            </p>
+          </div>
+          {% status_pill job.status %}
+        </div>
+
+        <div class="tag-list" style="margin:var(--gap-4) 0">
+          {% for skill in job.skills.all %}<span class="tag">{{ skill.name }}</span>{% endfor %}
+        </div>
+
+        <h2>About the work</h2>
+        <p style="white-space:pre-line">{{ job.description }}</p>
+
+        {% if job.requirements %}
+          <h2>Deliverables</h2>
+          <ul>
+            {% for line in job.requirements|split:"\n" %}<li>{{ line }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+
+        {% if job.attachments.all %}
+          <h2>Attachments</h2>
+          <ul>
+            {% for a in job.attachments.all %}
+              <li><a href="{% url 'files:serve' a.public_id %}">{{ a.original_name }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if agreement %}
+      <section class="card" style="margin-top:var(--gap-5);border-top:3px solid var(--brand, #4f46e5)">
+        <div class="card__head" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>Contract Agreement</h2>
+          {% if agreement.status == 'COMPLETED' %}
+            <span class="sb-pill sb-pill--ok">✓ Completed & Paid</span>
+          {% elif agreement.has_submitted_work %}
+            <span class="sb-pill sb-pill--warn">⏳ Deliverables Submitted</span>
+          {% else %}
+            <span class="sb-pill sb-pill--info">⚡ Active Contract</span>
+          {% endif %}
+        </div>
+        <div class="card__body">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--gap-3);margin-bottom:var(--gap-3)">
+            <div>
+              <span class="tiny muted" style="text-transform:uppercase;font-weight:600">Hired Freelancer:</span>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <span class="avatar avatar--sm">{{ agreement.freelancer.initials }}</span>
+                <strong>{{ agreement.freelancer.full_name }}</strong>
+                <span class="tiny muted">(@{{ agreement.freelancer.username }})</span>
+              </div>
+            </div>
+            <div>
+              <span class="tiny muted" style="text-transform:uppercase;font-weight:600">Agreed Price:</span>
+              <div class="coin coin--lg" style="font-weight:700;color:var(--brand,#4f46e5)">{{ agreement.amount|coin }}</div>
+            </div>
+          </div>
+          {% if agreement.deliverables %}
+            <p class="small muted" style="margin-bottom:var(--gap-3)"><strong>Scope:</strong> {{ agreement.deliverables|truncatechars:120 }}</p>
+          {% endif %}
+          <div style="display:flex;gap:var(--gap-2);flex-wrap:wrap">
+            <a class="btn btn--primary btn--sm" href="{{ agreement.get_absolute_url }}">
+              📄 Open Contract & Deliverables
+            </a>
+            {% if is_owner and not agreement.is_completed %}
+              <a class="btn btn--success btn--sm" href="{{ agreement.get_absolute_url }}" style="background:#059669;border-color:#059669;color:#fff">
+                ✓ Review & Approve Payment
+              </a>
+            {% elif user.pk == agreement.freelancer_id and not agreement.is_completed %}
+              <a class="btn btn--secondary btn--sm" href="{{ agreement.get_absolute_url }}">
+                📤 Submit Completed Work
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    {% if is_owner and job_conversations %}
+      <section class="card" style="margin-top:var(--gap-5)">
+        <div class="card__head">
+          <h2>Messages & Inquiries ({{ job_conversations|length }})</h2>
+          <a class="btn btn--secondary btn--sm" href="{% url 'messaging:list' %}">All Messages</a>
+        </div>
+        <div class="card__body card__body--tight">
+          {% for conv in job_conversations %}
+            <div class="list-row" style="padding-inline:0">
+              <span class="avatar avatar--sm">
+                {% if conv.freelancer_participant %}{{ conv.freelancer_participant.initials }}{% else %}FL{% endif %}
+              </span>
+              <div class="list-row__main">
+                <a class="list-row__title" href="{{ conv.get_absolute_url }}">
+                  {% if conv.freelancer_participant %}
+                    {{ conv.freelancer_participant.full_name }}
+                    <span class="tiny muted">(@{{ conv.freelancer_participant.username }})</span>
+                  {% else %}
+                    Freelancer Inquiry
+                  {% endif %}
+                </a>
+                <span class="list-row__meta">
+                  {% if conv.last_message_preview %}
+                    {{ conv.last_message_preview|truncatechars:60 }} ·
+                  {% endif %}
+                  {% if conv.last_message_at %}{{ conv.last_message_at|timesince }} ago{% else %}{{ conv.created_at|timesince }} ago{% endif %}
+                </span>
+              </div>
+              <a class="btn btn--secondary btn--sm" href="{{ conv.get_absolute_url }}">
+                💬 Reply
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if is_owner and proposals %}
+      <section class="card" style="margin-top:var(--gap-5)">
+        <div class="card__head">
+          <h2>Proposals ({{ job.proposal_count }})</h2>
+          <a class="btn btn--secondary btn--sm" href="{% url 'proposals:for_job' job.public_id %}">See all</a>
+        </div>
+        <div class="card__body card__body--tight">
+          {% for proposal in proposals %}
+            <div class="list-row" style="padding-inline:0">
+              <span class="avatar avatar--sm">{{ proposal.freelancer.initials }}</span>
+              <div class="list-row__main">
+                <a class="list-row__title" href="{{ proposal.get_absolute_url }}">{{ proposal.freelancer.full_name }}</a>
+                <span class="list-row__meta">{{ proposal.estimated_days }} days · {{ proposal.created_at|timesince }} ago</span>
+              </div>
+              <span class="coin">{{ proposal.proposed_amount|coins }}</span>
+              {% status_pill proposal.status %}
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if similar %}
+      <section class="section" style="margin-top:var(--gap-6)">
+        <h2>Similar jobs</h2>
+        <div class="grid grid--2">
+          {% for job in similar %}{% include "components/job-card.html" %}{% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  </article>
+
+  <aside class="stack">
+    <div class="card">
+      <div class="card__body center">
+        <p class="stat__label">Budget</p>
+        <p class="coin coin--xl">{{ job.budget|coin }}</p>
+        <p class="tiny muted">{{ SKILLCOIN.CODE }} · {{ job.get_job_type_display }}</p>
+
+        {% if job.budget_reserved_at %}
+          <p class="sb-pill sb-pill--ok" style="margin-top:var(--gap-3)">Budget reserved</p>
+        {% endif %}
+
+        <hr>
+        <dl class="dl" style="text-align:left">
+          {% if job.deadline %}<dt>Deadline</dt><dd>{{ job.deadline|date:"j M Y" }}</dd>{% endif %}
+          {% if job.estimated_days %}<dt>Estimated</dt><dd>{{ job.estimated_days }} days</dd>{% endif %}
+          <dt>Experience</dt><dd>{{ job.get_experience_level_display }}</dd>
+          <dt>Complexity</dt><dd>{{ job.get_complexity_display }}</dd>
+          <dt>Freelancers</dt><dd>{{ job.people_required }}{% if job.team_required %} (team allowed){% endif %}</dd>
+          <dt>Proposals</dt><dd>{{ job.proposal_count }}</dd>
+        </dl>
+
+        <div class="stack-sm" style="margin-top:var(--gap-4)">
+          {% if not user.is_authenticated %}
+            <a class="btn btn--primary btn--block" href="{% url 'accounts:login' %}?next={{ request.path }}">Sign in to apply</a>
+          {% elif is_owner %}
+            {% if agreement %}
+              <a class="btn btn--primary btn--block" href="{{ agreement.get_absolute_url }}" style="background:var(--brand-gradient);border:0;color:#fff;">
+                📄 View Contract ({{ agreement.amount|coin }})
+              </a>
+            {% endif %}
+            {% if job.status == 'COMPLETED' %}
+              <p class="sb-pill sb-pill--ok" style="margin-top:var(--gap-2);display:flex;justify-content:center">✓ Job Completed & Closed</p>
+            {% elif job.status != 'CANCELLED' %}
+              <a class="btn btn--secondary btn--block" href="{% url 'marketplace:job_edit' job.public_id %}">Edit job</a>
+              {% if job.status == 'DRAFT' %}
+                <form method="post" action="{% url 'marketplace:job_publish' job.public_id %}">
+                  {% csrf_token %}
+                  <button class="btn btn--primary btn--block" type="submit">Publish and reserve budget</button>
+                </form>
+              {% endif %}
+              <a class="btn btn--ghost btn--block" href="{% url 'marketplace:job_cancel' job.public_id %}">Cancel job</a>
+            {% endif %}
+          {% elif user.is_freelancer %}
+            {% if agreement and agreement.freelancer_id == user.pk %}
+              <a class="btn btn--primary btn--block" href="{{ agreement.get_absolute_url }}" style="background:var(--brand-gradient);border:0;color:#fff;">
+                📄 Your Contract ({{ agreement.amount|coin }})
+              </a>
+            {% endif %}
+            {% if has_applied %}
+              <p class="sb-pill sb-pill--info" style="margin-bottom:var(--gap-2)">You have proposed on this job</p>
+              {% if my_proposal %}
+                <a class="btn btn--secondary btn--block" href="{{ my_proposal.get_absolute_url }}">View My Proposal</a>
+                {% if my_proposal.negotiation %}
+                  <a class="btn btn--primary btn--block" href="{{ my_proposal.negotiation.get_absolute_url }}" style="background:var(--brand-gradient);border:0;color:#fff;">🤝 Negotiation Room</a>
+                {% endif %}
+              {% else %}
+                <a class="btn btn--secondary btn--block" href="{% url 'proposals:my_proposals' %}">See my proposal</a>
+              {% endif %}
+            {% elif job.status == 'COMPLETED' or job.status == 'HIRED' or job.status == 'IN_PROGRESS' %}
+              <p class="sb-pill sb-pill--neutral" style="margin-bottom:var(--gap-2);display:flex;justify-content:center">🔒 Closed to new proposals</p>
+            {% else %}
+              <a class="btn btn--primary btn--block" href="{% url 'proposals:create' job.public_id %}">Submit a proposal</a>
+            {% endif %}
+            {% if my_conversation %}
+              <a class="btn btn--secondary btn--block" href="{{ my_conversation.get_absolute_url }}">💬 Chat with Client</a>
+            {% else %}
+              <form method="post" action="{% url 'messaging:start_job' job.public_id %}">
+                {% csrf_token %}
+                <button class="btn btn--secondary btn--block" type="submit">💬 Message the client</button>
+              </form>
+            {% endif %}
+            <form method="post" action="{% url 'marketplace:job_save' job.public_id %}" data-no-busy="1">
+              {% csrf_token %}
+              <button class="btn btn--ghost btn--block" type="submit">{% if is_saved %}★ Saved{% else %}☆ Save this job{% endif %}</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head"><h2>About the client</h2></div>
+      <div class="card__body">
+        <div class="identity">
+          <span class="avatar">{{ job.client.initials }}</span>
+          <div>
+            <div class="identity__name"><a href="{{ job.client.get_absolute_url }}">{{ job.client.full_name }}</a></div>
+            <div class="identity__meta">Member since {{ job.client.date_joined|date:"M Y" }}</div>
+          </div>
+        </div>
+        {% if job.client.rating_summary.total_reviews %}
+          <p class="small" style="margin-top:var(--gap-3)">
+            {{ job.client.rating_summary.average_rating|stars }}
+            {{ job.client.rating_summary.average_rating }} from
+            {{ job.client.rating_summary.total_reviews }} review{{ job.client.rating_summary.total_reviews|pluralize }}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

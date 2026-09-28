@@ -1,1 +1,60 @@
 {% extends "layouts/dashboard.html" %}
+{% block title %}My jobs — Skillbridge{% endblock %}
+{% block page_heading %}My jobs{% endblock %}
+
+{% block content %}
+<div class="row row--between row--wrap" style="margin-bottom:var(--gap-4)">
+  <form method="get" class="row row--tight" data-autosubmit>
+    <label class="sr-only" for="status">Status</label>
+    <select id="status" name="status">
+      <option value="">All statuses</option>
+      {% for value, label in statuses %}
+        <option value="{{ value }}"{% if value == current_status %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <input type="search" name="q" value="{{ query }}" placeholder="Search my jobs">
+    <button class="btn btn--secondary btn--sm" type="submit">Search</button>
+  </form>
+  <a class="btn btn--primary" href="{% url 'marketplace:job_create' %}">Post a job</a>
+</div>
+
+{% if page.object_list %}
+  <div class="card card--flush">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Job</th><th>Status</th><th class="num">Budget</th>
+            <th class="num">Reserved</th><th class="num">Proposals</th><th>Deadline</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in page.object_list %}
+            <tr>
+              <td>
+                <a class="bold" href="{{ job.get_absolute_url }}">{{ job.title }}</a><br>
+                <span class="tiny muted">{{ job.category.name }}</span>
+              </td>
+              <td>{% status_pill job.status %}</td>
+              <td class="num coin">{{ job.budget|coin }}</td>
+              <td class="num coin">{{ job.reserved_amount|coin }}</td>
+              <td class="num">
+                {% if job.proposal_count %}
+                  <a href="{% url 'proposals:for_job' job.public_id %}">{{ job.proposal_count }}</a>
+                {% else %}0{% endif %}
+              </td>
+              <td class="small">{{ job.deadline|date:"j M Y"|default:"—" }}</td>
+              <td class="right">
+                <a class="btn btn--ghost btn--sm" href="{% url 'marketplace:job_edit' job.public_id %}">Edit</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% include "components/pagination.html" %}
+{% else %}
+  {% include "components/empty-state.html" with title="You have not posted a job yet" body="Post one and its budget is reserved the moment it goes live, so freelancers know the work is real." action_url="/jobs/post/" action_label="Post a job" %}
+{% endif %}
+{% endblock %}

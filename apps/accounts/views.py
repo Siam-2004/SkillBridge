@@ -1,8 +1,3 @@
-"""Registration, sign-in, email verification and account settings.
-
-Password reset is Django's own built-in flow, wired up in ``urls.py`` with our
-templates — there is no reason to reimplement it.
-"""
 
 from __future__ import annotations
 

@@ -16,8 +16,7 @@ from apps.accounts.models import Role, User
 
 @receiver(post_save, sender=User, dispatch_uid="accounts.bootstrap_user")
 def bootstrap_user(sender, instance: User, created: bool, raw: bool = False, **kwargs):
-    # ``raw`` means loaddata/fixtures: the related tables may not be populated
-    # yet and fixtures carry their own rows.
+
     if not created or raw:
         return
 

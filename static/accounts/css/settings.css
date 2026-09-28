@@ -1,9 +1,4 @@
-/* ==========================================================================
-   SkillBridge — Account Settings Stylesheet
-   Styles for user profile settings, password changes, notifications
-   ========================================================================== */
 
-/* Settings Section Cards */
 .card {
   border-radius: var(--r-xl);
   border: 1px solid var(--line);

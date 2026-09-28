@@ -1,8 +1,4 @@
-/* ==========================================================================
-   Skillbridge — foundation
-   Design tokens, reset, typography and layout primitives.
-   Hand-written CSS: there is no build step, so what is here is what ships.
-   ========================================================================== */
+
 
 :root {
   /* Brand ---------------------------------------------------------------- */

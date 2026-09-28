@@ -1,6 +1,4 @@
-/* Read Django's CSRF token so fetch() POSTs are accepted.
-   Every mutating request in this project is a normal form post; this exists
-   for the few places that post in the background (mark-as-read, filters). */
+
 (function (global) {
   "use strict";
 

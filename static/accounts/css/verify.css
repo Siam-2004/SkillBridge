@@ -1,7 +1,3 @@
-/* ==========================================================================
-   SkillBridge — Email Verification Dedicated Stylesheet
-   Matches auth-card aesthetics from login.css and register.css
-   ========================================================================== */
 
 .auth-wrapper {
   min-height: calc(100vh - 64px - 100px);

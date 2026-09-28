@@ -1,13 +1,3 @@
-"""Skillbridge settings — one file, one project, one database.
-
-Everything the application needs is either in the Python standard library or in
-Django. There is no cache server, message broker, worker, search engine, object
-store or frontend build step, so there is nothing to configure for them and
-nothing to install before:
-
- python manage.py migrate
- python manage.py runserver
-"""
 
 import os
 from pathlib import Path
@@ -107,11 +97,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
         "OPTIONS": {
-            # SQLite serialises writers. Without a timeout, a second writer
-            # arriving mid-transaction fails instantly with "database is
-            # locked" instead of waiting its turn. Write-ahead logging and
-            # foreign-key enforcement are switched on in
-            # apps/core/apps.py, which works on every Django 5 release.
+
             "timeout": 20,
         },
     }
@@ -121,12 +107,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.User"
 
-# Sign-in accepts either the email address or the username, and refuses a
-# suspended account before it ever gets a session.
-#
-# Deliberately the only backend. Leaving Django's ModelBackend as a fallback
-# would undo that: it authenticates on `is_active` alone, so a suspended
-# account refused by the first backend would simply be let in by the second.
+
 AUTHENTICATION_BACKENDS = [
     "apps.accounts.backends.EmailOrUsernameBackend",
 ]

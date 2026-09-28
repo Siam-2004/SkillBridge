@@ -45,6 +45,10 @@ class ValidationFailed(DomainError):
         self.errors = errors or {}
 
 
+class DuplicateProposal(DomainError):
+    default_message = "You already have an active proposal submitted for this job."
+
+
 # --------------------------------------------------------------------------- #
 # Financial failures — deliberately distinct so the money path can be audited
 # and alerted on separately from ordinary validation noise.

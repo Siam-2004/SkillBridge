@@ -137,15 +137,7 @@ contact = _static_page("core/contact.html", "Contact us")
 
 def jobs(request):
     """Browse jobs, projects and freelance opportunities."""
-    return render(
-        request,
-        "core/jobs.html",
-        {
-            "categories": category_tree(),
-            "nav_section": "jobs",
-            "page_title": "Browse Jobs & Projects — Skillbridge",
-        },
-    )
+    return redirect("marketplace:job_list")
 
 
 def search(request):

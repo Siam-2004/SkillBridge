@@ -1,10 +1,4 @@
-/* ==========================================================================
-   Skillbridge — components
-   Every reusable piece of interface. Page-specific rules live in that page's
-   own stylesheet, never here.
-   ========================================================================== */
 
-/* ---------------------------------------------------------------- cards -- */
 .card {
   background: var(--surface);
   border: 1px solid var(--line);

@@ -1,5 +1,4 @@
-/* Site-wide behaviour: theme, navigation, confirmations, busy buttons and the
-   live countdowns used by the 48-hour review window. Vanilla only. */
+
 (function () {
   "use strict";
 

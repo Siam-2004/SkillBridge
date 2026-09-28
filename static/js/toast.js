@@ -1,5 +1,4 @@
-/* Transient messages. Django's own messages framework renders inline alerts;
-   this is for feedback raised by a background request. */
+
 (function (global) {
   "use strict";
 

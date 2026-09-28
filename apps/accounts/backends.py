@@ -6,12 +6,6 @@ from django.db.models import Q
 
 
 class EmailOrUsernameBackend(ModelBackend):
-    """Sign in with either the email address or the username.
-
-    Suspended/banned accounts are rejected here rather than after login, so a
-    disabled account never obtains a session.
-    """
-
     def authenticate(self, request, username=None, password=None, **kwargs):
         User = get_user_model()
         identifier = (username or kwargs.get("email") or "").strip().lower()

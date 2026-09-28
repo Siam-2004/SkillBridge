@@ -1,10 +1,3 @@
-"""Auth forms.
-
-Validation that is a *business* rule lives in ``accounts.services``; these
-classes only shape and clean the input. A form never decides whether an action
-is allowed — that is the service's job, and the service is what the tests
-exercise.
-"""
 
 from __future__ import annotations
 

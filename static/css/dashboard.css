@@ -1,7 +1,3 @@
-/* ==========================================================================
-   Skillbridge — signed-in shell
-   Sidebar, topbar and the pieces shared by every dashboard page.
-   ========================================================================== */
 
 .app { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; }
 

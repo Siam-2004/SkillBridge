@@ -1,5 +1,4 @@
-/* Dialogs built on <dialog>. Any element with data-modal-open="<id>" opens it;
-   anything with data-modal-close inside closes it. No library. */
+
 (function () {
   "use strict";
 

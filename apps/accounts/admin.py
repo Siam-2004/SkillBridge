@@ -1,12 +1,8 @@
 """User administration."""
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils import timezone
-
 from apps.accounts.models import EmailVerificationToken, User
-
-
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     list_display = (

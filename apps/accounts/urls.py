@@ -1,8 +1,3 @@
-"""Identity routes.
-
-Password reset uses Django's own views with our templates: the flow is
-standard, well tested and needs no model of its own.
-"""
 
 from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy

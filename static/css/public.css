@@ -1,7 +1,3 @@
-/* ==========================================================================
-   Skillbridge — public site chrome
-   The marketing shell: top navigation, hero, footer.
-   ========================================================================== */
 
 .site-header {
   position: sticky; top: 0; z-index: 60;

@@ -1,14 +1,3 @@
-"""Search helpers that work on SQLite.
-
-There is no search engine and no database-specific full-text extension. Each
-searchable model keeps a denormalised ``search_text`` column holding everything
-worth matching on, refreshed whenever the record changes. A query is then one
-``icontains`` against that column instead of six ``OR``s across joined tables.
-
-Ranking is deliberately simple: a hit in the title outranks a hit in the body.
-That is enough for a marketplace of this size, and it behaves identically on
-every machine the project runs on.
-"""
 
 from __future__ import annotations
 

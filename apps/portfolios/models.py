@@ -1,10 +1,3 @@
-"""Freelancer portfolio.
-
-A portfolio item is public marketing material, so the model carries an explicit
-``is_public`` flag and a ``confidentiality_note``: forbids publishing
-confidential project data, and a freelancer who worked on a private client
-system needs a way to describe the work without exposing it.
-"""
 
 from __future__ import annotations
 

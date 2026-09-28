@@ -9,9 +9,6 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.template.defaultfilters import filesizeformat
 
-# Extensions that can execute in a browser or on a server if ever served
-# directly.  Even though private files are streamed through a permission check,
-# we refuse them at the door.
 DANGEROUS_EXTENSIONS = {
     ".exe",
     ".dll",
@@ -41,12 +38,6 @@ DANGEROUS_EXTENSIONS = {
 
 
 def as_domain_error(validator, value, field: str = ""):
-    """Run a field validator from inside a service.
-
-    Validators raise Django's ``ValidationError`` because forms collect it into
-    field errors. Services promise ``DomainError`` instead, so the two contracts
-    meet here rather than leaking a 500 out of a view.
-    """
     from apps.core.exceptions import ValidationFailed
 
     try:

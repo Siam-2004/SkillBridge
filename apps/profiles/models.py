@@ -11,10 +11,6 @@ from django.utils.text import slugify
 from apps.core.models import TimeStampedModel
 from apps.core.money import ZERO, MoneyField
 
-
-# --------------------------------------------------------------------------- #
-# Taxonomy — what people do, and what jobs ask for
-# --------------------------------------------------------------------------- #
 class Category(TimeStampedModel):
     name = models.CharField(max_length=120, unique=True)
     slug = models.SlugField(max_length=140, unique=True, db_index=True)

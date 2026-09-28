@@ -51,11 +51,7 @@ class SoftDeleteQuerySet(models.QuerySet):
 
 
 class SoftDeleteModel(models.Model):
-    """Nothing that could ever be evidence is hard-deleted.
 
-    Chats, submissions, agreements and financial records have to survive for
-    dispute resolution and audit, so "delete" means "hide from the active UI".
-    """
 
     deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)
 
@@ -83,12 +79,7 @@ class BaseModel(UUIDModel, TimeStampedModel):
 # Site configuration
 # --------------------------------------------------------------------------- #
 class SiteSetting(TimeStampedModel):
-    """Admin-editable runtime configuration.
 
-    Only values an operator may legitimately change while the site is running
-    belong here. Financial invariants stay in code and database constraints,
-    where an admin cannot reach them.
-    """
 
     class Kind(models.TextChoices):
         STRING = "STRING", "String"
@@ -128,11 +119,6 @@ class SiteSetting(TimeStampedModel):
 
 
 class HomepageSection(TimeStampedModel):
-    """Editable marketing copy for the public home page.
-
-    The *statistics* on the home page are never stored here — they must always
-    be computed live, so they live in ``apps.core.selectors.platform_stats``.
-    """
 
     class Slot(models.TextChoices):
         HERO = "HERO", "Hero"
@@ -164,12 +150,6 @@ class HomepageSection(TimeStampedModel):
 # Activity stream
 # --------------------------------------------------------------------------- #
 class ActivityVerb(models.TextChoices):
-    """Every action that appears in a job's or project's history.
-
-    The specification lists the actions that must be recorded; the extras here
-    are the other side of those same events (a rejection as well as an
-    approval), because a history that only records success is not a history.
-    """
 
     # Jobs
     JOB_CREATED = "JOB_CREATED", "Job created"
@@ -231,12 +211,6 @@ class ActivityVerb(models.TextChoices):
 
 
 class ActivityLog(TimeStampedModel):
-    """The human-readable story of a job or project.
-
-    Distinct from ``AuditLog``: this is what participants read on the activity
-    tab, so it is phrased for people. The audit trail is the forensic record and
-    is deliberately a separate table with different retention and access.
-    """
 
     class Visibility(models.TextChoices):
         PARTICIPANTS = "PARTICIPANTS", "Project participants"

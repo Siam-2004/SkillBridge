@@ -10,12 +10,6 @@ _local = threading.local()
 
 
 def current_actor():
-    """The authenticated user handling the current request, if any.
-
-    Used by ``apps.audit`` so a service that is three layers deep can
-    attribute an audit row without every signature having to pass ``actor``
-    down.  Explicit ``actor=`` arguments always win over this fallback.
-    """
     return getattr(_local, "actor", None)
 
 
@@ -64,13 +58,6 @@ class RequestActorMiddleware:
 
 
 class DomainErrorMiddleware:
-    """Turn a ``DomainError`` raised in any view into its proper response.
-
-    The ``handle_domain_errors`` decorator does this for views that opt in, but
-    a service call in an un-decorated view would otherwise surface a
-    ``PermissionDenied`` as a 500 — telling the user the server broke when in
-    fact they were correctly refused. This is the backstop.
-    """
 
     def __init__(self, get_response):
         self.get_response = get_response

@@ -1,8 +1,3 @@
-"""The wallet and its ledger.
-
-Read-only: nothing here moves money. Deposits and withdrawals live in
-``apps.payments``, and every balance change goes through ``wallets.ledger``.
-"""
 
 from __future__ import annotations
 

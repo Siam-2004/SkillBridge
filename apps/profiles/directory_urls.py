@@ -1,8 +1,3 @@
-"""The public people directory.
-
-Two prefixes share this module: ``/freelancers/`` and ``/clients/``. Keeping
-them together means the two public profile pages cannot drift apart.
-"""
 
 from django.urls import path
 

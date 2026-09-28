@@ -1,1 +1,31 @@
 {% extends "layouts/dashboard.html" %}
+{% block title %}Cancel job — Skillbridge{% endblock %}
+{% block page_heading %}Cancel job{% endblock %}
+
+{% block content %}
+<section class="card" style="max-width:640px">
+  <div class="card__head"><h2>{{ job.title }}</h2></div>
+  <div class="card__body">
+    <div class="alert alert--warning">
+      <span class="alert__icon" aria-hidden="true">▲</span>
+      <div class="alert__body">
+        <strong>This cannot be undone.</strong>
+        {% if job.reserved_amount %}
+          The {{ job.reserved_amount|coins }} reserved against this job returns
+          to your available balance.
+        {% endif %}
+        Anyone who has proposed is told, and sees the reason you give.
+      </div>
+    </div>
+
+    <form method="post" novalidate data-confirm="Cancel this job? Proposals on it will be closed.">
+      {% csrf_token %}
+      {% include "components/form.html" %}
+      <div class="form-actions">
+        <button class="btn btn--danger" type="submit">Cancel this job</button>
+        <a class="btn btn--ghost" href="{{ job.get_absolute_url }}">Keep it open</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

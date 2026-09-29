@@ -1,0 +1,8 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Negotiation — {{ negotiation.job.title }}{% endblock %}
+{% block page_heading %}Negotiation{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'negotiations/css/negotiation.css' %}">{% endblock %}
+{% block page_js %}<script src="{% static 'negotiations/js/negotiation.js' %}"></script>{% endblock %}
+
+

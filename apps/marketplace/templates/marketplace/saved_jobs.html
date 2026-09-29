@@ -1,2 +1,16 @@
 {% extends "layouts/dashboard.html" %}
+{% block title %}Saved jobs — Skillbridge{% endblock %}
+{% block page_heading %}Saved jobs{% endblock %}
 
+{% block content %}
+{% if page.object_list %}
+  <div class="stack">
+    {% for saved in page.object_list %}
+      {% with job=saved.job %}{% include "components/job-card.html" %}{% endwith %}
+    {% endfor %}
+  </div>
+  {% include "components/pagination.html" %}
+{% else %}
+  {% include "components/empty-state.html" with title="Nothing saved yet" body="Save a job from the jobs list to come back to it." action_url="/jobs/" action_label="Browse jobs" %}
+{% endif %}
+{% endblock %}

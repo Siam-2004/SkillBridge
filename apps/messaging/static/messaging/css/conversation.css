@@ -1,2 +1,35 @@
 /* Conversation: a scrolling thread with a composer pinned underneath. */
+.conversation { display: flex; flex-direction: column; height: calc(100vh - 190px); min-height: 460px; }
 
+.thread {
+  flex: 1 1 auto; overflow-y: auto;
+  padding: var(--gap-4) var(--gap-5);
+  display: flex; flex-direction: column; gap: var(--gap-3);
+}
+
+.msg { display: flex; gap: var(--gap-3); max-width: 78%; }
+.msg--mine { margin-left: auto; flex-direction: row-reverse; }
+.msg__body {
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: var(--gap-2) var(--gap-3);
+  min-width: 0;
+}
+.msg--mine .msg__body { background: var(--brand-50); border-color: var(--brand-200); }
+:root[data-theme="dark"] .msg--mine .msg__body { background: rgba(52, 101, 240, .16); border-color: #27437a; }
+
+.msg__meta { display: flex; gap: var(--gap-2); align-items: baseline; margin-bottom: 2px; }
+.msg__text { font-size: .92rem; overflow-wrap: anywhere; }
+.msg__files { list-style: none; padding: 0; margin: var(--gap-2) 0 0; font-size: .82rem; }
+
+.msg--system { max-width: none; justify-content: center; }
+.msg__system {
+  margin: 0; text-align: center; font-size: .8rem; color: var(--text-faint);
+  background: var(--ink-50); border-radius: var(--r-pill); padding: 4px 14px;
+}
+
+.composer { border-top: 1px solid var(--line); padding: var(--gap-3) var(--gap-5); }
+.composer textarea { resize: none; min-height: 64px; }
+.composer__actions { display: flex; justify-content: flex-end; gap: var(--gap-2); margin-top: var(--gap-2); }
+.composer label.btn { cursor: pointer; }
+
+@media (max-width: 1024px) { .conversation { height: auto; } .thread { max-height: 60vh; } }

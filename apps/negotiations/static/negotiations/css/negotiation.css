@@ -1,2 +1,19 @@
 /* Negotiation room: the offer thread reads as a conversation of terms. */
 
+.offer-thread { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--gap-3); }
+
+.offer {
+  border: 1px solid var(--line); border-left-width: 3px;
+  border-radius: var(--r); background: var(--surface);
+  padding: var(--gap-4);
+}
+.offer.is-mine { border-left-color: var(--brand-400); }
+.offer.is-current { box-shadow: var(--shadow); border-color: var(--brand-300); }
+
+.offer__head { display: flex; align-items: center; gap: var(--gap-2); flex-wrap: wrap; margin-bottom: var(--gap-3); }
+.offer__terms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-3); }
+.offer__terms > div { display: flex; flex-direction: column; }
+.offer__terms .coin { font-size: 1.05rem; }
+.offer ul { padding-left: 1.1em; margin-bottom: 0; }
+
+@media (max-width: 600px) { .offer__terms { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

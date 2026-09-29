@@ -5,4 +5,127 @@
 {% block page_css %}<link rel="stylesheet" href="{% static 'negotiations/css/negotiation.css' %}">{% endblock %}
 {% block page_js %}<script src="{% static 'negotiations/js/negotiation.js' %}"></script>{% endblock %}
 
+{% block content %}
+<div class="page-head">
+  <h1 style="font-size:1.3rem">{{ negotiation.job.title }}</h1>
+  <p class="lede">
+    With {% if is_client %}{{ negotiation.freelancer.full_name }}{% else %}{{ negotiation.client.full_name }}{% endif %}
+    · {% status_pill negotiation.status %}
+  </p>
+</div>
 
+<div class="grid grid--sidebar">
+  <section>
+    <h2>Offer history</h2>
+    <ol class="offer-thread">
+      {% for offer in offers %}
+        <li class="offer{% if offer.pk == current.pk %} is-current{% endif %}{% if offer.sender_id == user.pk %} is-mine{% endif %}">
+          <div class="offer__head">
+            <strong>{{ offer.sender.full_name }}</strong>
+            <span class="tiny muted">{{ offer.created_at|date:"j M, H:i" }}</span>
+            {% status_pill offer.status %}
+            {% if offer.is_final %}<span class="sb-pill sb-pill--warn">Final</span>{% endif %}
+          </div>
+          <div class="offer__terms">
+            <div><span class="stat__label">Amount</span><span class="coin">{{ offer.amount|coin }}</span></div>
+            <div><span class="stat__label">Deadline</span><span>{{ offer.deadline|date:"j M Y" }}</span></div>
+            <div><span class="stat__label">Revisions</span><span>{{ offer.revision_limit }}</span></div>
+          </div>
+          {% if offer.deliverables %}
+            <p class="tiny muted" style="margin:var(--gap-2) 0 2px">Deliverables</p>
+            <ul class="small">{% for line in offer.deliverable_list %}<li>{{ line }}</li>{% endfor %}</ul>
+          {% endif %}
+          {% if offer.message %}<p class="small" style="margin-top:var(--gap-2)">{{ offer.message }}</p>{% endif %}
+          {% if offer.expires_at and offer.status == 'ACTIVE' %}
+            <p class="tiny muted" style="margin-top:var(--gap-2)">
+              Expires in <span class="countdown" data-countdown="{{ offer.expires_at|date:'c' }}"
+                                data-elapsed-label="expired">…</span>
+            </p>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  <aside class="stack">
+    {% if my_turn %}
+      <div class="card">
+        <div class="card__head"><h2>Your move</h2></div>
+        <div class="card__body stack-sm">
+          <form method="post" action="{% url 'negotiations:accept' negotiation.public_id %}"
+                data-confirm="Accept these terms? The agreement locks immediately and changes will need the other party's approval.">
+            {% csrf_token %}
+            <button class="btn btn--success btn--block" type="submit">Accept these terms</button>
+          </form>
+          <button class="btn btn--primary btn--block" type="button" data-modal-open="counter-modal">Counter</button>
+          <form method="post" action="{% url 'negotiations:reject' negotiation.public_id %}">
+            {% csrf_token %}
+            <button class="btn btn--ghost btn--block" type="submit">Reject this offer</button>
+          </form>
+        </div>
+      </div>
+    {% elif negotiation.is_active %}
+      <div class="card"><div class="card__body small muted">
+        Waiting for {{ current.receiver.full_name }} to respond to the current offer.
+      </div></div>
+    {% endif %}
+
+    {% if agreement %}
+      <div class="card" style="border-top: 3px solid var(--brand, #4f46e5)">
+        <div class="card__head"><h2>Contract Formed</h2></div>
+        <div class="card__body stack-sm">
+          <p class="small">Terms accepted at <strong>{{ agreement.amount|coin }}</strong>.</p>
+          <div>
+            {% if agreement.status == 'COMPLETED' %}
+              <span class="sb-pill sb-pill--ok">✓ Completed & Paid</span>
+            {% elif agreement.has_submitted_work %}
+              <span class="sb-pill sb-pill--warn">⏳ Deliverables Submitted</span>
+            {% else %}
+              <span class="sb-pill sb-pill--info">⚡ Active Contract</span>
+            {% endif %}
+          </div>
+          <a class="btn btn--primary btn--block" href="{{ agreement.get_absolute_url }}" style="background:var(--brand-gradient);border:0;color:#fff;margin-top:var(--gap-2)">
+            📄 Manage Contract & Deliverables
+          </a>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="card">
+      <div class="card__body">
+        <dl class="dl">
+          <dt>Job budget</dt><dd class="coin">{{ negotiation.job.budget|coin }}</dd>
+          <dt>Opened</dt><dd>{{ negotiation.created_at|date:"j M Y" }}</dd>
+          <dt>Offers</dt><dd>{{ offers|length }}</dd>
+        </dl>
+        {% if conversation %}
+          <a class="btn btn--secondary btn--block" style="margin-top:var(--gap-3)" href="{{ conversation.get_absolute_url }}">💬 Direct Message</a>
+        {% endif %}
+        <a class="btn btn--ghost btn--block" style="margin-top:var(--gap-2)" href="{{ negotiation.job.get_absolute_url }}">View the job</a>
+        {% if negotiation.is_active %}
+          <form method="post" action="{% url 'negotiations:cancel' negotiation.public_id %}"
+                data-confirm="Close this negotiation?">
+            {% csrf_token %}
+            <button class="btn btn--ghost btn--block" type="submit">Close negotiation</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+</div>
+
+<dialog class="modal" id="counter-modal">
+  <form method="post" action="{% url 'negotiations:counter' negotiation.public_id %}">
+    {% csrf_token %}
+    <div class="modal__head"><h2>Counter offer</h2></div>
+    <div class="modal__body">
+      <p class="small muted">Pre-filled with the current terms. Change what you need to.</p>
+      {% include "components/form.html" %}
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" type="button" data-modal-close>Cancel</button>
+      <button class="btn btn--primary" type="submit">Send counter offer</button>
+    </div>
+  </form>
+</dialog>
+{% endblock %}

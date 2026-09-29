@@ -1,1 +1,60 @@
 {% extends "layouts/dashboard.html" %}
+{% block title %}Messages — Skillbridge{% endblock %}
+{% block page_heading %}Messages{% endblock %}
+{% block content %}
+{% if page.object_list %}
+  <div class="card card--flush">
+    {% for c in page.object_list %}
+      <a class="list-row" href="{{ c.get_absolute_url }}" style="padding:var(--gap-3) var(--gap-4);gap:var(--gap-3);align-items:center;border-bottom:1px solid var(--border-color,#e5e7eb)">
+        <span class="avatar avatar--md" aria-hidden="true" style="flex-shrink:0">
+          {% if c.counterparty %}{{ c.counterparty.initials }}{% else %}SB{% endif %}
+        </span>
+        <span class="list-row__main" style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--gap-2);margin-bottom:2px">
+            <span class="list-row__title" style="font-weight:600;font-size:1.02rem;color:var(--text,#111827)">
+              {% if c.counterparty %}
+                {{ c.counterparty.full_name }}
+                <span class="tiny muted" style="font-weight:400">(@{{ c.counterparty.username }})</span>
+              {% else %}
+                Skillbridge
+              {% endif %}
+            </span>
+            <span class="tiny muted" style="flex-shrink:0">
+              {% if c.last_message_at %}{{ c.last_message_at|timesince }} ago{% else %}{{ c.created_at|timesince }} ago{% endif %}
+            </span>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:var(--gap-2);margin-bottom:3px">
+            <span class="sb-pill sb-pill--neutral" style="font-size:0.75rem;padding:2px 8px">
+              {% if c.job %}Job: {{ c.job.title|truncatechars:35 }}{% elif c.project %}{{ c.project.title|truncatechars:35 }}{% else %}Direct Message{% endif %}
+            </span>
+            {% if c.counterparty %}
+              <span class="tiny muted">{{ c.counterparty.get_role_display }}</span>
+            {% endif %}
+          </div>
+
+          <p class="small muted" style="margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            {% if c.last_message_preview %}
+              {{ c.last_message_preview }}
+            {% else %}
+              <em>No messages exchanged yet.</em>
+            {% endif %}
+          </p>
+        </span>
+
+        <span style="display:flex;align-items:center;gap:var(--gap-2);flex-shrink:0">
+          {% if c.my_unread %}
+            <span class="sb-pill sb-pill--info" style="font-weight:700;background:#3b82f6;color:#fff">{{ c.my_unread }} new</span>
+          {% endif %}
+          {% if c.is_archived %}
+            <span class="sb-pill sb-pill--neutral">Archived</span>
+          {% endif %}
+        </span>
+      </a>
+    {% endfor %}
+  </div>
+  {% include "components/pagination.html" %}
+{% else %}
+  {% include "components/empty-state.html" with title="No conversations yet" body="A conversation starts when you message a client about a job, or when someone messages you." %}
+{% endif %}
+{% endblock %}

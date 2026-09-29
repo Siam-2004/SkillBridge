@@ -1,2 +1,11 @@
 /* Job list: the filter rail and the save control that sits over each card. */
+.job-filters { position: sticky; top: 78px; }
+.job-filters select[multiple] { min-height: 130px; }
 
+.job-row { position: relative; }
+.job-save { position: absolute; top: var(--gap-3); right: var(--gap-3); }
+.job-row .card__body { padding-right: 92px; }
+
+@media (max-width: 1024px) {
+  .job-filters { position: static; }
+}

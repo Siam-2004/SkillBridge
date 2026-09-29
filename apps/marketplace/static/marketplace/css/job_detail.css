@@ -1,2 +1,9 @@
 /* Job detail: the sticky budget panel and the readable body column. */
+.grid--sidebar > aside > .card:first-child { position: sticky; top: 78px; }
+.grid--sidebar article h2 { margin-top: var(--gap-5); font-size: 1.05rem; }
+.grid--sidebar article h2:first-of-type { margin-top: var(--gap-4); }
+.grid--sidebar article p { max-width: 74ch; }
 
+@media (max-width: 1024px) {
+  .grid--sidebar > aside > .card:first-child { position: static; }
+}

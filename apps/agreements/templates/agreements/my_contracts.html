@@ -19,7 +19,6 @@
   </div>
 </div>
 
-<!-- Status Filter Tabs -->
 <div class="subnav-tabs" style="display:flex;gap:var(--gap-2);margin-bottom:var(--gap-4);border-bottom:1px solid var(--border-color,#e5e7eb);padding-bottom:var(--gap-2);overflow-x:auto">
   <a class="btn btn--sm {% if not current_status %}btn--primary{% else %}btn--ghost{% endif %}" href="{% url 'agreements:my_contracts' %}">
     All ({{ counts.all }})
@@ -48,7 +47,7 @@
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
               <span class="avatar avatar--sm">{{ a.client.initials }}</span>
               <span class="small">
-                Client: <strong>{{ a.client.full_name }}</strong> 
+                Client: <strong>{{ a.client.full_name }}</strong>
                 <span class="tiny muted">(@{{ a.client.username }})</span>
               </span>
               <span class="tiny muted">· Category: {{ a.job.category.name }}</span>

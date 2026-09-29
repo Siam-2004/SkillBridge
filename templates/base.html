@@ -8,7 +8,6 @@
   <meta name="description" content="{% block meta_description %}Skillbridge is a freelance marketplace with escrow-protected SkillCoin payments, project workspaces and temporary freelancer teams.{% endblock %}">
   <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
 
-  {# Resolve the stored theme before first paint, so there is no flash. #}
   <script>
     (function () {
       try {
@@ -24,7 +23,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  {# Foundation, then components. Each page adds only its own stylesheet. #}
   <link rel="stylesheet" href="{% static 'css/base.css' %}?v=4.0">
   <link rel="stylesheet" href="{% static 'css/components.css' %}?v=4.0">
   {% block shell_css %}{% endblock %}

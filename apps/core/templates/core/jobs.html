@@ -19,7 +19,6 @@
   </div>
 </div>
 
-<!-- Search & Category Rail -->
 <div class="card" style="padding:var(--gap-4);margin-bottom:var(--gap-6);backdrop-filter:blur(12px)">
   <form action="{% url 'core:search' %}" method="get" class="row row--wrap" style="gap:var(--gap-3)">
     <div style="flex:1 1 300px">
@@ -29,7 +28,6 @@
   </form>
 </div>
 
-<!-- Available Project Categories -->
 <div class="section-head">
   <h2>Browse by Project Category</h2>
   <a href="{% url 'core:categories' %}">All categories →</a>
@@ -44,7 +42,6 @@
   {% endfor %}
 </div>
 
-<!-- Featured Escrow Projects / Job Showcase -->
 <div class="section-head">
   <h2>Recent Funded Opportunities</h2>
   <span class="muted small">All payments held safely in SkillCoin escrow</span>
@@ -139,7 +136,6 @@
   </div>
 </div>
 
-<!-- CTA Banner -->
 <div class="cta-band">
   <h2>Have a Project to Build?</h2>
   <p>Post your project requirement, deposit the budget safely into escrow, and choose from our vetted freelancers.</p>

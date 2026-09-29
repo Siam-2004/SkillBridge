@@ -1,13 +1,11 @@
-
 (function () {
   "use strict";
 
-  /* ---- theme ------------------------------------------------------------ */
   const THEME_KEY = "sb-theme";
 
   function applyTheme(theme) {
     document.documentElement.dataset.theme = theme;
-    try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* blocked */ }
+    try { localStorage.setItem(THEME_KEY, theme); } catch (e) {  }
   }
 
   document.addEventListener("click", function (event) {
@@ -17,7 +15,6 @@
     }
   });
 
-  /* ---- mobile navigation ------------------------------------------------ */
   document.addEventListener("click", function (event) {
     const toggle = event.target.closest("[data-nav-toggle]");
     if (toggle) {
@@ -34,7 +31,6 @@
     }
   });
 
-  /* ---- destructive actions need a confirmation -------------------------- */
   document.addEventListener("submit", function (event) {
     const form = event.target;
     const message = form.dataset.confirm;
@@ -42,9 +38,7 @@
       event.preventDefault();
       return;
     }
-    /* Disable the submit button so a double click cannot post twice. This
-       matters most on money forms, where the server is idempotent but the
-       user should still see that something happened. */
+
     const button = form.querySelector('button[type="submit"], input[type="submit"]');
     if (button && !form.dataset.noBusy) {
       window.setTimeout(function () {
@@ -59,16 +53,12 @@
     if (link && !window.confirm(link.dataset.confirm)) event.preventDefault();
   });
 
-  /* ---- auto-submitting filter forms ------------------------------------- */
   document.querySelectorAll("[data-autosubmit]").forEach(function (form) {
     form.querySelectorAll("select, input[type=checkbox]").forEach(function (input) {
       input.addEventListener("change", function () { form.submit(); });
     });
   });
 
-  /* ---- countdowns ------------------------------------------------------- */
-  /* The server decides when a window closes; this only renders the remaining
-     time so a client watching the page sees it tick down. */
   function renderCountdown(el) {
     const deadline = Date.parse(el.dataset.countdown);
     if (isNaN(deadline)) return;
@@ -102,7 +92,6 @@
     window.setInterval(tick, 1000);
   }
 
-  /* ---- character counters ----------------------------------------------- */
   document.querySelectorAll("[data-counter-for]").forEach(function (out) {
     const input = document.getElementById(out.dataset.counterFor);
     if (!input) return;

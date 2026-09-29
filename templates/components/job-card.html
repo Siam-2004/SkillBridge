@@ -1,2 +1,50 @@
 <div class="card job-card-component" style="transition:transform 0.2s ease, box-shadow 0.2s ease;">
-  
+  <div class="card__body">
+    <div class="row row--between row--top" style="gap:var(--gap-3);margin-bottom:var(--gap-2)">
+      <div style="min-width:0;flex:1 1 auto">
+        <div class="row row--tight" style="margin-bottom:6px;flex-wrap:wrap">
+          <span class="sb-pill sb-pill--info" style="font-size:0.75rem;padding:2px 8px">{{ job.category.name }}</span>
+          {% if job.is_featured %}
+            <span class="sb-pill sb-pill--warn" style="font-size:0.75rem;padding:2px 8px">★ Featured</span>
+          {% endif %}
+          {% status_pill job.status %}
+        </div>
+        <h3 style="margin:0 0 4px;font-size:1.15rem;font-weight:700;line-height:1.3">
+          <a href="{{ job.get_absolute_url }}" style="color:var(--text);text-decoration:none">{{ job.title }}</a>
+        </h3>
+        <p class="tiny muted" style="margin:0">
+          Posted by <strong>{{ job.client.full_name }}</strong> · {{ job.published_at|default:job.created_at|timesince }} ago
+        </p>
+      </div>
+
+      <div style="text-align:right;flex-shrink:0">
+        <span class="coin bold" style="font-size:1.25rem">{{ job.budget|coins }}</span>
+        <div class="tiny muted">{{ job.get_job_type_display }}</div>
+      </div>
+    </div>
+
+    <p class="muted small" style="margin:var(--gap-2) 0 var(--gap-3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5">
+      {{ job.description|truncatewords:40 }}
+    </p>
+
+    <div class="tag-list" style="margin-bottom:var(--gap-3)">
+      {% for skill in job.skills.all|slice:":5" %}
+        <span class="tag" style="font-size:0.75rem;padding:2px 8px">{{ skill.name }}</span>
+      {% endfor %}
+      {% if job.skills.count > 5 %}
+        <span class="tag" style="font-size:0.75rem;padding:2px 8px">+{{ job.skills.count|add:"-5" }} more</span>
+      {% endif %}
+    </div>
+
+    <div class="row row--between" style="font-size:0.8rem;color:var(--text-muted);border-top:1px solid var(--line);padding-top:var(--gap-2);margin-top:auto">
+      <div class="row row--tight" style="gap:var(--gap-3)">
+        <span>⏳ {{ job.days_left|default:0 }} days left</span>
+        <span>👥 {{ job.proposal_count }} proposal{{ job.proposal_count|pluralize }}</span>
+        <span>🎯 {{ job.get_experience_level_display }}</span>
+      </div>
+      <div>
+        <a class="btn btn--secondary btn--sm" href="{{ job.get_absolute_url }}">View Details →</a>
+      </div>
+    </div>
+  </div>
+</div>

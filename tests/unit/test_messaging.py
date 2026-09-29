@@ -20,7 +20,7 @@ class MessagingUnitTestCase(TestCase):
             conversation=conversation,user=self.user2,role=ConversationParticipant.Role.FREELANCER
         )
         message = Message.objects.create(
-            conversation=conversation,sender=self.user1,content='Hi! I am Sabbir. When can you start the work?'
+            conversation=conversation,sender=self.user1,content='Hi! When can you start the work?'
         )
         self.assertEqual(conversation.participants.count(), 2)
         self.assertEqual(conversation.messages.count(), 1)

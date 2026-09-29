@@ -1,1 +1,64 @@
 {% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Proposals for {{ job.title }} — Skillbridge{% endblock %}
+{% block page_heading %}Job Proposals{% endblock %}
+
+{% block content %}
+<div class="page-head" style="margin-bottom:var(--gap-4)">
+  <div class="row row--between row--wrap">
+    <div>
+      <h1 style="font-size:1.5rem;margin-bottom:4px">
+        Proposals for: <a href="{{ job.get_absolute_url }}">{{ job.title }}</a>
+      </h1>
+      <p class="lede">
+        {{ total }} proposal{{ total|pluralize }} received · Budget: <span class="coin bold">{{ job.budget|coins }}</span>
+      </p>
+    </div>
+    <a class="btn btn--secondary btn--sm" href="{{ job.get_absolute_url }}">Back to Job</a>
+  </div>
+</div>
+
+{% if page.object_list %}
+  <div class="card card--flush">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Freelancer</th>
+            <th>Proposed Bid</th>
+            <th>Delivery</th>
+            <th>Submitted</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in page.object_list %}
+            <tr>
+              <td>
+                <div class="identity">
+                  <span class="avatar avatar--sm">{{ p.freelancer.initials }}</span>
+                  <div>
+                    <a class="bold" href="{{ p.get_absolute_url }}">{{ p.freelancer.full_name }}</a>
+                    <div class="tiny muted">{{ p.freelancer.freelancer_profile.headline|default:"Freelancer" }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="coin bold">{{ p.proposed_amount|coins }}</td>
+              <td>{{ p.estimated_days }} days</td>
+              <td class="small text-muted">{{ p.created_at|timesince }} ago</td>
+              <td>{% status_pill p.status %}</td>
+              <td class="right">
+                <a class="btn btn--secondary btn--sm" href="{{ p.get_absolute_url }}">Review</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% include "components/pagination.html" %}
+{% else %}
+  {% include "components/empty-state.html" with title="No proposals received yet" body="As soon as qualified freelancers review your brief and submit terms, they will appear here." %}
+{% endif %}
+{% endblock %}

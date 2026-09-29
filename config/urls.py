@@ -26,6 +26,13 @@ urlpatterns = [
     path("portfolios/", include("apps.portfolios.urls")),
     # Money
     path("wallet/", include("apps.wallets.urls")),
+    # Marketplace & Work
+    path("jobs/", include("apps.marketplace.urls")),
+    path("proposals/", include("apps.proposals.urls")),
+    path("negotiations/", include("apps.negotiations.urls")),
+    path("contracts/", include("apps.agreements.urls")),
+    path("messages/", include("apps.messaging.urls")),
+    path("notifications/", include("apps.notifications.urls")),
 ]
 
 handler403 = "apps.core.views.error_403"

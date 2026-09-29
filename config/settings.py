@@ -43,6 +43,12 @@ SKILLBRIDGE_APPS = [
     "apps.profiles",
     "apps.portfolios",
     "apps.wallets",
+    "apps.marketplace",
+    "apps.proposals",
+    "apps.negotiations",
+    "apps.agreements",
+    "apps.messaging",
+    "apps.notifications",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + SKILLBRIDGE_APPS
@@ -204,7 +210,7 @@ BUSINESS_RULES = {
     "EMAIL_TOKEN_EXPIRY_HOURS": 48,
     "MIN_DEPOSIT": 100,
     "MIN_WITHDRAWAL": 500,
-    "MIN_JOB_BUDGET": 500,
+    "MIN_JOB_BUDGET": 0,
     "MAX_PORTFOLIO_REFERENCES": 5,
     "DEFAULT_REVISION_LIMIT": 2,
     "MAX_UPLOAD_MB": 25,

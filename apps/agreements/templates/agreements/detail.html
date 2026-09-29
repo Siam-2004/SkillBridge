@@ -1,1 +1,571 @@
 {% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Contract Agreement — {{ job.title }} — Skillbridge{% endblock %}
+{% block page_heading %}Contract & Deliverables{% endblock %}
+
+{% block content %}
+<div class="page-head" style="margin-bottom:var(--gap-5)">
+  <div class="row row--between row--wrap" style="align-items:center;gap:var(--gap-3)">
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <a href="{% if is_freelancer %}{% url 'agreements:my_contracts' %}{% else %}{% url 'marketplace:my_jobs' %}{% endif %}" class="small muted" style="text-decoration:none">
+          ← Back to {% if is_freelancer %}My Contracts{% else %}My Jobs{% endif %}
+        </a>
+        <span class="tiny muted">•</span>
+        <span class="tiny muted" style="text-transform:uppercase;letter-spacing:0.5px;font-weight:600">Agreement #{{ agreement.public_id|slice:":8" }}</span>
+      </div>
+      <h1 style="font-size:1.65rem;margin-bottom:6px;line-height:1.25">
+        <a href="{{ job.get_absolute_url }}" style="color:inherit;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='inherit'">{{ job.title }}</a>
+      </h1>
+      <p class="lede" style="font-size:0.92rem;margin:0;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span>Client: <strong>{{ agreement.client.full_name }}</strong></span>
+        <span>•</span>
+        <span>Freelancer: <strong>{{ agreement.freelancer.full_name }}</strong></span>
+        <span>•</span>
+        <span>Created: <strong>{{ agreement.created_at|date:"j M Y" }}</strong></span>
+      </p>
+    </div>
+    <div>
+      {% if agreement.is_completed %}
+        <span class="sb-pill sb-pill--ok" style="font-size:0.95rem;padding:8px 18px;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 0 15px rgba(16,185,129,0.25)">
+          ✓ Contract Closed & Paid
+        </span>
+      {% elif agreement.has_submitted_work %}
+        <span class="sb-pill sb-pill--warn" style="font-size:0.95rem;padding:8px 18px;font-weight:700;display:inline-flex;align-items:center;gap:8px">
+          ⏳ Work Submitted (Under Review)
+        </span>
+      {% else %}
+        <span class="sb-pill sb-pill--info" style="font-size:0.95rem;padding:8px 18px;font-weight:700;display:inline-flex;align-items:center;gap:8px">
+          ⚡ Active Contract
+        </span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="grid grid--sidebar" style="gap:var(--gap-5);align-items:start">
+  <article class="stack" style="gap:var(--gap-5)">
+
+    <!-- If COMPLETED: Show Closed State and Clean Immutable Audit History -->
+    {% if agreement.is_completed %}
+      <div class="card" style="border:1.5px solid #10b981;background:linear-gradient(180deg, rgba(16,185,129,0.06) 0%, var(--surface) 120px);overflow:hidden">
+        <div style="background:#10b981;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.4rem">🔒</span>
+            <div>
+              <strong style="font-size:1.05rem;display:block">Contract Closed — Successfully Completed & Paid</strong>
+              <span style="font-size:0.82rem;opacity:0.95">Approved & Settled on {{ agreement.completed_at|date:"j F Y, H:i" }}</span>
+            </div>
+          </div>
+          <span style="background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:20px;font-size:0.82rem;font-weight:600">
+            Escrow Released: {{ agreement.amount|coin }}
+          </span>
+        </div>
+
+        <div class="card__body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:var(--gap-3);margin-bottom:var(--gap-4);background:var(--surface-2);border:1px solid var(--line);padding:14px 18px;border-radius:var(--r)">
+            <div>
+              <span class="tiny muted" style="display:block;text-transform:uppercase;font-weight:600">Total Settlement</span>
+              <strong style="font-size:1.15rem;color:#10b981">{{ agreement.amount|coin }}</strong>
+            </div>
+            <div>
+              <span class="tiny muted" style="display:block;text-transform:uppercase;font-weight:600">Payout Recipient</span>
+              <strong style="font-size:0.95rem">{{ agreement.freelancer.full_name }}</strong>
+            </div>
+            <div>
+              <span class="tiny muted" style="display:block;text-transform:uppercase;font-weight:600">Approval Date</span>
+              <strong style="font-size:0.95rem">{{ agreement.completed_at|date:"j M Y, H:i" }}</strong>
+            </div>
+            {% if agreement.payment_transaction %}
+              <div>
+                <span class="tiny muted" style="display:block;text-transform:uppercase;font-weight:600">Transaction Ref</span>
+                <code style="font-size:0.82rem;background:var(--ink-50);padding:2px 6px;border-radius:4px">TXN-{{ agreement.payment_transaction.public_id|slice:":10"|upper }}</code>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Client Review Feedback -->
+          {% if agreement.client_feedback %}
+            <div style="margin-bottom:var(--gap-4);background:linear-gradient(135deg, rgba(79,70,229,0.04), rgba(16,185,129,0.04));border:1px solid var(--line-strong);border-radius:var(--r);padding:16px 20px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <span class="avatar avatar--sm">{{ agreement.client.initials }}</span>
+                <div>
+                  <strong style="font-size:0.92rem">{{ agreement.client.full_name }}</strong>
+                  <span class="tiny muted">(Client Feedback)</span>
+                </div>
+              </div>
+              <p style="margin:0;font-style:italic;line-height:1.6;font-size:0.95rem">“{{ agreement.client_feedback }}”</p>
+            </div>
+          {% endif %}
+
+          <!-- Deliverables Details Header -->
+          <h2 style="font-size:1.1rem;margin:0 0 var(--gap-3);display:flex;align-items:center;gap:8px">
+            <span>📦</span> Final Approved Deliverables
+          </h2>
+
+          {% if agreement.work_submission %}
+            <div style="background:var(--surface-2);border:1px solid var(--line);padding:16px;border-radius:var(--r);white-space:pre-line;line-height:1.7;font-size:0.95rem;margin-bottom:var(--gap-4)">
+              {{ agreement.work_submission }}
+            </div>
+          {% endif %}
+
+          <!-- Google Drive / Live Link -->
+          {% if agreement.submission_link %}
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--gap-3);background:linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.03));border:1.5px solid var(--brand-300, #a5b4fc);border-radius:var(--r);padding:14px 18px;margin-bottom:var(--gap-4);flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:1.6rem">🌐</span>
+                <div>
+                  <strong style="display:block;font-size:0.95rem">Project / Deliverable Link</strong>
+                  <span class="tiny muted" style="word-break:break-all">{{ agreement.submission_link|truncatechars:65 }}</span>
+                </div>
+              </div>
+              <a href="{{ agreement.submission_link }}" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--sm" style="display:inline-flex;align-items:center;gap:6px">
+                Open Link ↗️
+              </a>
+            </div>
+          {% endif %}
+
+          <!-- Uploaded Files / Attachments -->
+          {% if agreement.attachments.all or agreement.submission_file %}
+            <div style="margin-top:var(--gap-4)">
+              <h3 style="font-size:0.95rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:var(--gap-3)">
+                Deliverable Files & Media Attachments
+              </h3>
+
+              <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:var(--gap-3)">
+                {% for att in agreement.attachments.all %}
+                  <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px">
+                    {% if att.is_image %}
+                      <a href="{{ att.file.url }}" target="_blank" rel="noopener noreferrer" style="display:block;border-radius:var(--r-sm);overflow:hidden;height:130px;background:#000;display:flex;align-items:center;justify-content:center">
+                        <img src="{{ att.file.url }}" alt="{{ att.original_name }}" style="max-height:100%;max-width:100%;object-fit:cover">
+                      </a>
+                    {% else %}
+                      <div style="height:70px;background:var(--ink-50);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:2rem">
+                        📄
+                      </div>
+                    {% endif %}
+                    <div style="min-width:0">
+                      <div style="font-weight:600;font-size:0.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ att.original_name }}">
+                        {{ att.original_name }}
+                      </div>
+                      {% if att.size_bytes %}
+                        <span class="tiny muted">{{ att.size_bytes|filesizeformat }}</span>
+                      {% endif %}
+                    </div>
+                    <a href="{{ att.file.url }}" download class="btn btn--secondary btn--sm" style="width:100%;margin-top:auto">
+                      ⬇ Download File
+                    </a>
+                  </div>
+                {% empty %}
+                  {% if agreement.submission_file %}
+                    <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px">
+                      {% if agreement.is_submission_image %}
+                        <a href="{{ agreement.submission_file.url }}" target="_blank" rel="noopener noreferrer" style="display:block;border-radius:var(--r-sm);overflow:hidden;height:130px;background:#000;display:flex;align-items:center;justify-content:center">
+                          <img src="{{ agreement.submission_file.url }}" alt="Deliverable proof" style="max-height:100%;max-width:100%;object-fit:cover">
+                        </a>
+                      {% else %}
+                        <div style="height:70px;background:var(--ink-50);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:2rem">
+                          📦
+                        </div>
+                      {% endif %}
+                      <div style="min-width:0">
+                        <div style="font-weight:600;font-size:0.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                          Attached Deliverable File
+                        </div>
+                      </div>
+                      <a href="{{ agreement.submission_file.url }}" download class="btn btn--secondary btn--sm" style="width:100%;margin-top:auto">
+                        ⬇ Download File
+                      </a>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    <!-- If NOT COMPLETED: Show Work Deliverables & Submission/Approval Form -->
+    {% else %}
+
+      <!-- Review Section for Client or Under-Review Alert -->
+      {% if agreement.has_submitted_work %}
+        <div class="card" style="border-top:4px solid var(--warn-fg, #f59e0b)">
+          <div class="card__head" style="background:rgba(245, 158, 11, 0.05)">
+            <div>
+              <h2 style="color:var(--text);font-size:1.15rem;display:flex;align-items:center;gap:8px">
+                <span>📤</span> Submitted Deliverables (Under Review)
+              </h2>
+              <span class="tiny muted">Delivered on {{ agreement.submitted_at|date:"j F Y, H:i" }}</span>
+            </div>
+            <span class="sb-pill sb-pill--warn">Pending Client Approval</span>
+          </div>
+
+          <div class="card__body">
+            {% if is_client %}
+              <div class="alert alert--info" style="margin-bottom:var(--gap-4);background:#eff6ff;border-color:#3b82f6;color:#1e40af">
+                <span class="alert__icon" aria-hidden="true" style="font-size:1.3rem">🔍</span>
+                <div class="alert__body">
+                  <strong>Please Review the Deliverables Below</strong>
+                  <p style="margin-top:4px;font-size:0.92rem">
+                    Inspect the submitted notes, links, and uploaded files. When you are satisfied with the work, click <strong>Approve Deliverables & Release Payment</strong> below to transfer the {{ agreement.amount|coin }} escrow balance to the freelancer.
+                  </p>
+                </div>
+              </div>
+            {% else %}
+              <div class="alert alert--info" style="margin-bottom:var(--gap-4);background:#eff6ff;border-color:#3b82f6;color:#1e40af">
+                <span class="alert__icon" aria-hidden="true" style="font-size:1.3rem">⏳</span>
+                <div class="alert__body">
+                  <strong>Awaiting Client Review</strong>
+                  <p style="margin-top:4px;font-size:0.92rem">
+                    You have submitted your deliverables. The client will inspect your files and release the {{ agreement.amount|coin }} payment. You can also update your submission below if needed.
+                  </p>
+                </div>
+              </div>
+            {% endif %}
+
+            <!-- Deliverables description -->
+            {% if agreement.work_submission %}
+              <h3 style="font-size:0.95rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:var(--gap-2)">
+                Notes & Summary:
+              </h3>
+              <div style="background:var(--surface-2);border:1px solid var(--line);padding:16px;border-radius:var(--r);white-space:pre-line;line-height:1.7;font-size:0.95rem;margin-bottom:var(--gap-4)">
+                {{ agreement.work_submission }}
+              </div>
+            {% endif %}
+
+            <!-- Google Drive / Project Link -->
+            {% if agreement.submission_link %}
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--gap-3);background:linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.03));border:1.5px solid var(--brand-300, #a5b4fc);border-radius:var(--r);padding:14px 18px;margin-bottom:var(--gap-4);flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="font-size:1.6rem">🌐</span>
+                  <div>
+                    <strong style="display:block;font-size:0.95rem">Project / Deliverable Link</strong>
+                    <span class="tiny muted" style="word-break:break-all">{{ agreement.submission_link }}</span>
+                  </div>
+                </div>
+                <a href="{{ agreement.submission_link }}" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--sm" style="display:inline-flex;align-items:center;gap:6px">
+                  Open Project Link ↗️
+                </a>
+              </div>
+            {% endif %}
+
+            <!-- Uploaded Files / Attachments -->
+            {% if agreement.attachments.all or agreement.submission_file %}
+              <div style="margin-top:var(--gap-4);margin-bottom:var(--gap-4)">
+                <h3 style="font-size:0.95rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:var(--gap-3)">
+                  Uploaded Files & Screenshots
+                </h3>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:var(--gap-3)">
+                  {% for att in agreement.attachments.all %}
+                    <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px">
+                      {% if att.is_image %}
+                        <a href="{{ att.file.url }}" target="_blank" rel="noopener noreferrer" style="display:block;border-radius:var(--r-sm);overflow:hidden;height:120px;background:#000;display:flex;align-items:center;justify-content:center">
+                          <img src="{{ att.file.url }}" alt="{{ att.original_name }}" style="max-height:100%;max-width:100%;object-fit:cover">
+                        </a>
+                      {% else %}
+                        <div style="height:60px;background:var(--ink-50);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:1.8rem">
+                          📄
+                        </div>
+                      {% endif %}
+                      <div style="min-width:0">
+                        <div style="font-weight:600;font-size:0.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ att.original_name }}">
+                          {{ att.original_name }}
+                        </div>
+                        {% if att.size_bytes %}
+                          <span class="tiny muted">{{ att.size_bytes|filesizeformat }}</span>
+                        {% endif %}
+                      </div>
+                      <a href="{{ att.file.url }}" download class="btn btn--secondary btn--sm" style="width:100%;margin-top:auto">
+                        ⬇ Download File
+                      </a>
+                    </div>
+                  {% empty %}
+                    {% if agreement.submission_file %}
+                      <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px">
+                        {% if agreement.is_submission_image %}
+                          <a href="{{ agreement.submission_file.url }}" target="_blank" rel="noopener noreferrer" style="display:block;border-radius:var(--r-sm);overflow:hidden;height:120px;background:#000;display:flex;align-items:center;justify-content:center">
+                            <img src="{{ agreement.submission_file.url }}" alt="Deliverable proof" style="max-height:100%;max-width:100%;object-fit:cover">
+                          </a>
+                        {% else %}
+                          <div style="height:60px;background:var(--ink-50);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:1.8rem">
+                            📦
+                          </div>
+                        {% endif %}
+                        <div style="min-width:0">
+                          <div style="font-weight:600;font-size:0.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                            Deliverable File
+                          </div>
+                        </div>
+                        <a href="{{ agreement.submission_file.url }}" download class="btn btn--secondary btn--sm" style="width:100%;margin-top:auto">
+                          ⬇ Download File
+                        </a>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            <!-- Client Action: Approve and Pay -->
+            {% if is_client %}
+              <div style="margin-top:var(--gap-5);padding-top:var(--gap-4);border-top:1.5px solid var(--line)">
+                <h3 style="font-size:1.15rem;margin-bottom:var(--gap-2);color:#059669;display:flex;align-items:center;gap:8px">
+                  <span>✓</span> Client Approval & Escrow Release
+                </h3>
+                <p class="small muted" style="margin-bottom:var(--gap-4)">
+                  Releasing payment will mark this project as officially closed and instantly deposit <strong>{{ agreement.amount|coin }}</strong> into {{ agreement.freelancer.full_name }}'s wallet.
+                </p>
+                <form method="post" action="{% url 'agreements:approve_and_pay' agreement.public_id %}" data-confirm="Are you sure you want to approve this work and release {{ agreement.amount|coin }} to {{ agreement.freelancer.full_name }}? This will mark the contract as completed and closed.">
+                  {% csrf_token %}
+                  <div class="field" style="margin-bottom:var(--gap-4)">
+                    <label for="feedback" class="field__label">Client Review / Feedback Note (optional):</label>
+                    <input type="text" id="feedback" name="feedback" class="input" placeholder="e.g. Outstanding work, clean implementation, and delivered ahead of schedule!">
+                  </div>
+                  <button type="submit" class="btn btn--success btn--lg" style="width:100%;font-size:1.05rem;padding:14px;box-shadow:0 4px 14px rgba(16,185,129,0.35);font-weight:700">
+                    ✓ Approve Deliverables & Release {{ agreement.amount|coin }}
+                  </button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Freelancer Submission Form (if not completed) -->
+      {% if is_freelancer %}
+        <div class="card" style="border-top:4px solid var(--brand, #4f46e5)">
+          <div class="card__head">
+            <div>
+              <h2 style="font-size:1.2rem;margin:0">
+                {% if agreement.has_submitted_work %}📤 Update Deliverables & Work Submission{% else %}📤 Submit Completed Deliverables{% endif %}
+              </h2>
+              <span class="tiny muted">Provide notes, drive/project links, and upload file deliverables for client review.</span>
+            </div>
+          </div>
+          <div class="card__body">
+            <form method="post" action="{% url 'agreements:submit_work' agreement.public_id %}" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="field" style="margin-bottom:var(--gap-4)">
+                <label for="work_submission" class="field__label">
+                  <strong>Deliverables Summary & Notes:</strong> <span class="required-mark">*</span>
+                </label>
+                <textarea id="work_submission" name="work_submission" rows="5" class="input" placeholder="Summarize your work, details of implementation, deployment instructions, or milestone notes..." required>{{ agreement.work_submission }}</textarea>
+                <p class="field__hint">Be specific about what was built or completed according to the agreed deliverables.</p>
+              </div>
+
+              <div class="field" style="margin-bottom:var(--gap-4)">
+                <label for="submission_link" class="field__label">
+                  <strong>Project Link (Google Drive / GitHub / Figma / Live Demo):</strong>
+                </label>
+                <div style="position:relative">
+                  <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none">🔗</span>
+                  <input type="url" id="submission_link" name="submission_link" value="{{ agreement.submission_link }}" class="input" style="padding-left:42px" placeholder="https://drive.google.com/drive/folders/... or https://github.com/...">
+                </div>
+                <p class="field__hint">💡 If using Google Drive, ensure link sharing permissions are set to "Anyone with the link can view".</p>
+              </div>
+
+              <div class="field" style="margin-bottom:var(--gap-4)">
+                <label class="field__label">
+                  <strong>Upload Deliverable Files & Proof of Work (Images, ZIP, Documents):</strong>
+                </label>
+                <div id="drop-zone" style="border:2px dashed var(--line-strong);border-radius:var(--r);padding:24px 16px;text-align:center;background:var(--surface-2);cursor:pointer;transition:border-color 0.2s, background 0.2s" onclick="document.getElementById('files-input').click()">
+                  <div style="font-size:2.2rem;margin-bottom:6px">📁</div>
+                  <strong style="font-size:0.95rem;color:var(--text);display:block">Click to browse or drag & drop files</strong>
+                  <span class="tiny muted" style="display:block;margin-top:4px">Upload screenshots, images, zip archives, or PDF reports (multiple files supported)</span>
+                  <input type="file" id="files-input" name="files" multiple accept="image/*,.pdf,.zip,.rar,.tar.gz,.doc,.docx,.txt" style="display:none" onchange="handleFileSelect(this)">
+                </div>
+
+                <!-- Preview container for selected files -->
+                <div id="selected-files-list" style="margin-top:var(--gap-3);display:flex;flex-wrap:wrap;gap:8px"></div>
+              </div>
+
+              <div style="margin-top:var(--gap-5);padding-top:var(--gap-4);border-top:1px solid var(--line)">
+                <button type="submit" class="btn btn--primary btn--lg" style="width:100%;font-size:1.05rem;padding:13px;font-weight:700">
+                  📤 {% if agreement.has_submitted_work %}Update Deliverables Submission{% else %}Submit Completed Work for Client Review{% endif %}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% elif is_client and not agreement.has_submitted_work %}
+        <!-- Client waiting state -->
+        <div class="card" style="border-top:4px solid var(--brand, #4f46e5)">
+          <div class="card__head">
+            <h2>⏳ Work In Progress</h2>
+          </div>
+          <div class="card__body">
+            <p style="font-size:0.95rem;line-height:1.6;color:var(--text-muted)">
+              <strong>{{ agreement.freelancer.full_name }}</strong> is currently working on your project deliverables. Once the work or Google Drive links are submitted, you will receive an in-app notification and will be able to review and approve the project here.
+            </p>
+          </div>
+        </div>
+      {% endif %}
+
+    {% endif %}
+
+    <!-- Agreed Terms & Scope of Work Card (Available for both in all states) -->
+    <div class="card">
+      <div class="card__head">
+        <h2>Agreed Scope of Work & Deliverables</h2>
+      </div>
+      <div class="card__body">
+        <p style="white-space:pre-line;line-height:1.7;font-size:0.98rem;margin:0">{{ agreement.deliverables }}</p>
+      </div>
+    </div>
+
+  </article>
+
+  <!-- Sidebar Terms & Quick Actions -->
+  <aside class="stack" style="gap:var(--gap-4)">
+    <div class="card">
+      <div class="card__head"><h2>Contract Summary</h2></div>
+      <div class="card__body center" style="padding:var(--gap-4)">
+        <p class="stat__label">Total Contract Value</p>
+        <p class="coin coin--xl" style="font-weight:800;color:var(--brand,#4f46e5);font-size:2rem">{{ agreement.amount|coin }}</p>
+        <p class="tiny muted" style="margin-top:2px">{{ agreement.job.get_job_type_display }} Project</p>
+
+        <hr style="margin:var(--gap-3) 0">
+
+        <dl class="dl" style="text-align:left;font-size:0.88rem;gap:8px 0">
+          <dt>Status</dt>
+          <dd>
+            {% if agreement.is_completed %}
+              <strong style="color:#10b981">Completed & Paid</strong>
+            {% elif agreement.has_submitted_work %}
+              <strong style="color:#f59e0b">Work Submitted</strong>
+            {% else %}
+              <strong style="color:var(--brand,#4f46e5)">Active In Progress</strong>
+            {% endif %}
+          </dd>
+          <dt>Deadline</dt>
+          <dd>{{ agreement.deadline|date:"j M Y" }}</dd>
+          <dt>Revisions</dt>
+          <dd>{{ agreement.revision_limit }} round{{ agreement.revision_limit|pluralize }}</dd>
+          <dt>Contract ID</dt>
+          <dd><code>{{ agreement.public_id|slice:":8" }}</code></dd>
+        </dl>
+
+        <div class="stack-sm" style="margin-top:var(--gap-4);gap:var(--gap-2)">
+          {% if conversation %}
+            <a class="btn btn--primary btn--block" href="{{ conversation.get_absolute_url }}" style="background:var(--brand-gradient);border:0;color:#fff">
+              💬 Direct Message
+            </a>
+          {% else %}
+            <form method="post" action="{% url 'messaging:start_job' job.public_id %}">
+              {% csrf_token %}
+              {% if is_client %}
+                <input type="hidden" name="freelancer" value="{{ agreement.freelancer.public_id }}">
+              {% endif %}
+              <button class="btn btn--primary btn--block" type="submit" style="background:var(--brand-gradient);border:0;color:#fff">
+                💬 Direct Message
+              </button>
+            </form>
+          {% endif %}
+
+          {% if agreement.offer and agreement.offer.negotiation %}
+            <a class="btn btn--secondary btn--block btn--sm" href="{{ agreement.offer.negotiation.get_absolute_url }}">
+              🤝 Negotiation History
+            </a>
+          {% endif %}
+
+          <a class="btn btn--ghost btn--block btn--sm" href="{{ job.get_absolute_url }}">
+            View Job Details
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Counterparty card -->
+    <div class="card">
+      <div class="card__head">
+        <h2>{% if is_client %}Hired Freelancer{% else %}Project Client{% endif %}</h2>
+      </div>
+      <div class="card__body" style="padding:var(--gap-4)">
+        {% if is_client %}
+          <div class="identity">
+            <span class="avatar avatar--lg">{{ agreement.freelancer.initials }}</span>
+            <div style="min-width:0">
+              <div class="identity__name">
+                <a href="{{ agreement.freelancer.get_absolute_url }}">{{ agreement.freelancer.full_name }}</a>
+              </div>
+              <div class="identity__meta">
+                @{{ agreement.freelancer.username }}
+              </div>
+              <p class="tiny muted" style="margin-top:4px;line-height:1.4">
+                {{ agreement.freelancer.freelancer_profile.headline|default:"Freelancer" }}
+              </p>
+            </div>
+          </div>
+        {% else %}
+          <div class="identity">
+            <span class="avatar avatar--lg">{{ agreement.client.initials }}</span>
+            <div style="min-width:0">
+              <div class="identity__name">
+                <a href="{{ agreement.client.get_absolute_url }}">{{ agreement.client.full_name }}</a>
+              </div>
+              <div class="identity__meta">
+                @{{ agreement.client.username }} · Client
+              </div>
+              {% if agreement.client.client_profile.company_name %}
+                <p class="tiny muted" style="margin-top:4px">
+                  {{ agreement.client.client_profile.company_name }}
+                </p>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+function handleFileSelect(input) {
+  const container = document.getElementById('selected-files-list');
+  container.innerHTML = '';
+  if (!input.files || input.files.length === 0) return;
+
+  for (let i = 0; i < input.files.length; i++) {
+    const file = input.files[i];
+    const item = document.createElement('div');
+    item.style.cssText = 'background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:6px 12px;font-size:0.82rem;display:inline-flex;align-items:center;gap:6px';
+    
+    const icon = file.type.startsWith('image/') ? '🖼️' : '📄';
+    const size = (file.size / 1024 < 1024) ? (file.size / 1024).toFixed(1) + ' KB' : (file.size / (1024*1024)).toFixed(1) + ' MB';
+    
+    item.innerHTML = `<span>${icon}</span> <strong>${file.name}</strong> <span class="muted">(${size})</span>`;
+    container.appendChild(item);
+  }
+}
+
+// Drag & drop highlight
+const dropZone = document.getElementById('drop-zone');
+if (dropZone) {
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--brand)';
+      dropZone.style.background = 'rgba(79, 70, 229, 0.05)';
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--line-strong)';
+      dropZone.style.background = 'var(--surface-2)';
+    }, false);
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    const input = document.getElementById('files-input');
+    input.files = files;
+    handleFileSelect(input);
+  });
+}
+</script>
+{% endblock %}

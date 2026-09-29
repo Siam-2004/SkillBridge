@@ -1,0 +1,53 @@
+{% extends "layouts/public.html" %}
+{% load static %}
+{% block title %}Jobs — Skillbridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'marketplace/css/jobs.css' %}">{% endblock %}
+{% block page_js %}<script src="{% static 'marketplace/js/jobs.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Jobs</h1>
+  <p class="lede">
+    {{ total }} job{{ total|pluralize }} open. Every one of them has its budget
+    already reserved — you are never proposing against money that is not there.
+  </p>
+</div>
+
+<div class="grid grid--aside">
+  <aside class="card job-filters">
+    <div class="card__head"><h2>Filter</h2></div>
+    <div class="card__body">
+      <form method="get" class="filters" id="job-filters">
+        {% include "components/form.html" %}
+        <div class="btn-group" style="margin-top:var(--gap-4)">
+          <button class="btn btn--primary btn--sm" type="submit">Apply</button>
+          <a class="btn btn--ghost btn--sm" href="{% url 'marketplace:job_list' %}">Clear</a>
+        </div>
+      </form>
+    </div>
+  </aside>
+
+  <div>
+    {% if page.object_list %}
+      <div class="stack">
+        {% for job in page.object_list %}
+          <div class="job-row">
+            {% include "components/job-card.html" %}
+            {% if user.is_authenticated and user.is_freelancer %}
+              <form method="post" action="{% url 'marketplace:job_save' job.public_id %}" class="job-save" data-no-busy="1">
+                {% csrf_token %}
+                <button class="btn btn--ghost btn--sm" type="submit">
+                  {% if job.id in saved_ids %}★ Saved{% else %}☆ Save{% endif %}
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      {% include "components/pagination.html" %}
+    {% else %}
+      {% include "components/empty-state.html" with title="No jobs match those filters" body="Try widening the budget range or clearing a filter or two." action_url="/jobs/" action_label="Clear filters" %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

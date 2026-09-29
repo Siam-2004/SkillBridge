@@ -1,0 +1,2 @@
+"""Negotiation and offer inspection."""
+

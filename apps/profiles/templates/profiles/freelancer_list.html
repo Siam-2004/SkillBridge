@@ -25,7 +25,7 @@
     </div>
     <div class="card__body">
       <form method="get" class="filters-form">
-        <!-- Search Keyword -->
+
         <div class="filter-group">
           <label for="{{ form.q.id_for_label }}">Search</label>
           <div class="filter-input-wrap">
@@ -34,13 +34,11 @@
           </div>
         </div>
 
-        <!-- Category -->
         <div class="filter-group">
           <label for="{{ form.category.id_for_label }}">Category</label>
           {{ form.category }}
         </div>
 
-        <!-- Hourly Rate Range (Side by side) -->
         <div class="filter-group">
           <label>Hourly Rate (BDT)</label>
           <div class="rate-range-row">
@@ -56,7 +54,6 @@
           </div>
         </div>
 
-        <!-- Rating -->
         <div class="filter-group">
           <label for="{{ form.min_rating.id_for_label }}">Minimum Rating</label>
           <div class="rating-select-wrap">
@@ -69,25 +66,21 @@
           </div>
         </div>
 
-        <!-- Availability -->
         <div class="filter-group">
           <label for="{{ form.availability.id_for_label }}">Availability</label>
           {{ form.availability }}
         </div>
 
-        <!-- Experience Level -->
         <div class="filter-group">
           <label for="{{ form.experience_level.id_for_label }}">Experience</label>
           {{ form.experience_level }}
         </div>
 
-        <!-- Sort -->
         <div class="filter-group">
           <label for="{{ form.sort.id_for_label }}">Sort By</label>
           {{ form.sort }}
         </div>
 
-        <!-- Portfolio Checkbox -->
         <div class="filter-group filter-check-group">
           <label class="check-label" for="{{ form.has_portfolio.id_for_label }}">
             <input type="checkbox" name="has_portfolio" value="yes" id="{{ form.has_portfolio.id_for_label }}"{% if form.has_portfolio.value == 'yes' %} checked{% endif %}>
@@ -95,7 +88,6 @@
           </label>
         </div>
 
-        <!-- Submit & Clear -->
         <div class="filter-actions">
           <button class="btn btn--primary btn--block" type="submit">Apply Filters</button>
           <a class="btn btn--ghost btn--block btn--sm" href="{% url 'directory:freelancer_list' %}">Clear All</a>

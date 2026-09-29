@@ -46,7 +46,6 @@
 <div class="grid grid--sidebar" style="gap:var(--gap-5);align-items:start">
   <article class="stack" style="gap:var(--gap-5)">
 
-    <!-- If COMPLETED: Show Closed State and Clean Immutable Audit History -->
     {% if agreement.is_completed %}
       <div class="card" style="border:1.5px solid #10b981;background:linear-gradient(180deg, rgba(16,185,129,0.06) 0%, var(--surface) 120px);overflow:hidden">
         <div style="background:#10b981;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
@@ -84,7 +83,6 @@
             {% endif %}
           </div>
 
-          <!-- Client Review Feedback -->
           {% if agreement.client_feedback %}
             <div style="margin-bottom:var(--gap-4);background:linear-gradient(135deg, rgba(79,70,229,0.04), rgba(16,185,129,0.04));border:1px solid var(--line-strong);border-radius:var(--r);padding:16px 20px">
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
@@ -98,7 +96,6 @@
             </div>
           {% endif %}
 
-          <!-- Deliverables Details Header -->
           <h2 style="font-size:1.1rem;margin:0 0 var(--gap-3);display:flex;align-items:center;gap:8px">
             <span>📦</span> Final Approved Deliverables
           </h2>
@@ -109,7 +106,6 @@
             </div>
           {% endif %}
 
-          <!-- Google Drive / Live Link -->
           {% if agreement.submission_link %}
             <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--gap-3);background:linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.03));border:1.5px solid var(--brand-300, #a5b4fc);border-radius:var(--r);padding:14px 18px;margin-bottom:var(--gap-4);flex-wrap:wrap">
               <div style="display:flex;align-items:center;gap:12px">
@@ -125,7 +121,6 @@
             </div>
           {% endif %}
 
-          <!-- Uploaded Files / Attachments -->
           {% if agreement.attachments.all or agreement.submission_file %}
             <div style="margin-top:var(--gap-4)">
               <h3 style="font-size:0.95rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:var(--gap-3)">
@@ -185,10 +180,8 @@
         </div>
       </div>
 
-    <!-- If NOT COMPLETED: Show Work Deliverables & Submission/Approval Form -->
     {% else %}
 
-      <!-- Review Section for Client or Under-Review Alert -->
       {% if agreement.has_submitted_work %}
         <div class="card" style="border-top:4px solid var(--warn-fg, #f59e0b)">
           <div class="card__head" style="background:rgba(245, 158, 11, 0.05)">
@@ -224,7 +217,6 @@
               </div>
             {% endif %}
 
-            <!-- Deliverables description -->
             {% if agreement.work_submission %}
               <h3 style="font-size:0.95rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:var(--gap-2)">
                 Notes & Summary:
@@ -234,7 +226,6 @@
               </div>
             {% endif %}
 
-            <!-- Google Drive / Project Link -->
             {% if agreement.submission_link %}
               <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--gap-3);background:linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.03));border:1.5px solid var(--brand-300, #a5b4fc);border-radius:var(--r);padding:14px 18px;margin-bottom:var(--gap-4);flex-wrap:wrap">
                 <div style="display:flex;align-items:center;gap:12px">
@@ -250,7 +241,6 @@
               </div>
             {% endif %}
 
-            <!-- Uploaded Files / Attachments -->
             {% if agreement.attachments.all or agreement.submission_file %}
               <div style="margin-top:var(--gap-4);margin-bottom:var(--gap-4)">
                 <h3 style="font-size:0.95rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:var(--gap-3)">
@@ -307,7 +297,6 @@
               </div>
             {% endif %}
 
-            <!-- Client Action: Approve and Pay -->
             {% if is_client %}
               <div style="margin-top:var(--gap-5);padding-top:var(--gap-4);border-top:1.5px solid var(--line)">
                 <h3 style="font-size:1.15rem;margin-bottom:var(--gap-2);color:#059669;display:flex;align-items:center;gap:8px">
@@ -332,7 +321,6 @@
         </div>
       {% endif %}
 
-      <!-- Freelancer Submission Form (if not completed) -->
       {% if is_freelancer %}
         <div class="card" style="border-top:4px solid var(--brand, #4f46e5)">
           <div class="card__head">
@@ -377,7 +365,6 @@
                   <input type="file" id="files-input" name="files" multiple accept="image/*,.pdf,.zip,.rar,.tar.gz,.doc,.docx,.txt" style="display:none" onchange="handleFileSelect(this)">
                 </div>
 
-                <!-- Preview container for selected files -->
                 <div id="selected-files-list" style="margin-top:var(--gap-3);display:flex;flex-wrap:wrap;gap:8px"></div>
               </div>
 
@@ -390,7 +377,7 @@
           </div>
         </div>
       {% elif is_client and not agreement.has_submitted_work %}
-        <!-- Client waiting state -->
+
         <div class="card" style="border-top:4px solid var(--brand, #4f46e5)">
           <div class="card__head">
             <h2>⏳ Work In Progress</h2>
@@ -405,7 +392,6 @@
 
     {% endif %}
 
-    <!-- Agreed Terms & Scope of Work Card (Available for both in all states) -->
     <div class="card">
       <div class="card__head">
         <h2>Agreed Scope of Work & Deliverables</h2>
@@ -417,7 +403,6 @@
 
   </article>
 
-  <!-- Sidebar Terms & Quick Actions -->
   <aside class="stack" style="gap:var(--gap-4)">
     <div class="card">
       <div class="card__head"><h2>Contract Summary</h2></div>
@@ -477,7 +462,6 @@
       </div>
     </div>
 
-    <!-- Counterparty card -->
     <div class="card">
       <div class="card__head">
         <h2>{% if is_client %}Hired Freelancer{% else %}Project Client{% endif %}</h2>
@@ -531,10 +515,10 @@ function handleFileSelect(input) {
     const file = input.files[i];
     const item = document.createElement('div');
     item.style.cssText = 'background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:6px 12px;font-size:0.82rem;display:inline-flex;align-items:center;gap:6px';
-    
+
     const icon = file.type.startsWith('image/') ? '🖼️' : '📄';
     const size = (file.size / 1024 < 1024) ? (file.size / 1024).toFixed(1) + ' KB' : (file.size / (1024*1024)).toFixed(1) + ' MB';
-    
+
     item.innerHTML = `<span>${icon}</span> <strong>${file.name}</strong> <span class="muted">(${size})</span>`;
     container.appendChild(item);
   }

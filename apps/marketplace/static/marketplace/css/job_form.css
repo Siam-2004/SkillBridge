@@ -1,6 +1,4 @@
-/* Job form: wide fields and a sticky balance panel beside them. */
-
 #job-form select[multiple] { min-height: 180px; }
 #job-form textarea { line-height: 1.6; }
 .grid--sidebar > aside > .card:first-child { position: sticky; top: 78px; }
-@media (max-width: 1024px) { .grid--sidebar > aside > .card:first-child { position: static; } }
+@media (max-width: 1024px) {.grid--sidebar > aside > .card:first-child { position: static; } }

@@ -1,4 +1,3 @@
-
 (function () {
   "use strict";
 
@@ -23,7 +22,6 @@
     }
   });
 
-  /* Clicking the backdrop closes the dialog, which is what people expect. */
   document.addEventListener("click", function (event) {
     if (event.target.tagName === "DIALOG" && event.target.open) {
       const box = event.target.getBoundingClientRect();

@@ -11,7 +11,7 @@
 
 {% block content %}
 <div class="withdraw-container">
-  <!-- Balance Snapshot -->
+
   <div class="balance-strip">
     <div>
       <span class="muted small" style="display: block; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Available to Withdraw</span>
@@ -25,7 +25,6 @@
     </div>
   </div>
 
-  <!-- Withdrawal Form Card -->
   <section class="card">
     <div class="card__head">
       <h2>Request Payout</h2>
@@ -47,7 +46,6 @@
             <p class="field__error">{{ form.amount.errors.0 }}</p>
           {% endif %}
 
-          <!-- Quick select buttons -->
           <div class="quick-amounts">
             <span class="muted small" style="align-self: center; margin-right: 4px;">Quick select:</span>
             <button type="button" class="quick-btn" onclick="setAmount(100)">100</button>

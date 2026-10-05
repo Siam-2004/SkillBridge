@@ -1,1 +1,106 @@
 {% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Conversation — Skillbridge{% endblock %}
+{% block page_heading %}
+  {% if conversation.project %}{{ conversation.project.title }}{% elif conversation.job %}{{ conversation.job.title }}{% else %}Conversation{% endif %}
+{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'messaging/css/conversation.css' %}">{% endblock %}
+{% block page_js %}<script src="{% static 'messaging/js/conversation.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="grid grid--sidebar">
+  <section class="card conversation"
+           data-poll-url="{% url 'messaging:poll' conversation.public_id %}"
+           data-writable="{{ can_write|yesno:'1,0' }}">
+    <div class="card__head">
+      <h2>{{ conversation.get_conversation_type_display }}</h2>
+      {% if conversation.is_archived %}
+        <span class="sb-pill sb-pill--neutral">Archived — read only</span>
+      {% endif %}
+    </div>
+
+    <div class="thread" id="thread" tabindex="0" aria-label="Messages">
+      {% for m in messages_list %}
+        <article class="msg{% if m.sender_id == user.pk %} msg--mine{% endif %}{% if m.kind == 'SYSTEM' %} msg--system{% endif %}"
+                 data-created="{{ m.created_at|date:'c' }}">
+          {% if m.kind == 'SYSTEM' %}
+            <p class="msg__system">{{ m.content }}</p>
+          {% else %}
+            <span class="avatar avatar--sm">{{ m.sender.initials|default:"SB" }}</span>
+            <div class="msg__body">
+              <div class="msg__meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <strong>{{ m.sender.full_name|default:"Skillbridge" }}</strong>
+                {% if m.sender %}<span class="tiny muted" style="font-weight:400">(@{{ m.sender.username }})</span>{% endif %}
+                {% if m.sender_id == user.pk %}
+                  <span class="sb-pill sb-pill--neutral" style="font-size:0.68rem;padding:1px 6px">You</span>
+                {% elif m.sender %}
+                  <span class="sb-pill sb-pill--info" style="font-size:0.68rem;padding:1px 6px">{{ m.sender.get_role_display }}</span>
+                {% endif %}
+                <span class="tiny faint">{{ m.created_at|date:"j M, H:i" }}</span>
+              </div>
+              <div class="msg__text">{{ m.content|linebreaksbr }}</div>
+              {% if m.attachments.all %}
+                <ul class="msg__files">
+                  {% for a in m.attachments.all %}
+                    <li><a href="{% url 'files:serve' a.public_id %}">{{ a.original_name }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endif %}
+        </article>
+      {% empty %}
+        <p class="empty">No messages yet. Say hello.</p>
+      {% endfor %}
+    </div>
+
+    {% if can_write %}
+      <form class="composer" method="post" action="{% url 'messaging:send' conversation.public_id %}"
+            enctype="multipart/form-data" data-no-busy="1">
+        {% csrf_token %}
+        <label class="sr-only" for="id_content">Message</label>
+        {{ form.content }}
+        <div class="composer__actions">
+          <label class="btn btn--ghost btn--sm">
+            Attach
+            <input type="file" name="files" multiple class="sr-only">
+          </label>
+          <button class="btn btn--primary btn--sm" type="submit">Send</button>
+        </div>
+      </form>
+    {% else %}
+      <div class="card__foot small muted">
+        This conversation is archived. It stays readable and searchable as a
+        record of the project, but no new messages can be added.
+      </div>
+    {% endif %}
+  </section>
+
+  <aside class="stack">
+    <div class="card">
+      <div class="card__head"><h2>Participants</h2></div>
+      <div class="card__body card__body--tight">
+        {% for p in participants %}
+          <div class="row" style="padding:var(--gap-2) 0">
+            <span class="avatar avatar--sm">{{ p.user.initials }}</span>
+            <div>
+              <div class="small bold">{{ p.user.full_name }}</div>
+              <div class="tiny muted">{{ p.user.get_role_display }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if conversation.project %}
+      <div class="card"><div class="card__body">
+        <a class="btn btn--secondary btn--block" href="{{ conversation.project.get_absolute_url }}">Open the project</a>
+      </div></div>
+    {% elif conversation.job %}
+      <div class="card"><div class="card__body">
+        <a class="btn btn--secondary btn--block" href="{{ conversation.job.get_absolute_url }}">View the job</a>
+      </div></div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

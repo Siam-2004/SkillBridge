@@ -57,6 +57,17 @@ class DepositAdmin(admin.ModelAdmin):
             count += 1
         self.message_user(request, f'Rejected {count} deposit(s).')
 
+    def save_model(self, request, obj, form, change):
+        if change:
+            old_obj = Deposit.objects.get(pk=obj.pk)
+            if old_obj.status == Deposit.Status.PENDING and obj.status == Deposit.Status.APPROVED:
+                services.approve_deposit(deposit=obj, admin_user=request.user)
+                return
+            elif old_obj.status == Deposit.Status.PENDING and obj.status == Deposit.Status.REJECTED:
+                services.reject_deposit(deposit=obj, admin_user=request.user, reason=obj.admin_note)
+                return
+        super().save_model(request, obj, form, change)
+
 @admin.register(Withdrawal)
 class WithdrawalAdmin(admin.ModelAdmin):
     list_display = ('reference_id', 'created_at', 'user', 'amount', 'payment_method', 'account_number', 'external_transaction_id', 'status', 'processed_at')
@@ -65,6 +76,17 @@ class WithdrawalAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     actions = ['approve_withdrawals', 'reject_withdrawals']
+
+    def save_model(self, request, obj, form, change):
+        if change:
+            old_obj = Withdrawal.objects.get(pk=obj.pk)
+            if old_obj.status == Withdrawal.Status.PENDING and obj.status == Withdrawal.Status.APPROVED:
+                services.approve_withdrawal(withdrawal=obj, admin_user=request.user, transaction_id=obj.external_transaction_id)
+                return
+            elif old_obj.status == Withdrawal.Status.PENDING and obj.status == Withdrawal.Status.REJECTED:
+                services.reject_withdrawal(withdrawal=obj, admin_user=request.user, reason=obj.admin_note)
+                return
+        super().save_model(request, obj, form, change)
 
     @admin.action(description='Approve selected withdrawals and release funds')
     def approve_withdrawals(self, request, queryset):

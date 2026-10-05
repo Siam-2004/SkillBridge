@@ -1,0 +1,1 @@
+"""SkillBridge Tasks App."""

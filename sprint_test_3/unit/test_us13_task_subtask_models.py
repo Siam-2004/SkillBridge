@@ -1,17 +1,18 @@
 from decimal import Decimal
-
 from django.test import TestCase
 from django.utils import timezone
 from apps.accounts.models import User, Role
+from apps.core.exceptions import PermissionDenied, ValidationFailed
 from apps.projects.models import Project, Team, TeamMember
 from apps.tasks.models import Task, Subtask
 from apps.tasks import services as ts
 
 class US13TaskSubtaskModelsTestCase(TestCase):
     def setUp(self):
-        self.c = User.objects.create_user(email='c@ex.com', username='client', password='p', role=Role.CLIENT, is_email_verified=True)
-        self.own = User.objects.create_user(email='o@ex.com', username='own', password='p', role=Role.FREELANCER, is_email_verified=True)
-        self.mem = User.objects.create_user(email='m@ex.com', username='mem', password='p', role=Role.FREELANCER, is_email_verified=True)
+        self.c = User.objects.create_user(email='sabbir1@gmail.com', username='client', password='sabbir', role=Role.CLIENT, is_email_verified=True)
+        self.own = User.objects.create_user(email='sabbir2@gmail.com', username='own', password='sabbir', role=Role.FREELANCER, is_email_verified=True)
+        self.mem = User.objects.create_user(email='sabbir3@gmail.com', username='mem', password='sabbir', role=Role.FREELANCER, is_email_verified=True)
+        self.out = User.objects.create_user(email='sabbir4@gmail.com', username='out', password='sabbir', role=Role.FREELANCER, is_email_verified=True)
         self.p = Project.objects.create(client=self.c, freelancer=self.own, title='P', final_price=Decimal('100'), deadline=timezone.now()+timezone.timedelta(days=1), status=Project.Status.ACTIVE)
         t = Team.objects.create(project=self.p, name='T', owner=self.own)
         TeamMember.objects.create(team=t, user=self.own, role=TeamMember.Role.OWNER)
@@ -26,3 +27,9 @@ class US13TaskSubtaskModelsTestCase(TestCase):
         ts.assign_subtask(st, self.own, self.own)
         st.refresh_from_db()
         self.assertEqual(st.assigned_to, self.own)
+
+    def test_empty_task_title_validation(self):
+        with self.assertRaises(ValidationFailed): ts.create_task(self.p, '   ', '', self.own)
+
+    def test_unauthorized_user_cannot_create_task(self):
+        with self.assertRaises(PermissionDenied): ts.create_task(self.p, 'Task', '', self.out)

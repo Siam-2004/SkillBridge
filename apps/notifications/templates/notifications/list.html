@@ -1,1 +1,29 @@
 {% extends "layouts/dashboard.html" %}
+{% block title %}Notifications — Skillbridge{% endblock %}
+{% block page_heading %}Notifications{% endblock %}
+
+{% block content %}
+<div class="row row--between row--wrap" style="margin-bottom:var(--gap-4)">
+  <div class="tabs" style="margin:0;border:0">
+    <a href="{% url 'notifications:list' %}"{% if not unread_only %} class="is-active"{% endif %}>All</a>
+    <a href="?filter=unread"{% if unread_only %} class="is-active"{% endif %}>Unread ({{ unread }})</a>
+  </div>
+  {% if unread %}
+    <form method="post" action="{% url 'notifications:read_all' %}" data-no-busy="1">
+      {% csrf_token %}
+      <button class="btn btn--secondary btn--sm" type="submit">Mark all as read</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if page_obj.object_list %}
+  <div class="card card--flush">
+    {% for note in page_obj.object_list %}
+      {% include "components/notification-item.html" %}
+    {% endfor %}
+  </div>
+  {% include "components/pagination.html" with page=page_obj %}
+{% else %}
+  {% include "components/empty-state.html" with title="Nothing to read" body="Notifications about proposals, payments, deadlines and disputes appear here." %}
+{% endif %}
+{% endblock %}

@@ -1,1 +1,24 @@
 {% extends "layouts/dashboard.html" %}
+{% load skillbridge %}
+{% block title %}Projects — SkillBridge{% endblock %}
+{% block page_heading %}Projects Workspace{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card__head"><h2>Active Projects</h2></div>
+  <div class="card__body">
+    {% if projects %}
+      <div class="stack" style="gap:var(--gap-3);">
+        {% for p in projects %}
+          <div class="card" style="padding:var(--gap-3); border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <h3><a href="{% url 'projects:detail' p.public_id %}">{{ p.title }}</a></h3>
+              <p class="small muted">Client: <strong>{{ p.client.username }}</strong> · Lead: <strong>{{ p.freelancer.username }}</strong> · Price: {{ p.final_price|coin }} SKC · Due: {{ p.deadline|date:"d M Y" }}</p>
+            </div>
+            <a class="btn btn--secondary btn--sm" href="{% url 'projects:detail' p.public_id %}">Open Workspace →</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}<div class="empty"><p>No active projects found.</p></div>{% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "layouts/dashboard.html" %}
+{% block title %}Negotiations — Skillbridge{% endblock %}
+{% block page_heading %}Negotiations{% endblock %}
+{% block content %}
+{% if page.object_list %}
+  <div class="card card--flush">
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Job</th><th>With</th><th class="num">Current offer</th><th>Waiting on</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for n in page.object_list %}
+            <tr>
+              <td><a class="bold" href="{{ n.get_absolute_url }}">{{ n.job.title }}</a></td>
+              <td class="small">
+                {% if user.pk == n.client_id %}{{ n.freelancer.full_name }}{% else %}{{ n.client.full_name }}{% endif %}
+              </td>
+              <td class="num coin">{{ n.current_offer.amount|coin|default:"—" }}</td>
+              <td class="small muted">
+                {% if n.current_offer %}{{ n.current_offer.receiver.full_name }}{% else %}—{% endif %}
+              </td>
+              <td>{% status_pill n.status %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% include "components/pagination.html" %}
+{% else %}
+  {% include "components/empty-state.html" with title="No negotiations" body="A negotiation starts when a client opens one on a proposal." %}
+{% endif %}
+{% endblock %}

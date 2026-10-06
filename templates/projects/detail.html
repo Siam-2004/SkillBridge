@@ -1,1 +1,176 @@
 {% extends "layouts/dashboard.html" %}{% load skillbridge humanize %}
+{% block title %}{{ project.title }} — Workspace{% endblock %}
+{% block page_heading %}{{ project.title }}{% endblock %}
+{% block content %}
+<div class="stack" style="gap:var(--gap-4);">
+  <div class="card" style="padding:var(--gap-4);">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:var(--gap-3);">
+      <div>
+        <span class="badge badge--{{ project.status|lower }}">{{ project.get_status_display }}</span>
+        <h1 style="margin:var(--gap-2) 0; font-size:1.5rem;">{{ project.title }}</h1>
+        <p class="small muted" style="margin:0;">Client: <strong>{{ project.client.username }}</strong> · Lead: <strong>{{ project.freelancer.username }}</strong> · Price: <strong>{{ project.final_price|coin }} SKC</strong> · Due: <strong>{{ project.deadline|date:"d M Y" }}</strong></p>
+      </div>
+      <div><a class="btn btn--primary btn--sm" href="{% url 'projects:chat' project.public_id %}">💬 Project Chat</a></div>
+    </div>
+    {% if project.description %}<div style="margin-top:var(--gap-3); padding-top:var(--gap-3); border-top:1px solid var(--border-color);"><p class="small">{{ project.description|linebreaksbr }}</p></div>{% endif %}
+  </div>
+
+  {% if my_invite %}
+    <div class="alert alert--info" style="display:flex; justify-content:space-between; align-items:center;">
+      <div><strong>You are invited to join {{ my_invite.team.name }}!</strong> <span class="small">By {{ my_invite.invited_by.username }}</span></div>
+      <form method="post" action="{% url 'projects:invitation_respond' my_invite.id %}" style="display:inline-flex; gap:8px;">
+        {% csrf_token %}
+        <button type="submit" name="action" value="accept" class="btn btn--primary btn--sm">Accept Invitation</button>
+        <button type="submit" name="action" value="decline" class="btn btn--ghost btn--sm">Decline</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <div class="grid grid--2" style="gap:var(--gap-4); align-items:start;">
+    <div class="stack" style="gap:var(--gap-4);">
+      <!-- Tasks & Subtasks -->
+      <section class="card">
+        <div class="card__head" style="display:flex; justify-content:space-between; align-items:center;">
+          <h2>Tasks & Subtasks</h2>
+          {% if is_owner %}<button class="btn btn--secondary btn--sm" type="button" onclick="document.getElementById('task-create-form').classList.toggle('hide');">+ Add Task</button>{% endif %}
+        </div>
+        <div class="card__body">
+          {% if is_owner %}
+            <form id="task-create-form" class="hide" method="post" action="{% url 'tasks:create' project.public_id %}" style="margin-bottom:var(--gap-4); padding:var(--gap-3); background:var(--bg-subtle);">
+              {% csrf_token %}<input class="input" type="text" name="title" placeholder="Task title" required style="margin-bottom:6px;">
+              <textarea class="input" name="description" placeholder="Description" rows="2" style="margin-bottom:6px;"></textarea>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
+                <select class="input" name="priority"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option></select>
+                <select class="input" name="assigned_to"><option value="">Assign to</option>{% for tm in team_members %}<option value="{{ tm.user.id }}">{{ tm.user.username }}</option>{% endfor %}</select>
+              </div>
+              <button class="btn btn--primary btn--sm" type="submit">Save Task</button>
+            </form>
+          {% endif %}
+          {% for task in tasks %}
+            <div class="card" style="margin-bottom:var(--gap-3); padding:var(--gap-3); border:1px solid var(--border-color);">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <strong>{{ task.title }}</strong> <span class="badge badge--{{ task.priority|lower }}">{{ task.priority }}</span> <span class="badge badge--{{ task.status|lower }}">{{ task.get_status_display }}</span>
+                  {% if task.assigned_to %}<span class="tiny muted">({{ task.assigned_to.username }})</span>{% endif %}
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  {% if is_owner or task.assigned_to == request.user %}
+                    <form method="post" action="{% url 'tasks:status' task.id %}" style="display:inline-flex;">
+                      {% csrf_token %}
+                      <select name="status" class="input input--sm" onchange="this.form.submit()" style="padding:2px 4px; font-size:0.75rem;">
+                        <option value="TODO" {% if task.status == 'TODO' %}selected{% endif %}>To Do</option>
+                        <option value="IN_PROGRESS" {% if task.status == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+                        <option value="IN_REVIEW" {% if task.status == 'IN_REVIEW' %}selected{% endif %}>In Review</option>
+                        <option value="COMPLETED" {% if task.status == 'COMPLETED' %}selected{% endif %}>Done</option>
+                      </select>
+                    </form>
+                  {% endif %}
+                  {% if is_owner %}<button class="btn btn--ghost btn--sm" type="button" onclick="document.getElementById('subtask-form-{{ task.id }}').classList.toggle('hide');">+ Subtask</button>{% endif %}
+                </div>
+              </div>
+              {% if task.description %}<p class="small muted" style="margin:4px 0;">{{ task.description }}</p>{% endif %}
+              <div style="margin-top:var(--gap-2); border-top:1px dashed var(--border-color); padding-top:var(--gap-2);">
+                {% for sub in task.subtasks.all %}
+                  <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid var(--border-subtle);">
+                    <div><span>{{ sub.title }}</span> <span class="tiny muted">({% if sub.assigned_to %}{{ sub.assigned_to.username }}{% else %}Unassigned{% endif %})</span></div>
+                    <form method="post" action="{% url 'tasks:subtask_status' sub.id %}" style="display:inline-flex;">
+                      {% csrf_token %}
+                      <select name="status" class="input input--sm" onchange="this.form.submit()" style="padding:2px 4px; font-size:0.75rem;">
+                        <option value="TODO" {% if sub.status == 'TODO' %}selected{% endif %}>To Do</option>
+                        <option value="IN_PROGRESS" {% if sub.status == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+                        <option value="IN_REVIEW" {% if sub.status == 'IN_REVIEW' %}selected{% endif %}>In Review</option>
+                        <option value="COMPLETED" {% if sub.status == 'COMPLETED' %}selected{% endif %}>Done</option>
+                      </select>
+                    </form>
+                  </div>
+                {% empty %}<p class="tiny muted">No subtasks.</p>{% endfor %}
+                {% if is_owner %}
+                  <form id="subtask-form-{{ task.id }}" class="hide" method="post" action="{% url 'tasks:subtask_create' task.id %}" style="margin-top:6px; display:flex; gap:6px;">
+                    {% csrf_token %}<input class="input input--sm" type="text" name="title" placeholder="Subtask title" required style="flex:2;">
+                    <select class="input input--sm" name="assigned_to" style="flex:1;"><option value="">Assign</option>{% for tm in team_members %}<option value="{{ tm.user.id }}">{{ tm.user.username }}</option>{% endfor %}</select>
+                    <button class="btn btn--primary btn--sm" type="submit">Add</button>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          {% empty %}<p class="small muted">No tasks created yet.</p>{% endfor %}
+        </div>
+      </section>
+
+      <!-- Discussions & Comments with Mentions -->
+      <section class="card">
+        <div class="card__head"><h2>Discussions & Mentions</h2></div>
+        <div class="card__body">
+          <form method="post" action="{% url 'projects:comment_add' project.public_id %}" style="margin-bottom:var(--gap-3);">
+            {% csrf_token %}<textarea class="input" name="content" placeholder="Share updates, @mentions..." rows="2" required style="margin-bottom:6px;"></textarea>
+            <div style="display:flex; justify-content:flex-end;"><button class="btn btn--secondary btn--sm" type="submit">Post Comment</button></div>
+          </form>
+          <div class="stack" style="gap:6px;">
+            {% for c in comments %}
+              <div class="card" style="padding:var(--gap-2); border:1px solid var(--border-subtle);">
+                <div style="display:flex; justify-content:space-between;"><strong>{{ c.author.username }}</strong> <span class="tiny muted">{{ c.created_at|date:"d M, H:i" }}</span></div>
+                {% if c.task %}<span class="tiny muted">#{{ c.task.id }} {{ c.task.title }}</span>{% endif %}
+                <p class="small" style="margin:2px 0 0 0;">{{ c.content }}</p>
+              </div>
+            {% empty %}<p class="small muted">No comments yet.</p>{% endfor %}
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT COLUMN: Team, Files, Activity -->
+    <div class="stack" style="gap:var(--gap-4);">
+      <!-- Team & Members -->
+      <section class="card">
+        <div class="card__head"><h2>Team ({{ team.name|default:"Not formed" }})</h2></div>
+        <div class="card__body">
+          {% if team %}
+            <div class="stack" style="gap:4px; margin-bottom:var(--gap-3);">
+              {% for m in team_members %}<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--border-subtle);"><span>{{ m.user.username }}</span> <span class="badge badge--secondary">{{ m.get_role_display }}</span></div>{% endfor %}
+            </div>
+            {% if pending_invites %}
+              <div style="margin-bottom:var(--gap-2);">
+                <p class="tiny muted" style="font-weight:600; margin:0 0 4px 0;">PENDING INVITATIONS</p>
+                {% for inv in pending_invites %}<div style="display:flex; justify-content:space-between; padding:2px 0;"><span class="small">{{ inv.invitee.username }}</span> <span class="badge badge--warning">Invited</span></div>{% endfor %}
+              </div>
+            {% endif %}
+            {% if is_owner %}
+              <div style="margin-top:var(--gap-2); padding-top:var(--gap-2); border-top:1px solid var(--border-color);">
+                <form method="get" style="display:flex; gap:6px; margin-bottom:6px;"><input class="input input--sm" type="text" name="q" placeholder="Search freelancers..." value="{{ request.GET.q }}"><button class="btn btn--secondary btn--sm" type="submit">Search</button></form>
+                {% for f in available_freelancers %}
+                  <form method="post" action="{% url 'projects:team_invite' project.public_id %}" style="display:flex; justify-content:space-between; padding:3px 0;">{% csrf_token %}<input type="hidden" name="invitee_id" value="{{ f.id }}"><span class="small">{{ f.username }}</span><button class="btn btn--primary btn--sm" type="submit" style="padding:2px 6px;">Invite</button></form>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% elif is_owner %}
+            <form method="post" action="{% url 'projects:team_create' project.public_id %}">{% csrf_token %}<input class="input" type="text" name="name" placeholder="Team Name" required style="margin-bottom:6px;"><button class="btn btn--primary btn--sm" type="submit">Create Team</button></form>
+          {% else %}<p class="small muted">No team formed yet.</p>{% endif %}
+        </div>
+      </section>
+
+      <!-- Files Vault -->
+      <section class="card">
+        <div class="card__head"><h2>File Vault (Secure)</h2></div>
+        <div class="card__body">
+          <form method="post" enctype="multipart/form-data" action="{% url 'projects:file_upload' project.public_id %}" style="margin-bottom:var(--gap-3); display:flex; gap:6px; align-items:center;">
+            {% csrf_token %}<input type="file" name="file" required style="font-size:0.8rem;"><button class="btn btn--secondary btn--sm" type="submit">Upload File</button>
+          </form>
+          <div class="stack" style="gap:4px;">
+            {% for file in files %}<div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid var(--border-subtle);"><a href="{% url 'projects:file_download' project.public_id file.id %}">📄 {{ file.original_name }}</a><a class="btn btn--ghost btn--sm" href="{% url 'projects:file_download' project.public_id file.id %}">Download</a></div>{% empty %}<p class="small muted">No files uploaded.</p>{% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <!-- Activity History -->
+      <section class="card">
+        <div class="card__head"><h2>Activity Log</h2></div>
+        <div class="card__body" style="max-height:250px; overflow-y:auto;">
+          <div class="stack" style="gap:6px;">
+            {% for act in activities %}<div class="small" style="padding-bottom:4px; border-bottom:1px solid var(--border-subtle);"><strong>{{ act.actor.username|default:"System" }}</strong>: {{ act.details }} <span class="tiny muted">({{ act.created_at|naturaltime }})</span></div>{% empty %}<p class="tiny muted">No activities recorded.</p>{% endfor %}
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}

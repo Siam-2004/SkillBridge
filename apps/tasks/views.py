@@ -15,9 +15,8 @@ from apps.tasks import services
 def task_create(request, project_public_id):
     p = get_object_or_404(Project, public_id=project_public_id)
     uid = request.POST.get('assigned_to')
-    u = User.objects.filter(pk=uid).first() if uid else None
     try:
-        t = services.create_task(p, request.POST.get('title','').strip(), request.POST.get('description','').strip(), request.user, u, request.POST.get('priority','MEDIUM'))
+        t = services.create_task(p, request.POST.get('title','').strip(), request.POST.get('description','').strip(), request.user, User.objects.filter(pk=uid).first() if uid else None, request.POST.get('priority','MEDIUM'))
         messages.success(request, f'Task "{t.title}" created.')
     except DomainError as e: messages.error(request, e.message)
     return redirect('projects:detail', public_id=p.public_id)
@@ -37,9 +36,8 @@ def task_status_update(request, task_id):
 def subtask_create(request, task_id):
     t = get_object_or_404(Task.objects.select_related('project'), pk=task_id)
     uid = request.POST.get('assigned_to')
-    u = User.objects.filter(pk=uid).first() if uid else None
     try:
-        st = services.create_subtask(t, request.POST.get('title','').strip(), request.POST.get('description','').strip(), request.user, u)
+        st = services.create_subtask(t, request.POST.get('title','').strip(), request.POST.get('description','').strip(), request.user, User.objects.filter(pk=uid).first() if uid else None)
         messages.success(request, f'Subtask "{st.title}" added.')
     except DomainError as e: messages.error(request, e.message)
     return redirect('projects:detail', public_id=t.project.public_id)

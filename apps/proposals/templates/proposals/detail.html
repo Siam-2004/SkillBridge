@@ -1,0 +1,143 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Proposal from {{ proposal.freelancer.full_name }} — {{ proposal.job.title }} — Skillbridge{% endblock %}
+{% block page_heading %}Proposal Details{% endblock %}
+
+{% block content %}
+<div class="page-head" style="margin-bottom:var(--gap-5)">
+  <div class="row row--between row--wrap">
+    <div>
+      <h1 style="font-size:1.6rem;margin-bottom:4px">
+        Proposal for: <a href="{{ job.get_absolute_url }}">{{ job.title }}</a>
+      </h1>
+      <p class="lede" style="font-size:0.95rem">
+        Submitted by <strong>{{ proposal.freelancer.full_name }}</strong> · {{ proposal.created_at|timesince }} ago
+      </p>
+    </div>
+    <div>
+      {% status_pill proposal.status %}
+    </div>
+  </div>
+</div>
+
+<div class="grid grid--sidebar">
+  <article class="stack">
+    <div class="card">
+      <div class="card__head">
+        <h2>Cover Letter</h2>
+      </div>
+      <div class="card__body">
+        <p style="white-space:pre-line;line-height:1.7;font-size:1rem">{{ proposal.cover_letter }}</p>
+
+        {% if proposal.deliverables %}
+          <h3 style="margin-top:var(--gap-5);font-size:1.15rem">Proposed Deliverables</h3>
+          <ul style="padding-left:1.2em;line-height:1.6;margin-top:var(--gap-2)">
+            {% for line in proposal.deliverable_list %}
+              <li>{{ line }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        {% if proposal.additional_message %}
+          <h3 style="margin-top:var(--gap-5);font-size:1.15rem">Additional Notes</h3>
+          <p class="small muted" style="margin-top:var(--gap-2);white-space:pre-line">{{ proposal.additional_message }}</p>
+        {% endif %}
+
+        {% if proposal.status == 'REJECTED' and proposal.rejection_reason %}
+          <div class="alert alert--warning" style="margin-top:var(--gap-5)">
+            <span class="alert__icon" aria-hidden="true">⚠️</span>
+            <div class="alert__body">
+              <strong>Decline Note:</strong> {{ proposal.rejection_reason }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+
+  <aside class="stack">
+    <div class="card">
+      <div class="card__head"><h2>Offer Terms</h2></div>
+      <div class="card__body center">
+        <p class="stat__label">Proposed Bid</p>
+        <p class="coin coin--xl">{{ proposal.proposed_amount|coins }}</p>
+        <p class="tiny muted">{{ proposal.estimated_days }} days delivery</p>
+
+        <hr style="margin:var(--gap-3) 0">
+
+        <dl class="dl" style="text-align:left;font-size:0.9rem">
+          <dt>Revisions</dt>
+          <dd>{{ proposal.revision_limit }} round{{ proposal.revision_limit|pluralize }}</dd>
+          <dt>Job Budget</dt>
+          <dd class="coin">{{ job.budget|coins }}</dd>
+          <dt>Submitted</dt>
+          <dd>{{ proposal.created_at|date:"j M Y" }}</dd>
+        </dl>
+
+        <div class="stack-sm" style="margin-top:var(--gap-4)">
+          {% if negotiation %}
+            <a class="btn btn--primary btn--block" href="{{ negotiation.get_absolute_url }}">
+              Enter Negotiation Room
+            </a>
+          {% elif is_client and proposal.is_open %}
+            <form method="post" action="{% url 'negotiations:open' proposal.public_id %}">
+              {% csrf_token %}
+              <button class="btn btn--primary btn--block" type="submit">
+                Open Negotiation Room
+              </button>
+            </form>
+            <form method="post" action="{% url 'proposals:reject' proposal.public_id %}" data-confirm="Decline this proposal?">
+              {% csrf_token %}
+              <button class="btn btn--ghost btn--block" type="submit">
+                Decline Proposal
+              </button>
+            </form>
+          {% elif is_freelancer and proposal.can_withdraw %}
+            <form method="post" action="{% url 'proposals:withdraw' proposal.public_id %}" data-confirm="Withdraw your proposal?">
+              {% csrf_token %}
+              <button class="btn btn--danger btn--block" type="submit">
+                Withdraw Proposal
+              </button>
+            </form>
+          {% endif %}
+          <a class="btn btn--secondary btn--block" href="{{ job.get_absolute_url }}">
+            View Job Posting
+          </a>
+          {% if conversation %}
+            <a class="btn btn--secondary btn--block" href="{{ conversation.get_absolute_url }}">
+              💬 Chat with {% if is_client %}{{ proposal.freelancer.full_name }}{% else %}Client{% endif %}
+            </a>
+          {% else %}
+            <form method="post" action="{% url 'messaging:start_job' job.public_id %}">
+              {% csrf_token %}
+              {% if is_client %}
+                <input type="hidden" name="freelancer" value="{{ proposal.freelancer.public_id }}">
+              {% endif %}
+              <button class="btn btn--secondary btn--block" type="submit">
+                💬 Direct Message
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head"><h2>About Freelancer</h2></div>
+      <div class="card__body">
+        <div class="identity">
+          <span class="avatar avatar--md">{{ proposal.freelancer.initials }}</span>
+          <div>
+            <div class="identity__name">
+              <a href="{{ proposal.freelancer.get_absolute_url }}">{{ proposal.freelancer.full_name }}</a>
+            </div>
+            <div class="identity__meta">
+              {{ proposal.freelancer.freelancer_profile.headline|default:"Freelancer" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

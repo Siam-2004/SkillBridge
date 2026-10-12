@@ -9,7 +9,8 @@ def bootstrap_user(sender, instance: User, created: bool, raw: bool=False, **kwa
         return
     from apps.profiles.models import ClientProfile, FreelancerProfile
     from apps.wallets.models import Wallet
-    Wallet.objects.get_or_create(user=instance)
+    from decimal import Decimal
+    Wallet.objects.get_or_create(user=instance, defaults={'available_balance': Decimal('5000.00')})
     if instance.role == Role.CLIENT:
         ClientProfile.objects.get_or_create(user=instance)
     elif instance.role == Role.FREELANCER:

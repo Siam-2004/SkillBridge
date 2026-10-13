@@ -19,7 +19,17 @@ class Task(BaseModel):
     deadline = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.TODO, db_index=True)
     priority = models.CharField(max_length=10, choices=Priority.choices, default=Priority.MEDIUM)
+    submitted_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def is_review_expired(self) -> bool:
+        from datetime import timedelta
+        if self.status == self.Status.IN_REVIEW and self.submitted_at:
+            window = getattr(settings, 'BUSINESS_RULES', {}).get('TASK_REVIEW_WINDOW_HOURS', 48)
+            return timezone.now() >= self.submitted_at + timedelta(hours=window)
+        return False
+
     class Meta: ordering = ('created_at',)
 
 class Subtask(BaseModel):

@@ -51,7 +51,9 @@ class TeamMember(TimeStampedModel):
         constraints = [models.UniqueConstraint(fields=['team', 'user'], name='unique_team_member')]
 
 class TeamInvitation(BaseModel):
-    class Status(models.TextChoices): PENDING = ('PENDING', 'Pending'); ACCEPTED = ('ACCEPTED', 'Accepted'); DECLINED = ('DECLINED', 'Declined')
+    class Status(models.TextChoices):
+        PENDING = ('PENDING', 'Pending'); ACCEPTED = ('ACCEPTED', 'Accepted')
+        DECLINED = ('DECLINED', 'Declined'); EXPIRED = ('EXPIRED', 'Expired')
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='invitations')
     invitee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_team_invitations')
     invited_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_team_invitations')
@@ -60,6 +62,13 @@ class TeamInvitation(BaseModel):
     responded_at = models.DateTimeField(null=True, blank=True)
     class Meta:
         ordering = ('-created_at',)
+
+    @property
+    def is_expired(self) -> bool:
+        from datetime import timedelta
+        if self.status != self.Status.PENDING:
+            return self.status == self.Status.EXPIRED
+        return timezone.now() > self.created_at + timedelta(hours=48)
 
 class ProjectFile(BaseModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='files')

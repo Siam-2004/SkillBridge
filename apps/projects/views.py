@@ -14,6 +14,10 @@ from apps.tasks.models import Task
 @verified_required
 def project_list(request):
     u = request.user
+    from apps.agreements.models import Agreement
+    from apps.projects.services import create_project_from_agreement
+    for ag in Agreement.objects.filter(status=Agreement.Status.ACTIVE):
+        create_project_from_agreement(ag)
     q = Project.objects.filter(client=u) if u.is_client else Project.objects.filter(models.Q(freelancer=u) | models.Q(team__members__user=u)).distinct()
     return render(request, 'projects/list.html', {'projects': q, 'page_title': 'Projects Workspace', 'nav': 'projects'})
 
@@ -22,6 +26,10 @@ def project_detail(request, public_id):
     p = get_object_or_404(Project.objects.select_related('client', 'freelancer', 'team'), public_id=public_id)
     if not p.has_access(request.user): raise PermissionDenied("Access denied.")
     t = getattr(p, 'team', None)
+    from apps.tasks.services import check_and_auto_approve_task
+    from apps.tasks.models import Task
+    for rev_task in p.tasks.filter(status=Task.Status.IN_REVIEW):
+        check_and_auto_approve_task(rev_task)
     return render(request, 'projects/detail.html', {
         'project': p, 'team': t, 'is_owner': p.is_owner(request.user), 'page_title': p.title, 'nav': 'projects',
         'team_members': t.members.select_related('user').all() if t else [],

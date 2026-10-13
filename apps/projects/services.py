@@ -52,13 +52,17 @@ def invite_to_team(team: Team, invitee: User, invited_by: User, message: str = '
            message=f'{invited_by.username} invited you to join "{team.name}".', actor=invited_by, target_url=team.project.get_absolute_url(), email=True)
     return inv
 
-@transaction.atomic
 def respond_to_invitation(invitation: TeamInvitation, user: User, accept: bool) -> TeamInvitation:
     if invitation.invitee_id != user.pk and not user.is_superuser: raise PermissionDenied("Unauthorized.")
     if invitation.status != TeamInvitation.Status.PENDING: raise ValidationFailed("Already processed.")
-    invitation.status = TeamInvitation.Status.ACCEPTED if accept else TeamInvitation.Status.DECLINED
-    invitation.responded_at = timezone.now()
-    invitation.save(update_fields=['status', 'responded_at', 'updated_at'])
+    if invitation.is_expired:
+        TeamInvitation.objects.filter(pk=invitation.pk).update(status=TeamInvitation.Status.EXPIRED, updated_at=timezone.now())
+        invitation.status = TeamInvitation.Status.EXPIRED
+        raise ValidationFailed("Invitation has expired (48-hour limit).")
+    with transaction.atomic():
+        invitation.status = TeamInvitation.Status.ACCEPTED if accept else TeamInvitation.Status.DECLINED
+        invitation.responded_at = timezone.now()
+        invitation.save(update_fields=['status', 'responded_at', 'updated_at'])
     if accept:
         TeamMember.objects.get_or_create(team=invitation.team, user=user, defaults={'role': TeamMember.Role.MEMBER})
         verb, notif_type = ActivityVerb.INVITATION_ACCEPTED, NotificationType.INVITATION_ACCEPTED

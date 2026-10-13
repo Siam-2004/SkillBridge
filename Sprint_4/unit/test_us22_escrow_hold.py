@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -38,3 +39,6 @@ class US22EscrowHoldAtomicTest(TestCase):
         self.assertEqual(wallet.escrow_balance, Decimal('1200.00'))
         self.assertEqual(tx.status, WalletTransaction.Status.COMPLETED)
         self.assertEqual(tx.delta, Decimal('0.00'))  # Internal movement between buckets
+=======
+from decimal import Decimal
+>>>>>>> 9739d3368194f84a782517d152378c7444626916

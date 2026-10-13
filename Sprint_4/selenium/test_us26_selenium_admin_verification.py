@@ -10,15 +10,16 @@ User = get_user_model()
 
 class US26SeleniumAdminVerificationTest(BaseSprint4SeleniumTestCase):
     def setUp(self):
-        self.password = 'Admin'
+        self.password = 'Password123!'
+        self.admin_email = 'admin_us26_se@test.com'
         self.admin_user = User.objects.create_superuser(
-            username='admin',
-            email='adminrifat@gmail.com',
+            email=self.admin_email,
+            username='admin_us26_se',
             password=self.password
         )
         self.client_user = User.objects.create_user(
-            username='siam',
-            email='siam@gmail.com',
+            email='siam_us26_se@test.com',
+            username='siam_us26_se',
             password=self.password,
             role='CLIENT',
             is_email_verified=True
@@ -39,7 +40,7 @@ class US26SeleniumAdminVerificationTest(BaseSprint4SeleniumTestCase):
         initial_balance = self.client_user.wallet.available_balance
 
         # 1. Admin signs in
-        self.login_user('admin_us26_se@test.com', self.password)
+        self.login_user(self.admin_email, self.password)
 
         # 2. Admin navigates to the Deposits changelist view
         self.driver.get(f'{self.live_server_url}/admin/wallets/deposit/')

@@ -12,14 +12,14 @@ User = get_user_model()
 class US22EscrowHoldTest(TestCase):
     def setUp(self):
         self.client = User.objects.create_user(
-            username='sabbir',
-            email='23101199.com',
+            username='sabbir_client',
+            email='sabbir_client@example.com',
             password='Password123!',
             role='CLIENT'
         )
         self.freelancer = User.objects.create_user(
-            username='sabbir',
-            email='23101199.com',
+            username='sabbir_dev',
+            email='sabbir_dev@example.com',
             password='Password123!',
             role='FREELANCER'
         )

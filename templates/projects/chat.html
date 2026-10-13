@@ -1,0 +1,48 @@
+{% extends "layouts/dashboard.html" %}
+{% block title %}Chat — {{ project.title }}{% endblock %}
+{% block page_heading %}Project Chat: {{ project.title }}{% endblock %}
+{% block content %}
+<div class="card" style="display:flex; flex-direction:column; height:70vh; padding:0; overflow:hidden;">
+  <div class="card__head" style="padding:var(--gap-3); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+    <h2 style="margin:0; font-size:1.1rem;">💬 {{ project.title }}</h2>
+    <a class="btn btn--secondary btn--sm" href="{% url 'projects:detail' project.public_id %}">← Workspace</a>
+  </div>
+  <div id="chat-messages" style="flex:1; overflow-y:auto; padding:var(--gap-3); display:flex; flex-direction:column; gap:8px; background:var(--bg-subtle);">
+    <div id="chat-loading" class="small muted" style="text-align:center;">Loading...</div>
+  </div>
+  <div style="padding:var(--gap-3); border-top:1px solid var(--border-color); background:var(--card-bg);">
+    <form id="chat-form" style="display:flex; gap:8px;">
+      {% csrf_token %}
+      <input type="text" id="chat-input" class="input" placeholder="Type message... (@username)" style="flex:1;" required>
+      <button type="submit" class="btn btn--primary" id="chat-send-btn">Send</button>
+    </form>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const box = document.getElementById('chat-messages'), form = document.getElementById('chat-form'), inp = document.getElementById('chat-input');
+  const pollUrl = "{% url 'projects:chat_poll' project.public_id %}", sendUrl = "{% url 'projects:chat_send' project.public_id %}";
+  const token = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  let lastId = 0;
+  function render(m) {
+    const el = document.createElement('div');
+    el.style.maxWidth = '75%'; el.style.alignSelf = m.is_me ? 'flex-end' : 'flex-start';
+    el.style.background = m.is_me ? '#e0f2fe' : '#ffffff'; el.style.padding = '6px 10px'; el.style.borderRadius = '6px';
+    el.innerHTML = `${m.is_me ? '' : '<strong>' + m.author + '</strong>: '}${m.content} <span style="font-size:0.7rem; color:#64748b;">(${m.created_at})</span>`;
+    return el;
+  }
+  function poll() {
+    fetch(`${pollUrl}?after_id=${lastId}`).then(r => r.json()).then(d => {
+      const l = document.getElementById('chat-loading'); if (l) l.remove();
+      if (d.messages) d.messages.forEach(m => { if (m.id > lastId) { lastId = m.id; box.appendChild(render(m)); box.scrollTop = box.scrollHeight; } });
+    });
+  }
+  poll(); setInterval(poll, 2500);
+  form.addEventListener('submit', function(e) {
+    e.preventDefault(); const val = inp.value.trim(); if (!val) return; inp.value = '';
+    const fd = new FormData(); fd.append('content', val); fd.append('csrfmiddlewaretoken', token);
+    fetch(sendUrl, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } }).then(() => poll());
+  });
+});
+</script>
+{% endblock %}

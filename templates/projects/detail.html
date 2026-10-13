@@ -39,9 +39,10 @@
             <form id="task-create-form" class="hide" method="post" action="{% url 'tasks:create' project.public_id %}" style="margin-bottom:var(--gap-4); padding:var(--gap-3); background:var(--bg-subtle);">
               {% csrf_token %}<input class="input" type="text" name="title" placeholder="Task title" required style="margin-bottom:6px;">
               <textarea class="input" name="description" placeholder="Description" rows="2" style="margin-bottom:6px;"></textarea>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:6px;">
                 <select class="input" name="priority"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option></select>
                 <select class="input" name="assigned_to"><option value="">Assign to</option>{% for tm in team_members %}<option value="{{ tm.user.id }}">{{ tm.user.username }}</option>{% endfor %}</select>
+                <input class="input" type="number" step="0.01" min="0" name="skillcoin_allocation" placeholder="Escrow (SKC)" title="SkillCoin Escrow Allocation for this task">
               </div>
               <button class="btn btn--primary btn--sm" type="submit">Save Task</button>
             </form>
@@ -51,24 +52,71 @@
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div>
                   <strong>{{ task.title }}</strong> <span class="badge badge--{{ task.priority|lower }}">{{ task.priority }}</span> <span class="badge badge--{{ task.status|lower }}">{{ task.get_status_display }}</span>
+                  {% if task.skillcoin_allocation > 0 %}<span class="badge badge--success" style="background:var(--brand-50, #eef2ff); color:var(--brand-700, #4338ca); font-weight:700;">{{ task.skillcoin_allocation|coin }} SKC</span>{% endif %}
                   {% if task.assigned_to %}<span class="tiny muted">({{ task.assigned_to.username }})</span>{% endif %}
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
-                  {% if is_owner or task.assigned_to == request.user %}
+                  {% if is_owner %}
                     <form method="post" action="{% url 'tasks:status' task.id %}" style="display:inline-flex;">
                       {% csrf_token %}
                       <select name="status" class="input input--sm" onchange="this.form.submit()" style="padding:2px 4px; font-size:0.75rem;">
                         <option value="TODO" {% if task.status == 'TODO' %}selected{% endif %}>To Do</option>
                         <option value="IN_PROGRESS" {% if task.status == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
                         <option value="IN_REVIEW" {% if task.status == 'IN_REVIEW' %}selected{% endif %}>In Review</option>
-                        <option value="COMPLETED" {% if task.status == 'COMPLETED' %}selected{% endif %}>Done</option>
+                        <option value="COMPLETED" {% if task.status == 'COMPLETED' %}selected{% endif %}>Done (Approve Payout)</option>
                       </select>
                     </form>
+                    {% if task.status == 'IN_REVIEW' %}
+                      <form method="post" action="{% url 'tasks:status' task.id %}" style="display:inline-flex;">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="COMPLETED">
+                        <button class="btn btn--primary btn--sm" type="submit">Approve & Pay</button>
+                      </form>
+                      <form method="post" action="{% url 'tasks:status' task.id %}" style="display:inline-flex;">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="IN_PROGRESS">
+                        <button class="btn btn--ghost btn--sm" type="submit">Revision</button>
+                      </form>
+                    {% endif %}
+                  {% elif task.assigned_to == request.user %}
+                    {% if task.status != 'COMPLETED' %}
+                      <form method="post" action="{% url 'tasks:status' task.id %}" style="display:inline-flex;">
+                        {% csrf_token %}
+                        <select name="status" class="input input--sm" onchange="this.form.submit()" style="padding:2px 4px; font-size:0.75rem;">
+                          <option value="IN_PROGRESS" {% if task.status == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+                          <option value="IN_REVIEW" {% if task.status == 'IN_REVIEW' %}selected{% endif %}>Submit for Review</option>
+                        </select>
+                      </form>
+                    {% endif %}
                   {% endif %}
                   {% if is_owner %}<button class="btn btn--ghost btn--sm" type="button" onclick="document.getElementById('subtask-form-{{ task.id }}').classList.toggle('hide');">+ Subtask</button>{% endif %}
                 </div>
               </div>
               {% if task.description %}<p class="small muted" style="margin:4px 0;">{{ task.description }}</p>{% endif %}
+
+              <!-- Deliverable Files & Review Notice -->
+              <div style="margin: 6px 0;">
+                {% if task.files.all %}
+                  <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:4px;">
+                    <span class="tiny muted" style="align-self:center;">Deliverables:</span>
+                    {% for tf in task.files.all %}
+                      <a href="{% url 'tasks:file_download' task.id tf.id %}" class="small tag tag--ok" style="text-decoration:none;">📎 {{ tf.original_name }}</a>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                {% if task.status == 'IN_REVIEW' and task.submitted_at %}
+                  <p class="tiny" style="color:var(--brand-600, #4338ca); margin:4px 0; font-weight:600;">
+                    ⏳ Work submitted on {{ task.submitted_at|date:"d M H:i" }}. Auto-approved in 48 hours if Leader does not review.
+                  </p>
+                {% endif %}
+                {% if task.assigned_to == request.user and task.status != 'COMPLETED' %}
+                  <form method="post" action="{% url 'tasks:file_upload' task.id %}" enctype="multipart/form-data" style="margin-top:6px; display:flex; gap:6px; align-items:center;">
+                    {% csrf_token %}
+                    <input type="file" name="file" required class="input input--sm" style="padding:2px 4px; font-size:0.75rem; max-width:220px;">
+                    <button class="btn btn--secondary btn--sm" type="submit" style="padding:2px 8px; font-size:0.75rem;">+ Upload Deliverable</button>
+                  </form>
+                {% endif %}
+              </div>
               <div style="margin-top:var(--gap-2); border-top:1px dashed var(--border-color); padding-top:var(--gap-2);">
                 {% for sub in task.subtasks.all %}
                   <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid var(--border-subtle);">

@@ -39,7 +39,7 @@ class US26SeleniumAdminVerificationTest(BaseSprint4SeleniumTestCase):
         initial_balance = self.client_user.wallet.available_balance
 
         # 1. Admin signs in
-        self.login_user('adminrifat@gmail.com', self.password)
+        self.login_user('admin_us26_se@test.com', self.password)
 
         # 2. Admin navigates to the Deposits changelist view
         self.driver.get(f'{self.live_server_url}/admin/wallets/deposit/')

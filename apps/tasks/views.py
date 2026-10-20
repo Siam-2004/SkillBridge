@@ -15,8 +15,22 @@ from apps.tasks import services
 def task_create(request, project_public_id):
     p = get_object_or_404(Project, public_id=project_public_id)
     uid = request.POST.get('assigned_to')
+    raw_alloc = request.POST.get('skillcoin_allocation', '0').strip() or '0'
     try:
-        t = services.create_task(p, request.POST.get('title','').strip(), request.POST.get('description','').strip(), request.user, User.objects.filter(pk=uid).first() if uid else None, request.POST.get('priority','MEDIUM'))
+        from decimal import Decimal
+        alloc_amt = Decimal(raw_alloc)
+    except Exception:
+        alloc_amt = Decimal('0')
+    try:
+        t = services.create_task(
+            p,
+            request.POST.get('title','').strip(),
+            request.POST.get('description','').strip(),
+            request.user,
+            User.objects.filter(pk=uid).first() if uid else None,
+            request.POST.get('priority','MEDIUM'),
+            skillcoin_allocation=alloc_amt
+        )
         messages.success(request, f'Task "{t.title}" created.')
     except DomainError as e: messages.error(request, e.message)
     return redirect('projects:detail', public_id=p.public_id)

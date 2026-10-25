@@ -1,53 +1,133 @@
 {% extends "layouts/public.html" %}
 {% load static %}
-{% block title %}Jobs — Skillbridge{% endblock %}
-{% block page_css %}<link rel="stylesheet" href="{% static 'marketplace/css/jobs.css' %}">{% endblock %}
+{% block title %}Jobs Marketplace — SkillBridge{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'marketplace/css/jobs.css' %}?v=6.0">{% endblock %}
 {% block page_js %}<script src="{% static 'marketplace/js/jobs.js' %}"></script>{% endblock %}
 
 {% block content %}
-<div class="page-head">
-  <h1>Jobs</h1>
-  <p class="lede">
-    {{ total }} job{{ total|pluralize }} open. Every one of them has its budget
-    already reserved — you are never proposing against money that is not there.
-  </p>
-</div>
-
-<div class="grid grid--aside">
-  <aside class="card job-filters">
-    <div class="card__head"><h2>Filter</h2></div>
-    <div class="card__body">
-      <form method="get" class="filters" id="job-filters">
-        {% include "components/form.html" %}
-        <div class="btn-group" style="margin-top:var(--gap-4)">
-          <button class="btn btn--primary btn--sm" type="submit">Apply</button>
-          <a class="btn btn--ghost btn--sm" href="{% url 'marketplace:job_list' %}">Clear</a>
-        </div>
-      </form>
-    </div>
-  </aside>
-
-  <div>
-    {% if page.object_list %}
-      <div class="stack">
-        {% for job in page.object_list %}
-          <div class="job-row">
-            {% include "components/job-card.html" %}
-            {% if user.is_authenticated and user.is_freelancer %}
-              <form method="post" action="{% url 'marketplace:job_save' job.public_id %}" class="job-save" data-no-busy="1">
-                {% csrf_token %}
-                <button class="btn btn--ghost btn--sm" type="submit">
-                  {% if job.id in saved_ids %}★ Saved{% else %}☆ Save{% endif %}
-                </button>
-              </form>
-            {% endif %}
-          </div>
-        {% endfor %}
+<div class="page-head" style="margin-bottom:var(--gap-4);">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+    <div>
+      <div style="display:inline-block; font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--brand-600); margin-bottom:4px;">
+        Verified Job Opportunities
       </div>
-      {% include "components/pagination.html" %}
-    {% else %}
-      {% include "components/empty-state.html" with title="No jobs match those filters" body="Try widening the budget range or clearing a filter or two." action_url="/jobs/" action_label="Clear filters" %}
+      <h1 style="margin:0 0 6px 0; font-size:2.2rem; font-weight:800; letter-spacing:-0.025em;">Find Your Next Job</h1>
+      <p class="lede" style="margin:0; max-width:680px; color:var(--text-muted);">
+        {{ total }} job{{ total|pluralize }} open. Every job has its budget pre-funded in secure escrow.
+      </p>
+    </div>
+    {% if user.is_authenticated and user.is_client %}
+      <a href="{% url 'marketplace:job_create' %}" class="btn btn--primary" style="font-weight:700;">+ Post a Job</a>
     {% endif %}
   </div>
+</div>
+
+<!-- Top Horizontal Filter Bar -->
+<div class="card top-filter-bar">
+  <form method="get" id="job-filters">
+    <div class="top-filter-grid">
+      <!-- Search Keyword -->
+      <div class="top-filter-item">
+        <label class="filter-label" for="filter-q">Search Keyword</label>
+        <div class="filter-input-wrap">
+          <span class="filter-icon">🔍</span>
+          <input type="text" id="filter-q" name="q" value="{{ request.GET.q }}" placeholder="Search title, skills or keywords..." class="filter-control">
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="top-filter-item">
+        <label class="filter-label" for="filter-category">Category</label>
+        <select id="filter-category" name="category" class="filter-control">
+          <option value="">All Categories</option>
+          {% for cat in form.fields.category.queryset %}
+            <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Budget Range -->
+      <div class="top-filter-item">
+        <label class="filter-label">Budget (SKC)</label>
+        <div class="budget-range-row">
+          <input type="number" step="any" min="0" name="min_budget" value="{{ request.GET.min_budget }}" placeholder="Min" class="filter-control">
+          <span class="budget-range-sep">–</span>
+          <input type="number" step="any" min="0" name="max_budget" value="{{ request.GET.max_budget }}" placeholder="Max" class="filter-control">
+        </div>
+      </div>
+
+      <!-- Sort -->
+      <div class="top-filter-item">
+        <label class="filter-label" for="filter-sort">Sort By</label>
+        <select id="filter-sort" name="sort" class="filter-control">
+          {% for val, label in form.fields.sort.choices %}
+            <option value="{{ val }}" {% if request.GET.sort == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Actions -->
+      <div class="top-filter-actions">
+        <button class="btn btn--primary" type="submit">Filter</button>
+        {% if request.GET.q or request.GET.category or request.GET.min_budget or request.GET.max_budget or request.GET.job_type or request.GET.experience_level or request.GET.team_required %}
+          <a class="btn btn--ghost" href="{% url 'marketplace:job_list' %}">Reset</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Quick refinement chips -->
+    <div class="top-filter-refinements">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="tiny bold muted" style="text-transform:uppercase; font-size:0.75rem;">Type:</span>
+        <select name="job_type" class="filter-control" style="width:auto; height:34px; padding:4px 24px 4px 10px; font-size:0.82rem;">
+          {% for val, label in form.fields.job_type.choices %}
+            <option value="{{ val }}" {% if request.GET.job_type == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="tiny bold muted" style="text-transform:uppercase; font-size:0.75rem;">Experience:</span>
+        <select name="experience_level" class="filter-control" style="width:auto; height:34px; padding:4px 24px 4px 10px; font-size:0.82rem;">
+          {% for val, label in form.fields.experience_level.choices %}
+            <option value="{{ val }}" {% if request.GET.experience_level == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="tiny bold muted" style="text-transform:uppercase; font-size:0.75rem;">Collaboration:</span>
+        <select name="team_required" class="filter-control" style="width:auto; height:34px; padding:4px 24px 4px 10px; font-size:0.82rem;">
+          {% for val, label in form.fields.team_required.choices %}
+            <option value="{{ val }}" {% if request.GET.team_required == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Full-width Job Listings Feed -->
+<div>
+  {% if page.object_list %}
+    <div class="stack" style="gap:var(--gap-3);">
+      {% for job in page.object_list %}
+        <div class="job-row">
+          {% include "components/job-card.html" %}
+          {% if user.is_authenticated and user.is_freelancer %}
+            <form method="post" action="{% url 'marketplace:job_save' job.public_id %}" class="job-save" data-no-busy="1">
+              {% csrf_token %}
+              <button class="btn btn--ghost btn--sm" type="submit" title="Save job">
+                {% if job.id in saved_ids %}★ Saved{% else %}☆ Save{% endif %}
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    {% include "components/pagination.html" %}
+  {% else %}
+    {% include "components/empty-state.html" with title="No jobs match those filters" body="Try widening the budget range or clearing some filters to explore more opportunities." action_url="/jobs/" action_label="Reset All Filters" %}
+  {% endif %}
 </div>
 {% endblock %}

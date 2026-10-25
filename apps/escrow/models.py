@@ -62,3 +62,40 @@ class Escrow(BaseModel):
     def allocations_balanced(self) -> bool:
         return self.allocated_total == self.funded_amount
 
+class EscrowAllocation(TimeStampedModel):
+
+    class Status(models.TextChoices):
+        ALLOCATED = ('ALLOCATED', 'Allocated')
+        RELEASED = ('RELEASED', 'Released')
+        REFUNDED = ('REFUNDED', 'Refunded')
+        CANCELLED = ('CANCELLED', 'Cancelled')
+
+    class Trigger(models.TextChoices):
+        CLIENT_APPROVAL = ('CLIENT_APPROVAL', 'Client approved')
+        AUTO_RELEASE = ('AUTO_RELEASE', '48-hour rule')
+        PROJECT_APPROVAL = ('PROJECT_APPROVAL', 'Final project approval')
+        DISPUTE_RESOLUTION = ('DISPUTE_RESOLUTION', 'Dispute resolution')
+        ADMIN_RELEASE = ('ADMIN_RELEASE', 'Administrator release')
+    escrow = models.ForeignKey(Escrow, on_delete=models.CASCADE, related_name='allocations')
+    task = models.OneToOneField('tasks.Task', on_delete=models.CASCADE, null=True, blank=True, related_name='allocation_record', help_text='Null for the final, non-task payment of any remainder.')
+    freelancer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='escrow_allocations')
+    amount = MoneyField()
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.ALLOCATED, db_index=True)
+    released_at = models.DateTimeField(null=True, blank=True)
+    trigger = models.CharField(max_length=20, choices=Trigger.choices, blank=True)
+    released_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='released_allocations')
+    note = models.CharField(max_length=300, blank=True)
+    debit_transaction = models.ForeignKey('wallets.WalletTransaction', on_delete=models.SET_NULL, null=True, blank=True, related_name='allocation_debits')
+    credit_transaction = models.ForeignKey('wallets.WalletTransaction', on_delete=models.SET_NULL, null=True, blank=True, related_name='allocation_credits')
+
+    class Meta:
+        ordering = ('-created_at',)
+        indexes = [models.Index(fields=['escrow', '-created_at']), models.Index(fields=['status', '-released_at'])]
+        constraints = [models.CheckConstraint(check=models.Q(amount__gt=ZERO), name='allocation_amount_positive'), models.CheckConstraint(check=models.Q(status='RELEASED', credit_transaction__isnull=False) | ~models.Q(status='RELEASED'), name='allocation_released_requires_transaction')]
+
+    def __str__(self) -> str:
+        return f"allocation<{self.task_id or 'remainder'}> {self.amount}"
+
+    @property
+    def is_released(self) -> bool:
+        return self.status == self.Status.RELEASED

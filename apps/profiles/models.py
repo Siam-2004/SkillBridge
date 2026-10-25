@@ -81,6 +81,16 @@ class ClientProfile(TimeStampedModel):
         fields = [self.bio, self.company_name, self.location, self.phone, bool(self.user.avatar), self.user.first_name]
         return int(sum((1 for f in fields if f)) / len(fields) * 100)
 
+    @property
+    def average_rating(self) -> float:
+        from django.db.models import Avg
+        val = self.user.received_reviews.aggregate(Avg('rating'))['rating__avg']
+        return round(float(val), 1) if val is not None else 0.0
+
+    @property
+    def total_reviews(self) -> int:
+        return self.user.received_reviews.count()
+
     def get_absolute_url(self) -> str:
         return reverse('clients:client_public', args=[self.user.username])
 
@@ -151,6 +161,16 @@ class FreelancerProfile(TimeStampedModel):
     def completeness(self) -> int:
         fields = [self.professional_title, self.bio, self.location, self.hourly_rate > ZERO, bool(self.user.avatar), self.skills.exists(), self.experiences.exists(), self.user.first_name]
         return int(sum((1 for f in fields if f)) / len(fields) * 100)
+
+    @property
+    def average_rating(self) -> float:
+        from django.db.models import Avg
+        val = self.user.received_reviews.aggregate(Avg('rating'))['rating__avg']
+        return round(float(val), 1) if val is not None else 0.0
+
+    @property
+    def total_reviews(self) -> int:
+        return self.user.received_reviews.count()
 
     def get_absolute_url(self) -> str:
         return reverse('directory:freelancer_public', args=[self.user.username])

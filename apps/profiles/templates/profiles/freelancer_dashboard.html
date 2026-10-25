@@ -32,19 +32,6 @@
     </div>
   </div>
 {% endif %}
-<div class="grid grid--2" style="margin-top:var(--gap-5)">
-  <section class="card">
-    <div class="card__head">
-      <h2>Quick Actions</h2>
-    </div>
-    <div class="card__body">
-      <div class="btn-group">
-        <a class="btn btn--primary" href="{% url 'portfolios:my_portfolio' %}">Manage portfolio</a>
-        <a class="btn btn--secondary" href="{% url 'profiles:edit_freelancer' %}">Edit profile</a>
-        <a class="btn btn--ghost" href="{% url 'wallets:wallet' %}">View wallet</a>
-      </div>
-    </div>
-  </section>
 
 <div class="dash-grid">
   <a class="card stat" href="{% url 'wallets:wallet' %}">

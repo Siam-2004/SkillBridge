@@ -21,23 +21,7 @@
     <a class="btn btn--secondary btn--sm" href="{% url 'wallets:deposit' %}">+ Add Funds</a>
   </div>
 </div>
-<div class="dash-grid">
-  <a class="card stat" href="{% url 'wallets:wallet' %}">
-    <p class="stat__label">Available balance</p>
-    <p class="stat__value coin">{{ wallet_info.available|coin }}</p>
-    <p class="stat__note">{{ wallet_info.reserved|coin }} reserved · {{ wallet_info.escrow|coin }} in escrow</p>
-  </a>
-  <a class="card stat" href="{% url 'directory:freelancer_list' %}">
-    <p class="stat__label">Find Talent</p>
-    <p class="stat__value">Browse</p>
-    <p class="stat__note">Explore top freelancers</p>
-  </a>
-  <a class="card stat" href="{% url 'clients:client_public' user.username %}">
-    <p class="stat__label">Rating & Reviews</p>
-    <p class="stat__value">⭐ {{ profile.average_rating|default:"0.0" }}</p>
-    <p class="stat__note">{{ profile.total_reviews }} review{{ profile.total_reviews|pluralize }} · View profile</p>
-  </a>
-</div>
+
 <div class="dash-grid">
   <a class="card stat" href="{% url 'wallets:wallet' %}">
     <p class="stat__label">Available balance</p>

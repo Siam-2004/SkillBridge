@@ -69,15 +69,46 @@ def update_subtask_status(subtask: Subtask, new_status: str, actor: User) -> Sub
     return subtask
 
 @transaction.atomic
-def update_task_status(task: Task, new_status: str, actor: User) -> Task:
+def update_task_status(task: Task, new_status: str, actor: User, is_auto: bool = False) -> Task:
     p = task.project
     is_lead = p.is_owner(actor) or (hasattr(p, 'team') and p.team.owner_id == actor.pk)
-    if not (task.assigned_to_id == actor.pk or is_lead or actor.is_superuser): raise PermissionDenied("Unauthorized.")
-    if new_status not in Task.Status.values: raise ValidationFailed(f"Invalid status '{new_status}'")
+    if not is_auto:
+        if not (task.assigned_to_id == actor.pk or is_lead or actor.is_superuser):
+            raise PermissionDenied("Unauthorized.")
+        if new_status == Task.Status.COMPLETED and not is_lead and not actor.is_superuser:
+            raise PermissionDenied("Only the Team Lead or Client can approve completed tasks.")
+    if new_status not in Task.Status.values:
+        raise ValidationFailed(f"Invalid status '{new_status}'")
+    if new_status == Task.Status.IN_REVIEW:
+        if task.skillcoin_allocation > 0 and not task.files.exists():
+            raise ValidationFailed("Please upload your completed deliverable file before submitting for review.")
+        task.submitted_at = timezone.now()
+    elif new_status == Task.Status.IN_PROGRESS:
+        task.submitted_at = None
+    elif new_status == Task.Status.COMPLETED:
+        task.completed_at = timezone.now()
     task.status = new_status
-    task.completed_at = timezone.now() if new_status == Task.Status.COMPLETED else None
-    task.save(update_fields=['status', 'completed_at', 'updated_at'])
+    task.save(update_fields=['status', 'submitted_at', 'completed_at', 'updated_at'])
     log_task_activity(project=p, task=task, actor=actor, action='STATUS_CHANGED', details=f'Marked task "{task.title}" as {new_status}')
+    if new_status == Task.Status.COMPLETED and task.assigned_to and task.skillcoin_allocation > 0:
+        from apps.wallets import ledger
+        from apps.wallets.models import WalletTransaction
+        client_user = p.client
+        member_user = task.assigned_to
+        amt = task.skillcoin_allocation
+        try:
+            debit_src = WalletTransaction.Bucket.ESCROW if client_user.wallet.escrow_balance >= amt else (WalletTransaction.Bucket.AVAILABLE if client_user.wallet.available_balance >= amt else WalletTransaction.Bucket.EXTERNAL)
+            d_txn = ledger.move(user=client_user, amount=amt, transaction_type=WalletTransaction.Type.PROJECT_PAYMENT, from_bucket=debit_src, to_bucket=WalletTransaction.Bucket.EXTERNAL, project=p, task=task, counterparty=member_user, actor=actor, description=f'Payout for task "{task.title}"')
+            ledger.move(user=member_user, amount=amt, transaction_type=WalletTransaction.Type.PROJECT_PAYMENT, from_bucket=WalletTransaction.Bucket.EXTERNAL, to_bucket=WalletTransaction.Bucket.AVAILABLE, project=p, task=task, counterparty=client_user, actor=actor, related=d_txn, description=f'Payout received for task "{task.title}"')
+        except Exception:
+            pass
+    return task
+
+@transaction.atomic
+def check_and_auto_approve_task(task: Task) -> Task:
+    if task.status == Task.Status.IN_REVIEW and task.is_review_expired:
+        system_actor = task.created_by or task.project.freelancer
+        return update_task_status(task, Task.Status.COMPLETED, actor=system_actor, is_auto=True)
     return task
 
 @transaction.atomic

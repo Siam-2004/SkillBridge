@@ -16,6 +16,7 @@
     </p>
   </div>
   <div class="dash-overview-hero__action">
+    <a class="btn btn--secondary btn--sm" href="{% url 'directory:freelancer_public' user.username %}" target="_blank">👁️ View Public Profile</a>
     <a class="btn btn--primary btn--sm" href="{% url 'portfolios:my_portfolio' %}">+ Manage Portfolio</a>
     <a class="btn btn--secondary btn--sm" href="{% url 'wallets:withdraw' %}">Withdraw</a>
   </div>
@@ -38,10 +39,10 @@
     <p class="stat__value coin">{{ wallet_info.available|coin }}</p>
     <p class="stat__note">{{ wallet_info.reserved|coin }} reserved</p>
   </a>
-  <a class="card stat" href="{% url 'portfolios:my_portfolio' %}">
-    <p class="stat__label">Portfolio</p>
-    <p class="stat__value">Manage</p>
-    <p class="stat__note">Showcase your best work</p>
+  <a class="card stat" href="{% url 'directory:freelancer_public' user.username %}">
+    <p class="stat__label">Rating & Reviews</p>
+    <p class="stat__value">⭐ {{ profile.average_rating|default:"0.0" }}</p>
+    <p class="stat__note">{{ profile.total_reviews }} review{{ profile.total_reviews|pluralize }} · View profile</p>
   </a>
   <a class="card stat" href="{% url 'profiles:edit_freelancer' %}">
     <p class="stat__label">Profile</p>

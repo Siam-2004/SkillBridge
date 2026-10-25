@@ -16,6 +16,7 @@
     </p>
   </div>
   <div class="dash-overview-hero__action">
+    <a class="btn btn--secondary btn--sm" href="{% url 'clients:client_public' user.username %}" target="_blank">👁️ View Public Profile</a>
     <a class="btn btn--primary btn--sm" href="{% url 'directory:freelancer_list' %}">Explore Freelancers</a>
     <a class="btn btn--secondary btn--sm" href="{% url 'wallets:deposit' %}">+ Add Funds</a>
   </div>
@@ -32,10 +33,10 @@
     <p class="stat__value">Browse</p>
     <p class="stat__note">Explore top freelancers</p>
   </a>
-  <a class="card stat" href="{% url 'profiles:edit_client' %}">
-    <p class="stat__label">Profile</p>
-    <p class="stat__value">Manage</p>
-    <p class="stat__note">Update company & contact details</p>
+  <a class="card stat" href="{% url 'clients:client_public' user.username %}">
+    <p class="stat__label">Rating & Reviews</p>
+    <p class="stat__value">⭐ {{ profile.average_rating|default:"0.0" }}</p>
+    <p class="stat__note">{{ profile.total_reviews }} review{{ profile.total_reviews|pluralize }} · View profile</p>
   </a>
 </div>
 

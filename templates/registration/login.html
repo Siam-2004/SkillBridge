@@ -3,7 +3,7 @@
 
 {% block title %}Sign In — SkillBridge{% endblock %}
 {% block page_css %}
-<link rel="stylesheet" href="{% static 'accounts/css/login.css' %}?v=4.0">
+<link rel="stylesheet" href="{% static 'accounts/css/login.css' %}?v=6.0">
 {% endblock %}
 
 {% block form_header %}
@@ -15,16 +15,42 @@
 {% endblock %}
 
 {% block content %}
-<form method="post" novalidate>
+<form method="post" novalidate id="loginForm">
   {% csrf_token %}
   {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
-  {% include "components/form.html" %}
 
-  <div class="login-options">
-    <a href="{% url 'accounts:password_reset' %}">Forgot password?</a>
+  {% if form.non_field_errors %}
+    <div class="alert alert--error" style="margin-bottom: 1.25rem;">
+      <span class="alert__icon" aria-hidden="true">!</span>
+      <div class="alert__body">
+        {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="field{% if form.identifier.errors %} is-invalid{% endif %}">
+    <label for="{{ form.identifier.id_for_label }}">Email or Username <span class="required-mark">*</span></label>
+    {{ form.identifier }}
+    {% for error in form.identifier.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
   </div>
 
-  <button class="btn btn--primary btn--block btn--lg" type="submit">
+  <div class="field{% if form.password.errors %} is-invalid{% endif %}">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <label for="{{ form.password.id_for_label }}" style="margin:0;">Password <span class="required-mark">*</span></label>
+      <a href="{% url 'accounts:password_reset' %}" class="small muted" style="color:var(--brand-600); font-weight:600; text-decoration:none;">Forgot?</a>
+    </div>
+    {{ form.password }}
+    {% for error in form.password.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+  </div>
+
+  <div class="login-options">
+    <label style="display:flex; align-items:center; gap:8px; font-size:0.88rem; cursor:pointer;">
+      {{ form.remember }}
+      <span>Keep me signed in</span>
+    </label>
+  </div>
+
+  <button class="btn btn--primary btn--block btn--lg" type="submit" id="loginSubmitBtn">
     Sign In to SkillBridge
   </button>
 </form>

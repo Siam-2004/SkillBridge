@@ -72,7 +72,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--b
 input::placeholder, textarea::placeholder { color: var(--text-faint); }
 input:disabled, select:disabled, textarea:disabled { background: var(--ink-50); cursor: not-allowed; }
 textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
-select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-400) 50%), linear-gradient(135deg, var(--ink-400) 50%, transparent 50%); background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+select { appearance: none; background-color: var(--surface); color: var(--text); background-image: linear-gradient(45deg, transparent 50%, var(--ink-400) 50%), linear-gradient(135deg, var(--ink-400) 50%, transparent 50%); background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+select option { background-color: var(--surface, #ffffff); color: var(--text, #0f172a); }
+:root[data-theme="dark"] select { background-color: var(--surface, #0f172a); color: var(--text, #f8fafc); border-color: rgba(255, 255, 255, 0.16); }
+:root[data-theme="dark"] select option { background-color: #1e293b; color: #f8fafc; }
 .check { display: flex; align-items: flex-start; gap: var(--gap-2); margin-bottom: var(--gap-2); }
 .check input[type="checkbox"], .check input[type="radio"] { width: auto; height: auto; margin-top: 3px; accent-color: var(--brand-600); }
 .check label { font-weight: 400; font-size: .92rem; margin: 0; }

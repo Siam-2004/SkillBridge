@@ -3,7 +3,7 @@
 
 {% block title %}Create an Account — SkillBridge{% endblock %}
 {% block page_css %}
-<link rel="stylesheet" href="{% static 'accounts/css/register.css' %}?v=4.0">
+<link rel="stylesheet" href="{% static 'accounts/css/register.css' %}?v=5.0">
 {% endblock %}
 
 {% block form_header %}
@@ -15,13 +15,103 @@
 {% endblock %}
 
 {% block content %}
-<form method="post" novalidate>
+<form method="post" novalidate id="registerForm">
   {% csrf_token %}
-  {% include "components/form.html" %}
-  <button class="btn btn--primary btn--block btn--lg" type="submit" style="margin-top: 1rem;">
+  {% if form.non_field_errors %}
+    <div class="alert alert--error" style="margin-bottom: 1.25rem;">
+      <span class="alert__icon" aria-hidden="true">!</span>
+      <div class="alert__body">
+        {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Modern Interactive Role Selector -->
+  <div class="role-selector-wrap">
+    <div class="role-selector-header">
+      <span class="role-selector-label">I want to join as a:</span>
+      {% for error in form.role.errors %}<span class="field__error">{{ error }}</span>{% endfor %}
+    </div>
+    <div class="role-selector-grid">
+      <label class="role-select-card {% if form.role.value == 'CLIENT' or not form.role.value %}is-selected{% endif %}" id="card-client" for="role-client-input">
+        <input type="radio" name="role" value="CLIENT" id="role-client-input" {% if form.role.value == 'CLIENT' or not form.role.value %}checked{% endif %} class="role-native-radio">
+        <div class="role-card-top">
+          <span class="role-card-icon">💼</span>
+          <span class="role-check-indicator">✓</span>
+        </div>
+        <div class="role-card-title">Client</div>
+        <p class="role-card-desc"></p>
+      </label>
+
+      <label class="role-select-card {% if form.role.value == 'FREELANCER' %}is-selected{% endif %}" id="card-freelancer" for="role-freelancer-input">
+        <input type="radio" name="role" value="FREELANCER" id="role-freelancer-input" {% if form.role.value == 'FREELANCER' %}checked{% endif %} class="role-native-radio">
+        <div class="role-card-top">
+          <span class="role-card-icon">💻</span>
+          <span class="role-check-indicator">✓</span>
+        </div>
+        <div class="role-card-title">Freelancer</div>
+        <p class="role-card-desc"></p>
+      </label>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <div class="field{% if form.first_name.errors %} is-invalid{% endif %}">
+      <label for="{{ form.first_name.id_for_label }}">First Name <span class="required-mark">*</span></label>
+      {{ form.first_name }}
+      {% for error in form.first_name.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+    </div>
+    <div class="field{% if form.last_name.errors %} is-invalid{% endif %}">
+      <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+      {{ form.last_name }}
+      {% for error in form.last_name.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+    </div>
+  </div>
+
+  <div class="field{% if form.email.errors %} is-invalid{% endif %}">
+    <label for="{{ form.email.id_for_label }}">Email Address <span class="required-mark">*</span></label>
+    {{ form.email }}
+    {% for error in form.email.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+  </div>
+
+  <div class="field{% if form.password.errors %} is-invalid{% endif %}">
+    <label for="{{ form.password.id_for_label }}">Password <span class="required-mark">*</span></label>
+    {{ form.password }}
+    {% for error in form.password.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+  </div>
+
+  <div class="field{% if form.password_confirm.errors %} is-invalid{% endif %}">
+    <label for="{{ form.password_confirm.id_for_label }}">Confirm Password <span class="required-mark">*</span></label>
+    {{ form.password_confirm }}
+    {% for error in form.password_confirm.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+  </div>
+
+  <div class="field field-terms{% if form.accept_terms.errors %} is-invalid{% endif %}" style="margin-top:14px;">
+    <label for="{{ form.accept_terms.id_for_label }}" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:500;">
+      {{ form.accept_terms }}
+      <span>I agree to the <a href="#" target="_blank" style="color:var(--brand-600); font-weight:600;">Terms of Service</a> &amp; Privacy Policy</span>
+    </label>
+    {% for error in form.accept_terms.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+  </div>
+
+  <button class="btn btn--primary btn--block btn--lg" type="submit" style="margin-top: 1.25rem;">
     Create Free Account
   </button>
 </form>
+
+<script>
+  (function() {
+    var cards = document.querySelectorAll('.role-select-card');
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        cards.forEach(function(c) { c.classList.remove('is-selected'); });
+        card.classList.add('is-selected');
+        var radio = card.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+      });
+    });
+  })();
+</script>
 {% endblock %}
 
 {% block form_foot %}

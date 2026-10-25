@@ -101,3 +101,45 @@ def error_404(request, exception=None):
 
 def error_500(request):
     return render(request, 'errors/500.html', status=500)
+
+
+import json
+from django.contrib.auth.decorators import login_required
+from apps.core.assistant import process_assistant_query, get_user_accessible_projects, get_user_accessible_tasks
+
+@login_required
+def assistant_view(request):
+    projects = get_user_accessible_projects(request.user)
+    tasks = get_user_accessible_tasks(request.user)
+    initial_summary = process_assistant_query(request.user, 'summary')
+    return render(request, 'core/assistant.html', {
+        'nav': 'assistant',
+        'projects_count': projects.count(),
+        'tasks_count': tasks.count(),
+        'initial_summary': initial_summary.get('text', ''),
+        'suggestions': [
+            'What projects am I currently working on?',
+            'What tasks are assigned to me?',
+            'Which tasks have upcoming deadlines?',
+            'Show my high priority tasks',
+            'Any active disputes on my projects?',
+        ]
+    })
+
+@login_required
+def assistant_ask_api(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    query = ''
+    if request.content_type == 'application/json':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            query = data.get('query', '')
+        except Exception:
+            query = ''
+    else:
+        query = request.POST.get('query', '')
+    
+    result = process_assistant_query(request.user, query)
+    return JsonResponse(result)

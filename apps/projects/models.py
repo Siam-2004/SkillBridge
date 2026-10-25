@@ -70,6 +70,11 @@ class TeamInvitation(BaseModel):
             return self.status == self.Status.EXPIRED
         return timezone.now() > self.created_at + timedelta(hours=48)
 
+    @property
+    def expires_at(self):
+        from datetime import timedelta
+        return self.created_at + timedelta(hours=48)
+
 class ProjectFile(BaseModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='files')
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='uploaded_project_files')
@@ -84,3 +89,72 @@ class ProjectComment(BaseModel):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='authored_project_comments')
     content = models.TextField()
     mentions = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='mentioned_in_project_comments')
+
+class Review(BaseModel):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='reviews')
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='given_reviews')
+    reviewee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_reviews')
+    rating = models.PositiveSmallIntegerField(choices=[(1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), (4, '4 Stars'), (5, '5 Stars')])
+    feedback = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ('-created_at',)
+        constraints = [
+            models.UniqueConstraint(fields=['project', 'reviewer'], name='unique_project_reviewer')
+        ]
+
+    def __str__(self):
+        return f"Review by {self.reviewer} for {self.reviewee} ({self.rating}★)"
+
+    @property
+    def overall_rating(self):
+        return self.rating
+
+    @property
+    def written_comment(self):
+        return self.feedback
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.project.status != Project.Status.COMPLETED:
+            raise ValidationError("Ratings and reviews can only be submitted after project completion.")
+        if self.reviewer_id == self.reviewee_id:
+            raise ValidationError("Reviewer and reviewee cannot be the same user.")
+
+class Dispute(BaseModel):
+    class Status(models.TextChoices):
+        OPEN = ('OPEN', 'Open')
+        UNDER_REVIEW = ('UNDER_REVIEW', 'Under Review')
+        RESOLVED = ('RESOLVED', 'Resolved')
+        DISMISSED = ('DISMISSED', 'Dismissed')
+
+    class Reason(models.TextChoices):
+        QUALITY = ('QUALITY', 'Quality of work not as agreed')
+        DEADLINE = ('DEADLINE', 'Missed deadline or delayed milestone')
+        UNRESPONSIVE = ('UNRESPONSIVE', 'Counterparty unresponsive')
+        SCOPE = ('SCOPE', 'Scope disagreement / extra work demanded')
+        PAYMENT = ('PAYMENT', 'Payment or milestone dispute')
+        OTHER = ('OTHER', 'Other issue')
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='disputes')
+    raised_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='raised_disputes')
+    against = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='disputes_against')
+    reason = models.CharField(max_length=30, choices=Reason.choices, default=Reason.QUALITY)
+    description = models.TextField()
+    evidence = models.FileField(upload_to='projects/disputes/%Y/%m/', blank=True, null=True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.OPEN, db_index=True)
+    admin_resolution = models.TextField(blank=True)
+    resolved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='resolved_disputes')
+    resolved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return f"Dispute on {self.project.title} by {self.raised_by.username} ({self.status})"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.raised_by_id == self.against_id:
+            raise ValidationError("Cannot raise a dispute against yourself.")
+

@@ -31,6 +31,13 @@ class WalletTransactionAdmin(ReadOnlyAdmin):
     ordering = ('-created_at',)
     list_select_related = ('user',)
     readonly_fields = [f.name for f in WalletTransaction._meta.fields]
+    fieldsets = (
+        ('Transaction Identification', {'fields': ('internal_transaction_id', 'created_at', 'status', 'transaction_type')}),
+        ('Parties', {'fields': ('user', 'counterparty', 'actor')}),
+        ('Balance Accounting & Buckets', {'fields': ('amount', 'delta', 'from_bucket', 'to_bucket', 'balance_before', 'balance_after', 'available_after', 'reserved_after', 'escrow_after')}),
+        ('Associations & Context', {'fields': ('project', 'job', 'task', 'related_transaction')}),
+        ('Audit Trail & Verification', {'fields': ('description', 'metadata')}),
+    )
 
 @admin.register(Deposit)
 class DepositAdmin(admin.ModelAdmin):

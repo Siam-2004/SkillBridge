@@ -17,26 +17,44 @@ def freelancer_list(request):
     page, querystring = paginate(request, results, 12)
     return render(request, 'profiles/freelancer_list.html', {'form': form, 'page': page, 'querystring': querystring, 'total': page.paginator.count, 'nav_section': 'freelancers', 'page_title': 'Find freelancers'})
 
+def _get_review_summary_and_list(user):
+    from apps.projects.models import Review
+    from django.db.models import Avg
+    reviews = Review.objects.filter(reviewee=user).select_related('reviewer', 'project').order_by('-created_at')
+    total = reviews.count()
+    avg = round(reviews.aggregate(Avg('rating'))['rating__avg'] or 0.0, 1) if total > 0 else 0.0
+    breakdown = []
+    for star in [5, 4, 3, 2, 1]:
+        cnt = reviews.filter(rating=star).count()
+        pct = round((cnt / total * 100), 1) if total > 0 else 0
+        breakdown.append({'stars': star, 'count': cnt, 'percent': pct})
+    return {'average_rating': avg, 'total_reviews': total, 'breakdown': breakdown}, reviews
+
 def freelancer_public(request, username: str):
     try:
         profile = freelancer_public_profile(username)
     except FreelancerProfile.DoesNotExist as exc:
         raise Http404('No such freelancer.') from exc
     from apps.portfolios.models import Portfolio
-    return render(request, 'profiles/freelancer_public.html', {'profile': profile, 'owner': profile.user, 'skills': profile.skill_entries.select_related('skill'), 'experiences': profile.experiences.all(), 'education': profile.education.all(), 'portfolio': Portfolio.objects.filter(freelancer=profile, is_public=True).order_by('order', '-completed_on')[:6], 'summary': None, 'reviews': [], 'nav_section': 'freelancers', 'page_title': profile.user.full_name})
+    summary, reviews = _get_review_summary_and_list(profile.user)
+    return render(request, 'profiles/freelancer_public.html', {'profile': profile, 'owner': profile.user, 'skills': profile.skill_entries.select_related('skill'), 'experiences': profile.experiences.all(), 'education': profile.education.all(), 'portfolio': Portfolio.objects.filter(freelancer=profile, is_public=True).order_by('order', '-completed_on')[:6], 'summary': summary, 'reviews': reviews, 'nav_section': 'freelancers', 'page_title': profile.user.full_name})
 
 def client_public(request, username: str):
     try:
         profile = client_public_profile(username)
     except ClientProfile.DoesNotExist as exc:
         raise Http404('No such client.') from exc
-    return render(request, 'profiles/client_public.html', {'profile': profile, 'owner': profile.user, 'open_jobs': [], 'summary': None, 'reviews': [], 'page_title': profile.user.full_name})
+    from apps.marketplace.models import Job
+    summary, reviews = _get_review_summary_and_list(profile.user)
+    open_jobs = Job.objects.filter(client=profile.user, status=Job.Status.OPEN)[:6]
+    return render(request, 'profiles/client_public.html', {'profile': profile, 'owner': profile.user, 'open_jobs': open_jobs, 'summary': summary, 'reviews': reviews, 'page_title': profile.user.full_name})
 
 @client_required
 def client_dashboard(request):
     from apps.wallets.selectors import wallet_summary
     user = request.user
-    return render(request, 'profiles/client_dashboard.html', {'wallet_info': wallet_summary(user), 'open_jobs': 0, 'draft_jobs': 0, 'active_projects': 0, 'completed_projects': 0, 'new_proposals': 0, 'recent_jobs': [], 'recent_projects': [], 'awaiting_review': [], 'nav': 'dashboard', 'page_title': 'Dashboard'})
+    profile = ClientProfile.objects.filter(user=user).first()
+    return render(request, 'profiles/client_dashboard.html', {'wallet_info': wallet_summary(user), 'profile': profile, 'open_jobs': 0, 'draft_jobs': 0, 'active_projects': 0, 'completed_projects': 0, 'new_proposals': 0, 'recent_jobs': [], 'recent_projects': [], 'awaiting_review': [], 'nav': 'dashboard', 'page_title': 'Dashboard'})
 
 @freelancer_required
 def freelancer_dashboard(request):

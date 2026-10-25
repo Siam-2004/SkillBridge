@@ -126,6 +126,10 @@
 
 <nav class="side-group" aria-label="Activity">
   <p class="side-group__title">Activity</p>
+  <a class="side-link{% if nav == 'assistant' %} is-active{% endif %}" href="{% url 'core:assistant' %}">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><rect x="4" y="8" width="16" height="12" rx="2"></rect><path d="M9 13v2"></path><path d="M15 13v2"></path></svg>
+    <span>AI Assistant</span>
+  </a>
   <a class="side-link{% if nav == 'messages' %} is-active{% endif %}" href="{% url 'messaging:list' %}">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
     <span>Messages</span>

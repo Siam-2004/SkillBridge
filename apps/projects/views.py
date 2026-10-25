@@ -3,11 +3,12 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.http import FileResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from apps.core.permissions import verified_required
 from apps.core.exceptions import DomainError
 from apps.accounts.models import User
-from apps.projects.models import Project, TeamInvitation, ProjectFile, ProjectComment
+from apps.projects.models import Project, TeamInvitation, ProjectFile, ProjectComment, Review, Dispute
 from apps.projects import services
 from apps.tasks.models import Task
 
@@ -30,6 +31,12 @@ def project_detail(request, public_id):
     from apps.tasks.models import Task
     for rev_task in p.tasks.filter(status=Task.Status.IN_REVIEW):
         check_and_auto_approve_task(rev_task)
+    reviews = p.reviews.select_related('reviewer', 'reviewee').all()
+    my_review = p.reviews.filter(reviewer=request.user).first()
+    disputes = p.disputes.select_related('raised_by', 'against').all()
+    can_review = (p.status == Project.Status.COMPLETED) and (request.user.pk in (p.client_id, p.freelancer_id)) and not my_review
+    can_dispute = (request.user.pk in (p.client_id, p.freelancer_id))
+    reviewee = p.freelancer if request.user.pk == p.client_id else p.client
     return render(request, 'projects/detail.html', {
         'project': p, 'team': t, 'is_owner': p.is_owner(request.user), 'page_title': p.title, 'nav': 'projects',
         'team_members': t.members.select_related('user').all() if t else [],
@@ -40,6 +47,12 @@ def project_detail(request, public_id):
         'comments': p.comments.select_related('author', 'task').prefetch_related('mentions').all(),
         'activities': p.task_activities.select_related('actor', 'task', 'subtask').all()[:30],
         'available_freelancers': services.search_freelancers(query=request.GET.get('q', '').strip(), exclude_team=t) if p.is_owner(request.user) and t else [],
+        'reviews': reviews,
+        'my_review': my_review,
+        'disputes': disputes,
+        'can_review': can_review,
+        'can_dispute': can_dispute,
+        'reviewee': reviewee,
     })
 
 @verified_required
@@ -48,16 +61,32 @@ def create_team(request, public_id):
     p = get_object_or_404(Project, public_id=public_id)
     try: services.create_team(p, request.POST.get('name', '').strip() or f"{p.title[:80]} Team", request.user)
     except DomainError as e: messages.error(request, e.message)
-    return redirect('projects:detail', public_id=p.public_id)
+    return redirect(f"{reverse('projects:detail', kwargs={'public_id': p.public_id})}#team-workspace")
 
 @verified_required
 @require_POST
 def invite_member(request, public_id):
     p = get_object_or_404(Project, public_id=public_id)
     if hasattr(p, 'team'):
-        try: services.invite_to_team(p.team, get_object_or_404(User, pk=request.POST.get('invitee_id')), request.user, request.POST.get('message', ''))
-        except DomainError as e: messages.error(request, e.message)
-    return redirect('projects:detail', public_id=p.public_id)
+        invitee = None
+        invitee_id = request.POST.get('invitee_id')
+        email = request.POST.get('email', '').strip().lower()
+        if invitee_id:
+            invitee = get_object_or_404(User, pk=invitee_id)
+        elif email:
+            invitee = User.objects.filter(email__iexact=email).first()
+            if not invitee:
+                messages.error(request, f"No user registered with email '{email}'.")
+                return redirect(f"{reverse('projects:detail', kwargs={'public_id': p.public_id})}#team-workspace")
+        else:
+            messages.error(request, "Please select a freelancer or provide an email address.")
+            return redirect(f"{reverse('projects:detail', kwargs={'public_id': p.public_id})}#team-workspace")
+        try:
+            services.invite_to_team(p.team, invitee, request.user, request.POST.get('message', ''))
+            messages.success(request, f"Invitation sent to {invitee.username} ({invitee.email}).")
+        except DomainError as e:
+            messages.error(request, e.message)
+    return redirect(f"{reverse('projects:detail', kwargs={'public_id': p.public_id})}#team-workspace")
 
 @verified_required
 @require_POST
@@ -115,3 +144,61 @@ def project_chat_send(request, public_id):
     t = Task.objects.filter(pk=request.POST.get('task_id'), project=p).first() if request.POST.get('task_id') else None
     c = services.add_project_comment(p, request.user, body, t)
     return JsonResponse({'status': 'ok', 'message': {'id': c.id, 'author': c.author.username, 'content': c.content, 'created_at': c.created_at.strftime("%I:%M %p")}})
+
+@verified_required
+@require_POST
+def submit_review(request, public_id):
+    p = get_object_or_404(Project, public_id=public_id)
+    if not (request.user.pk in (p.client_id, p.freelancer_id)):
+        raise PermissionDenied("Only client or lead freelancer can review this project.")
+    if p.status != Project.Status.COMPLETED:
+        messages.error(request, "Ratings and reviews can only be submitted after project completion.")
+        return redirect('projects:detail', public_id=p.public_id)
+    if p.reviews.filter(reviewer=request.user).exists():
+        messages.error(request, "You have already reviewed this project.")
+        return redirect('projects:detail', public_id=p.public_id)
+
+    reviewee = p.freelancer if request.user.pk == p.client_id else p.client
+    try:
+        rating = int(request.POST.get('rating', 5))
+        if rating < 1 or rating > 5:
+            rating = 5
+    except Exception:
+        rating = 5
+    feedback = request.POST.get('feedback', '').strip()
+    Review.objects.create(
+        project=p,
+        reviewer=request.user,
+        reviewee=reviewee,
+        rating=rating,
+        feedback=feedback
+    )
+    messages.success(request, f"Review submitted successfully ({rating}★).")
+    return redirect('projects:detail', public_id=p.public_id)
+
+@verified_required
+@require_POST
+def submit_dispute(request, public_id):
+    p = get_object_or_404(Project, public_id=public_id)
+    if not (request.user.pk in (p.client_id, p.freelancer_id)):
+        raise PermissionDenied("Only client or lead freelancer can raise a dispute.")
+    against = p.freelancer if request.user.pk == p.client_id else p.client
+    reason = request.POST.get('reason', 'OTHER')
+    description = request.POST.get('description', '').strip()
+    if not description:
+        messages.error(request, "Dispute description cannot be empty.")
+        return redirect('projects:detail', public_id=p.public_id)
+
+    evidence = request.FILES.get('evidence')
+    Dispute.objects.create(
+        project=p,
+        raised_by=request.user,
+        against=against,
+        reason=reason,
+        description=description,
+        evidence=evidence,
+        status=Dispute.Status.OPEN
+    )
+    messages.warning(request, "Dispute submitted to Admin for formal investigation.")
+    return redirect('projects:detail', public_id=p.public_id)
+

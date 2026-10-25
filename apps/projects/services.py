@@ -33,9 +33,37 @@ def create_team(project: Project, name: str, owner: User) -> Team:
     return t
 
 def search_freelancers(query: str = '', exclude_team: Team | None = None):
-    qs = User.objects.filter(role=Role.FREELANCER, is_active=True)
-    if query:
-        qs = qs.filter(models.Q(username__icontains=query) | models.Q(first_name__icontains=query) | models.Q(email__icontains=query))
+    from django.db.models import Value
+    from django.db.models.functions import Concat
+    query = (query or '').strip()
+    if not query:
+        return User.objects.none()
+    qs = User.objects.filter(role=Role.FREELANCER, is_active=True).select_related('freelancer_profile').annotate(
+        full_name_annotated=Concat('first_name', Value(' '), 'last_name')
+    )
+    terms = query.split()
+    filter_q = (
+        models.Q(username__icontains=query) |
+        models.Q(first_name__icontains=query) |
+        models.Q(last_name__icontains=query) |
+        models.Q(full_name_annotated__icontains=query) |
+        models.Q(email__icontains=query) |
+        models.Q(freelancer_profile__professional_title__icontains=query) |
+        models.Q(freelancer_profile__skills__name__icontains=query)
+    )
+    if len(terms) > 1:
+        terms_q = models.Q()
+        for t in terms:
+            terms_q &= (
+                models.Q(username__icontains=t) |
+                models.Q(first_name__icontains=t) |
+                models.Q(last_name__icontains=t) |
+                models.Q(email__icontains=t) |
+                models.Q(freelancer_profile__professional_title__icontains=t) |
+                models.Q(freelancer_profile__skills__name__icontains=t)
+            )
+        filter_q |= terms_q
+    qs = qs.filter(filter_q).distinct()
     if exclude_team:
         qs = qs.exclude(id__in=exclude_team.members.values_list('user_id', flat=True))
     return qs[:20]

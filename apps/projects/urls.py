@@ -15,4 +15,6 @@ urlpatterns = [
     path('<uuid:public_id>/chat/', views.project_chat_view, name='chat'),
     path('<uuid:public_id>/chat/poll/', views.project_chat_poll, name='chat_poll'),
     path('<uuid:public_id>/chat/send/', views.project_chat_send, name='chat_send'),
+    path('<uuid:public_id>/reviews/submit/', views.submit_review, name='review_submit'),
+    path('<uuid:public_id>/disputes/create/', views.submit_dispute, name='dispute_create'),
 ]
